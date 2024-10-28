@@ -582,20 +582,12 @@ video {
   width: 20%;
 }
 
-.w-4\/5 {
-  width: 80%;
+.w-5\/6 {
+  width: 83.333333%;
 }
 
 .w-full {
   width: 100%;
-}
-
-.w-auto {
-  width: auto;
-}
-
-.w-5\/6 {
-  width: 83.333333%;
 }
 
 .flex-shrink-0 {
@@ -634,8 +626,8 @@ video {
   background-color: rgb(239 68 68 / var(--tw-bg-opacity));
 }
 
-.p-12 {
-  padding: 3rem;
+.p-16 {
+  padding: 4rem;
 }
 
 .p-5 {
@@ -646,8 +638,9 @@ video {
   padding: 1.5rem;
 }
 
-.p-16 {
-  padding: 4rem;
+.py-16 {
+  padding-top: 4rem;
+  padding-bottom: 4rem;
 }
 
 .pb-5 {
@@ -678,55 +671,6 @@ video {
   box-sizing: border-box;
 }
 
-.wrapper{
-  display: flex;
-  position: relative;
-}
-
-.wrapper .sidebar{
-  position: fixed;
-  width: 250px;
-  height: 100%;
-  padding-left: 10px;
-  background-color: #1A1B21;
-}
-
-.wrapper .sidebar h2{
-  text-align: center;
-  color: WHITE;
-  margin-left: 0px;
-  padding-top: 20px;
-  padding-bottom: 20px;
-}
-
-.wrapper .sidebar ul li a{
-  padding: 25px;
-  color: white;
-  display: block;
-}
-
-.wrapper .sidebar ul li {
-  margin-left:0%;
-  border-top: 1px solid WHITE;
-  background: #C02827;
-}
-
-.wrapper .sidebar ul li:hover{
-  background: #ff7b7b;
-}
-
-.wrapper .main-body{
-  margin-left: 300px;
-}
-
-.sizeButton{
-  background-color: #C02827;
-  color: white;
-  height: 225px;
-  width: 300px;
-  border-radius: 20%;
-}
-
 .hover\:bg-\[\#ff7b7b\]:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(255 123 123 / var(--tw-bg-opacity));
@@ -736,3 +680,4 @@ video {
   --tw-bg-opacity: 1;
   background-color: rgb(220 38 38 / var(--tw-bg-opacity));
 }
+
