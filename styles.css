@@ -45,3 +45,11 @@
 .wrapper .main-body{
     margin-left: 300px;
 }
+
+.sizeButton{
+    background-color: #C02827;
+    color: white;
+    height: 225px;
+    width: 300px;
+    border-radius: 20%;
+}
