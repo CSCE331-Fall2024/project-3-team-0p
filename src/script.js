@@ -147,3 +147,22 @@ function updateOrderDisplay() {
     }
 }
 
+const cancelButton = document.getElementById("cancel-order-button");
+cancelButton.addEventListener("click", cancelOrder);
+
+function cancelOrder() {
+    const userConfirmed = confirm("Are you sure you want to proceed?");
+    if (userConfirmed) {
+        // User clicked "OK"
+        // Resets the order and page to nothing
+        currentMeal = ["N/A", "N/A", "N/A", "N/A", "N/A"];
+        numEntrees = 0;
+        numSides = 1;
+        selectedEntrees = 0;
+        selectedSides = 0;
+        currentPrice = 0.0;
+        sessionStorage.clear();
+        updateOrderDisplay();
+    }
+}
+
