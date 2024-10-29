@@ -25,7 +25,7 @@ sizeButtons.forEach(button =>{
             alert("You have already selected a meal size. Please proceed with the order.")
         }
         else{
-            const buttonText = this.textContent.toLowerCase();
+            const buttonText = this.textContent.trim().toLowerCase();
             currentMeal[0] = buttonText;
 
             if (buttonText.includes("side")) {
@@ -61,7 +61,6 @@ sizeButtons.forEach(button =>{
                 console.log("Redirecting to entrees page");
                 window.location.href = "employee-entrees.html";
             }
-
         }
     });
 });
@@ -78,7 +77,7 @@ entreeButtons.forEach(button =>{
             alert("Please select a meal size first.")
         }
         else{
-            const buttonText = this.textContent.toLowerCase();
+            const buttonText = this.textContent.trim().toLowerCase();
             selectedEntrees += 1;
             currentMeal[selectedEntrees] = buttonText;
             sessionStorage.setItem("selectedEntrees", selectedEntrees);
@@ -108,7 +107,7 @@ sideButtons.forEach(button =>{
             alert("Please select a meal size first.")
         }
         else{
-            const buttonText = this.textContent.toLowerCase();
+            const buttonText = this.textContent.trim().toLowerCase();
             selectedSides += 1;
             currentMeal[4] = buttonText;
             sessionStorage.setItem("selectedSides", selectedSides);
@@ -119,3 +118,82 @@ sideButtons.forEach(button =>{
         }
     });
 });
+
+// for review page: make buttons functional and display order values while also connecting and interacting with the server
+// refreshes page and current order when order is placed
+document.addEventListener("DOMContentLoaded", () => {
+    // Loads the current order after choosing food items
+    console.log("made it here 1")
+    if (window.location.pathname === "/employee-review.html") {
+        updateOrderDisplay();
+    }
+});
+
+function updateOrderDisplay() {
+    const mealDetailsElement = document.getElementById("order-display");
+    const storedMeal = sessionStorage.getItem("currentMeal");
+
+    if (storedMeal) {
+        const currentMeal = JSON.parse(storedMeal);
+        let validFood = [];
+        currentMeal.forEach(food => {
+            if (food !== "N/A") {
+                validFood.push(food);
+            }
+        })
+        mealDetailsElement.textContent = validFood.join(", ");
+    } else {
+        mealDetailsElement.textContent = "No meal selected.";
+    }
+}
+
+const cancelButton = document.getElementById("cancel-order-button");
+cancelButton.addEventListener("click", cancelOrder);
+
+function cancelOrder() {
+    const userConfirmed = confirm("Are you sure you want to proceed?");
+    if (userConfirmed) {
+        // User clicked "OK"
+        // Resets the order and page to nothing
+        currentMeal = ["N/A", "N/A", "N/A", "N/A", "N/A"];
+        numEntrees = 0;
+        numSides = 1;
+        selectedEntrees = 0;
+        selectedSides = 0;
+        currentPrice = 0.0;
+        sessionStorage.clear();
+        updateOrderDisplay();
+    }
+}
+
+async function placeOrder() {
+    const orderData = JSON.stringify(currentMeal);
+    console.log("Order data being sent:", orderData);
+    try {
+        // Sends POST to the server
+        let result = await fetch("/submit", {
+            method: "POST",
+            headers: {"content-type": "application/json"},
+            body: orderData
+        });
+
+        if (result.ok) {
+            alert("Order Placed!")
+            // Resets the order and page to nothing
+            currentMeal = ["N/A", "N/A", "N/A", "N/A", "N/A"];
+            numEntrees = 0;
+            numSides = 1;
+            selectedEntrees = 0;
+            selectedSides = 0;
+            currentPrice = 0.0;
+            sessionStorage.clear();
+            updateOrderDisplay();
+        } else {
+            const errorMessage = await result.json(); // Get error message from server
+            alert(`Error: ${errorMessage.message}`);
+        }
+    } catch (error) {
+        console.error("Failed to place order:", error);
+        alert("Failed to place order. Please try again.");
+    }
+}
