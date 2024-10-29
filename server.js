@@ -22,11 +22,6 @@ app.get("/", (req, res) => {
 // Launches the web page
 app.listen(8080, () => console.log("app listening at http://localhost:8080"));
 
-// app.get("/employees", async (req, res) => {
-//     const rows = await readEmployees();
-//     res.setHeader("content-type", "application/json");
-//     res.send(JSON.stringify(rows));
-// });
 
 app.post("/submit", async (req, res) => {
     try{
@@ -64,32 +59,32 @@ async function addOrder(orderData) {
         const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Months are zero-based
         const day = String(currentDate.getDate()).padStart(2, '0');
         const orderDate = `${year}-${month}-${day}`;
-
+        
         // Get the current time components
         const hours = String(currentDate.getHours()).padStart(2, '0');
         const minutes = String(currentDate.getMinutes()).padStart(2, '0');
         const seconds = String(currentDate.getSeconds()).padStart(2, '0');
         const orderTime = `${hours}:${minutes}:${seconds}`;
-
+        
         // Get number of items in order
         const numItems = 1;
-
+        
         // Get total price of the order
         const priceResult = await pool.query("select price from mealsizes where mealname = $1", [orderData[0]]);
         const orderPrice = priceResult.rows[0].price;
-
+        
         console.log(`Current order data: (${orderID}, ${orderDate}, ${orderTime}, ${numItems}, ${orderPrice})`);
-
+        
         // INFORMATION FOR ORDER ITEM
         // Get id for this item in the order
         const orderItemsResult = await pool.query("select max(id) as max_id from orderitems");
         const orderItemsID = orderItemsResult.rows[0].max_id + 1;
-
+        
         // Get price of this order item
         const orderItemPrice = orderPrice;
-
+        
         console.log(`Current orderitems data: (${orderItemsID}, ${orderID}, ${orderItemPrice}, ${orderData[0]}, ${orderData[1]}, ${orderData[2]}, ${orderData[3]}, ${orderData[4]}})`);
-
+        
         // Insert into orders and orderitems tables
         await pool.query("INSERT INTO orders VALUES ($1, $2, $3, $4, $5)", [orderID, orderDate, orderTime, numItems, orderPrice]);
         await pool.query("INSERT INTO orderitems VALUES ($1, $2, $3, $4, $5, $6, $7, $8)", [orderItemsID, orderID, orderItemPrice, orderData[0], orderData[1], orderData[2], orderData[3], orderData[4]]);
@@ -98,17 +93,24 @@ async function addOrder(orderData) {
     }
 }
 
-// async function readEmployees() {
-//     try {
-//         const results = await client.query("SELECT name, username, position FROM employees");
-//         return results.rows;
-//     } catch(e) {
-//         console.log("Query failed: ", e);
-//     }
-// }
-
 // Close the client when the application exits
 process.on('exit', async () => {
     await pool.end();
     console.log("Database client disconnected");
 });
+
+// CAN BE USED IN LATER SPRINT
+// app.get("/employees", async (req, res) => {
+//     const rows = await readEmployees();
+//     res.setHeader("content-type", "application/json");
+//     res.send(JSON.stringify(rows));
+// });
+
+// async function readEmployees() {
+    //     try {
+        //         const results = await client.query("SELECT name, username, position FROM employees");
+        //         return results.rows;
+//     } catch(e) {
+//         console.log("Query failed: ", e);
+//     }
+// }
