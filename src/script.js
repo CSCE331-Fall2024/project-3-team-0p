@@ -4,7 +4,6 @@ let currentPrice = 0.0;
 
 // for meal size page: gets the text of each button and adds it to the array.
 const buttons = document.querySelectorAll(".sizeButton");
-
 buttons.forEach(button =>{
     button.addEventListener("click", function() {
         const buttonText = this.textContent.toLowerCase();
