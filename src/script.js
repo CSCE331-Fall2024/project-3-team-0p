@@ -96,12 +96,11 @@ entreeButtons.forEach(button =>{
     });
 });
 
-// for entrees page: gets the text of each button and adds it to the array. Allows 1-3 entrees to be selected depending on the type of meal.
-// Redirects to either the sides page or review page if we finish selecting entrees.
+// for sides page: gets the text of each button and adds it to the array. Allows 0-1 sides depending on the size.
+// Redirects to the review order page once finished selecting.
 const sideButtons = document.querySelectorAll(".sideButton");
 sideButtons.forEach(button =>{
     button.addEventListener("click", function() {
-        alert("miao")
         if(selectedSides >= numSides || numSides == 0){
             alert("You cannot add any more sides.")
         }
