@@ -37,7 +37,7 @@ SCRUM 3:
 Time: Tuesday, October 29, 6:15-6:30 pm
 Location: Zachry
 Agenda Items:
- Discuss what tasks are completed in the interface
+Discuss what tasks are completed in the interface
 Determined who would finish what for the GitHub release
 Minutes:
 Ian fine tuned the layout of the interface to make it more appealing
