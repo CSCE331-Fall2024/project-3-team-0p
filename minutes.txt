@@ -1,0 +1,51 @@
+SCRUM 1:
+Time: Sunday, October 27, 4:00-4:15 pm
+Location: Zachry
+Agenda Items:
+Complete design document
+Distribute tasks
+Minutes:
+Ian completed the system design
+Judy finished wire frame drawings, task breakdown, and scheduling
+Layla did the product backlog (Appendix 1)
+Alana set up the coding environment
+Obstacles:
+Ian struggled with knowing what components to include in the design and making them connect best
+Judy struggled with making the customer and cashier interfaces unique
+Layla struggled with the dependencies and priorities as well as estimated times
+Alana struggled with React and Node.js and getting them to not have errors
+
+
+SCRUM 2:
+Time: Monday, October 26, 5:00-5:15 pm
+Location: Zachry (lab)
+Agenda Items:
+Discussed what everyone did to begin coding
+Assign tasks
+Minutes:
+Ian integrated Tailwindcss into our project and created the entree page
+Judy created the navbar and moving between pages
+Layla developed the sides page and started to connect to the database with Node.js
+Alana organized the backlog and sprint backlog as well as got familiar and started connecting to the database with Node.js
+Obstacles:
+Ian struggled with getting Tailwindcss to constantly update with added classes
+Judy struggled with making the navbar line up correctly and give space to the main page
+Layla and Alana struggled with figuring out how to get Node.js to work with html files
+
+
+SCRUM 3:
+Time: Tuesday, October 29, 6:15-6:30 pm
+Location: Zachry
+Agenda Items:
+Discuss what tasks are completed in the interface
+Determined who would finish what for the GitHub release
+Minutes:
+Ian fine tuned the layout of the interface to make it more appealing
+Judy created the buttons for the meal size, entrees, and sides based on info from the database
+Layla developed the start page and connecting it to the cashier interface
+Alana connected to the database and created functionality to add orders to the database
+Obstacles:
+Ian struggled with getting the Tailwindcss to do what he wanted when it came to positioning
+Judy struggled with making sure the text of the buttons matched the database
+Layla struggled with getting the buttons for navigation to to match the cashier interface
+Alana struggled with making the html files to interact with the Node.js server and understanding POST
