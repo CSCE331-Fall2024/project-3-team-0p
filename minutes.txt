@@ -34,7 +34,7 @@ Layla and Alana struggled with figuring out how to get Node.js to work with html
 
 
 SCRUM 3:
-Time: Tuesday, October 29, 6:30-6:15 pm
+Time: Tuesday, October 29, 6:15-6:30 pm
 Location: Zachry
 Agenda Items:
  Discuss what tasks are completed in the interface
