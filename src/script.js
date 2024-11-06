@@ -166,6 +166,7 @@ function cancelOrder() {
     }
 }
 
+// Place order into the database
 async function placeOrder() {
     const orderData = JSON.stringify(currentMeal);
     console.log("Order data being sent:", orderData);
