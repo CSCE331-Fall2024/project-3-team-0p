@@ -1,3 +1,5 @@
+// https://project-3-team-0p.onrender.com
+
 const {Pool} = require("pg");
 const express = require("express");
 const path = require("path");
@@ -34,17 +36,6 @@ app.post("/submit", async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 });
-
-start();
-async function start() {
-    // await connect();
-    try {
-        await pool.connect()
-        console.log("Connected to database successfully")
-    } catch(e) {
-        console.log(`Failed to connect to database: ${e}`);
-    }
-}
 
 async function addOrder(orderData) {
     try{
