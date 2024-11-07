@@ -141,7 +141,7 @@ function updateOrderDisplay() {
                 validFood.push(food);
             }
         })
-        mealDetailsElement.textContent = validFood.join(", ");
+        mealDetailsElement.textContent = validFood.join("\n     ");
     } else {
         mealDetailsElement.textContent = "No meal selected.";
     }
