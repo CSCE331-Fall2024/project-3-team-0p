@@ -5,11 +5,13 @@ let numSides = 1;
 let selectedEntrees = 0;
 let selectedSides = 0;
 let currentPrice = 0.0;
+let currentPage = window.location.pathname;
 
 numEntrees = parseInt(sessionStorage.getItem("numEntrees")) || 0;
 numSides = parseInt(sessionStorage.getItem("numSides"));
 selectedSides = parseInt(sessionStorage.getItem("selectedSides")) || 0;
 selectedEntrees = parseInt(sessionStorage.getItem("selectedEntrees")) || 0;
+currentPage = currentPage = window.location.pathname;
 
 const storedMeal = sessionStorage.getItem("currentMeal");
 if (storedMeal) {
@@ -35,8 +37,14 @@ sizeButtons.forEach(button =>{
                 sessionStorage.setItem("selectedEntrees", selectedEntrees);
                 sessionStorage.setItem("currentMeal", JSON.stringify(currentMeal));
 
-                console.log("Redirecting to sides page");
-                window.location.href = "employee-sides.html";
+                if(currentPage.includes("employee")){
+                    console.log("Redirecting to employee sides page");
+                    window.location.href = "employee-sides.html";
+                }
+                else{
+                    console.log("Redirecting to customer sides page");
+                    window.location.href = "customer-sides.html";
+                }
             }
             else {
                 if(buttonText.includes("bowl")){
@@ -58,8 +66,14 @@ sizeButtons.forEach(button =>{
                 sessionStorage.setItem("selectedEntrees", selectedEntrees);
                 sessionStorage.setItem("currentMeal", JSON.stringify(currentMeal));
 
-                console.log("Redirecting to entrees page");
-                window.location.href = "employee-entrees.html";
+                if(currentPage.includes("employee")){
+                    console.log("Redirecting to employee entrees page");
+                    window.location.href = "employee-entrees.html";
+                }
+                else{
+                    console.log("Redirecting to customer entrees page");
+                    window.location.href = "customer-entrees.html";
+                }
             }
         }
     });
@@ -84,12 +98,24 @@ entreeButtons.forEach(button =>{
             sessionStorage.setItem("currentMeal", JSON.stringify(currentMeal));
 
             if(numSides != 0 && selectedEntrees == numEntrees){
-                console.log("Redirecting to sides page");
-                window.location.href = "employee-sides.html";
+                if(currentPage.includes("employee")){
+                    console.log("Redirecting to employee sides page");
+                    window.location.href = "employee-sides.html";
+                }
+                else{
+                    console.log("Redirecting to customer sides page");
+                    window.location.href = "customer-sides.html";
+                }
             }
             else if(numSides == 0 && selectedEntrees == numEntrees){
-                console.log("Redirecting to review order page");
-                window.location.href = "employee-review.html";
+                if(currentPage.includes("employee")){
+                    console.log("Redirecting to employee review page");
+                    window.location.href = "employee-review.html";
+                }
+                else{
+                    console.log("Redirecting to customer display meal page");
+                    window.location.href = "customer-displayMeals.html";
+                }
             }
         }
     });
@@ -113,8 +139,14 @@ sideButtons.forEach(button =>{
             sessionStorage.setItem("selectedSides", selectedSides);
             sessionStorage.setItem("currentMeal", JSON.stringify(currentMeal));
 
-            console.log("Redirecting to review order page");
-            window.location.href = "employee-review.html";
+            if(currentPage.includes("employee")){
+                console.log("Redirecting to employee review page");
+                window.location.href = "employee-review.html";
+            }
+            else{
+                console.log("Redirecting to customer displayMeal page");
+                window.location.href = "customer-displayMeal.html";
+            }
         }
     });
 });
