@@ -27,22 +27,33 @@ app.get("/", (req, res) => {
 app.listen(8080, () => console.log("app listening at http://localhost:8080"));
 
 app.get("/meal-size", async (req, res) => {
+    // Get data from the database
     const rows = await readMealSizes();
-    console.log(rows);
     
     // Send response as a JSON object
     res.json(rows);
 });
 
 app.get("/entrees", async (req, res) => {
-    const rows = await readEntrees();
+    // Get data from the database
+    const rows = await readMenuItems();
 
     // Filter values to just entrees
     const entrees = rows.filter(item => item.category === "Entree").map(item => item.name);
-    console.log(entrees);
 
     // Send response as a JSON object
     res.json(entrees);
+});
+
+app.get("/sides", async (req, res) => {
+    // Get data from the database
+    const rows = await readMenuItems();
+
+    // Filter values to just sides
+    const sides = rows.filter(item => item.category === "Side").map(item => item.name);
+
+    // Send response as a JSON object
+    res.json(sides);
 });
 
 // http request to place order data into database
@@ -67,7 +78,7 @@ async function readMealSizes() {
     }
 }
 
-async function readEntrees() {
+async function readMenuItems() {
     try {
         const results = await pool.query("SELECT name, category FROM menuitems");
         return results.rows;
