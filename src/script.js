@@ -24,6 +24,8 @@ document.addEventListener("DOMContentLoaded", () => {
         updateOrderDisplay();
     } else if (window.location.pathname === "/employee-mealsize.html") {
         setMealSizeButtons();
+    } else if (window.location.pathname === "/employee-entrees.html") {
+        setEntreeButton();
     }
 });
 
@@ -35,7 +37,6 @@ loginButton.addEventListener("click", function() {
 
 // for meal size page: gets the text of each button and adds it to the array.
 // Also sets the price of the current item and also establishes the number of entrees and sides.
-
 async function getMealSizeNames() {
     try {
         // Sends GET to the server
@@ -115,7 +116,6 @@ function mealSizeButtonClick() {
 
 async function setMealSizeButtons() {
     let mealSizeNames = await getMealSizeNames();
-    console.log(mealSizeNames);
 
     const table = document.getElementById("meal-size-table");
     let tr;
@@ -139,106 +139,89 @@ async function setMealSizeButtons() {
     }
 }
 
-// const sizeButtons = document.querySelectorAll(".sizeButton");
-// sizeButtons.forEach(button =>{
-//     button.addEventListener("click", function() {
-//         if(currentMeal[0] != "N/A"){
-//             alert("You have already selected a meal size. Please proceed with the order.")
-//         }
-//         else{
-//             const buttonText = this.textContent.trim().toLowerCase();
-//             currentMeal[0] = buttonText;
-
-//             if (buttonText.includes("side")) {
-//                 // saving the items for a single session
-//                 sessionStorage.setItem("numEntrees", numEntrees);
-//                 sessionStorage.setItem("numSides", numSides);
-//                 sessionStorage.setItem("selectedEntrees", selectedEntrees);
-//                 sessionStorage.setItem("currentMeal", JSON.stringify(currentMeal));
-
-//                 if(currentPage.includes("employee")){
-//                     console.log("Redirecting to employee sides page");
-//                     window.location.href = "employee-sides.html";
-//                 }
-//                 else{
-//                     console.log("Redirecting to customer sides page");
-//                     window.location.href = "customer-sides.html";
-//                 }
-//             }
-//             else {
-//                 if(buttonText.includes("bowl")){
-//                     numEntrees = 1;
-//                 }
-//                 else if(buttonText.includes("bigger")){
-//                     numEntrees = 3;
-//                 }
-//                 else if(buttonText.includes("plate")){
-//                     numEntrees = 2;
-//                 }
-//                 else{
-//                     numEntrees = 1;
-//                     numSides = 0;
-//                 }
-//                 // saving the items for a single session
-//                 sessionStorage.setItem("numEntrees", numEntrees);
-//                 sessionStorage.setItem("numSides", numSides);
-//                 sessionStorage.setItem("selectedEntrees", selectedEntrees);
-//                 sessionStorage.setItem("currentMeal", JSON.stringify(currentMeal));
-
-//                 if(currentPage.includes("employee")){
-//                     console.log("Redirecting to employee entrees page");
-//                     window.location.href = "employee-entrees.html";
-//                 }
-//                 else{
-//                     console.log("Redirecting to customer entrees page");
-//                     window.location.href = "customer-entrees.html";
-//                 }
-//             }
-//         }
-//     });
-// });
-
 // for entrees page: gets the text of each button and adds it to the array. Allows 1-3 entrees to be selected depending on the type of meal.
 // Redirects to either the sides page or review page if we finish selecting entrees.
-const entreeButtons = document.querySelectorAll(".entreeButton");
-entreeButtons.forEach(button =>{
-    button.addEventListener("click", function() {
-        if(selectedEntrees >= numEntrees || numEntrees == 0){
-            alert("You cannot add any more entrees.")
-        }
-        else if(currentMeal[0] == "N/A"){
-            alert("Please select a meal size first.")
-        }
-        else{
-            const buttonText = this.textContent.trim().toLowerCase();
-            selectedEntrees += 1;
-            currentMeal[selectedEntrees] = buttonText;
-            sessionStorage.setItem("selectedEntrees", selectedEntrees);
-            sessionStorage.setItem("currentMeal", JSON.stringify(currentMeal));
+async function getEntreeNames() {
+    try {
+        // Sends GET to the server
+        let result = await fetch("/entrees", {
+            method: "GET"
+        });
 
-            if(numSides != 0 && selectedEntrees == numEntrees){
-                if(currentPage.includes("employee")){
-                    console.log("Redirecting to employee sides page");
-                    window.location.href = "employee-sides.html";
-                }
-                else{
-                    console.log("Redirecting to customer sides page");
-                    window.location.href = "customer-sides.html";
-                }
+        if (result.ok) {
+            const entreeNames = await result.json();
+            return entreeNames;
+        } else {
+            const errorMessage = await result.json(); // Get error message from server
+            alert(`Error: ${errorMessage.message}`);
+        }
+    } catch (error) {
+        console.error("Failed to place order:", error);
+        alert("Failed to place order. Please try again.");
+    }
+}
+
+function entreeButtonClick() {
+    if(selectedEntrees >= numEntrees || numEntrees == 0){
+        alert("You cannot add any more entrees.")
+    }
+    else if(currentMeal[0] == "N/A"){
+        alert("Please select a meal size first.")
+    }
+    else{
+        const buttonText = this.textContent.trim().toLowerCase();
+        selectedEntrees += 1;
+        currentMeal[selectedEntrees] = buttonText;
+        sessionStorage.setItem("selectedEntrees", selectedEntrees);
+        sessionStorage.setItem("currentMeal", JSON.stringify(currentMeal));
+
+        if(numSides != 0 && selectedEntrees == numEntrees){
+            if(currentPage.includes("employee")){
+                console.log("Redirecting to employee sides page");
+                window.location.href = "employee-sides.html";
             }
-            else if(numSides == 0 && selectedEntrees == numEntrees){
-                if(currentPage.includes("employee")){
-                    console.log("Redirecting to employee review page");
-                    window.location.href = "employee-review.html";
-                }
-                else{
-                    console.log("Redirecting to customer display meal page");
-                    window.location.href = "customer-displayMeals.html";
-                }
+            else{
+                console.log("Redirecting to customer sides page");
+                window.location.href = "customer-sides.html";
             }
         }
-    });
-});
+        else if(numSides == 0 && selectedEntrees == numEntrees){
+            if(currentPage.includes("employee")){
+                console.log("Redirecting to employee review page");
+                window.location.href = "employee-review.html";
+            }
+            else{
+                console.log("Redirecting to customer display meal page");
+                window.location.href = "customer-displayMeals.html";
+            }
+        }
+    }
+}
+
+async function setEntreeButton() {
+    let entreeNames = await getEntreeNames();
+
+    const table = document.getElementById("entree-table");
+    let tr;
+
+    for (let i = 0; i < entreeNames.length; ++i) {
+        if (i % 3 === 0) {
+            tr = document.createElement("tr");
+            table.appendChild(tr);
+        }
+
+        const dt = document.createElement("td");
+        const button = document.createElement("button");
+    
+        const entreeName = entreeNames[i];
+        button.textContent = entreeName;
+        button.className = "w-5/6 py-16 bg-red-500 text-white rounded hover:bg-red-600 entreeButton";
+        button.addEventListener("click", entreeButtonClick);
+        
+        dt.appendChild(button);
+        tr.appendChild(dt);
+    }
+}
 
 // for sides page: gets the text of each button and adds it to the array. Allows 0-1 sides depending on the size.
 // Redirects to the review order page once finished selecting.
