@@ -145,7 +145,7 @@ sideButtons.forEach(button =>{
             }
             else{
                 console.log("Redirecting to customer displayMeal page");
-                window.location.href = "customer-displayMeal.html";
+                window.location.href = "customer-displayMeals.html";
             }
         }
     });
@@ -156,7 +156,7 @@ sideButtons.forEach(button =>{
 document.addEventListener("DOMContentLoaded", () => {
     // Loads the current order after choosing food items
     console.log("made it here 1")
-    if (window.location.pathname === "/employee-review.html") {
+    if (window.location.pathname === "/employee-review.html" || window.location.pathname === "/customer-displayMeals.html") {
         updateOrderDisplay();
     }
 });
