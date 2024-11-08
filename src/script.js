@@ -33,9 +33,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // for login page: redirect to correct page
 const loginButton = document.getElementById("login-button");
-loginButton.addEventListener("click", function() {
-    window.location.href = "employee-mealsize.html";
-});
+if (loginButton) {
+    loginButton.addEventListener("click", function() {
+        window.location.href = "employee-mealsize.html";
+    });
+}
+
 
 // for meal size page: gets the text of each button and adds it to the array.
 // Also sets the price of the current item and also establishes the number of entrees and sides.
@@ -333,9 +336,16 @@ function cancelOrder() {
 }
 
 const cancelButton = document.getElementById("cancel-order-button");
-cancelButton.addEventListener("click", cancelOrder);
+if (cancelButton) {
+    cancelButton.addEventListener("click", cancelOrder);
+}
 
 // Place order into the database
+const placeOrderButton = document.getElementById("place-order-button");
+if (placeOrderButton) {
+    placeOrderButton.addEventListener("click", placeOrder);
+}
+
 async function placeOrder() {
     const orderData = JSON.stringify(currentMeal);
     console.log("Order data being sent:", orderData);
