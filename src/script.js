@@ -26,6 +26,8 @@ document.addEventListener("DOMContentLoaded", () => {
         setMealSizeButtons();
     } else if (window.location.pathname === "/employee-entrees.html") {
         setEntreeButton();
+    } else if (window.location.pathname === "/employee-sides.html") {
+        setSideButton();
     }
 });
 
@@ -42,7 +44,6 @@ async function getMealSizeNames() {
         // Sends GET to the server
         let result = await fetch("/meal-size", {
             method: "GET",
-            headers: {"content-type": "application/json"}
         });
 
         if (result.ok) {
@@ -225,43 +226,78 @@ async function setEntreeButton() {
 
 // for sides page: gets the text of each button and adds it to the array. Allows 0-1 sides depending on the size.
 // Redirects to the review order page once finished selecting.
-const sideButtons = document.querySelectorAll(".sideButton");
-sideButtons.forEach(button =>{
-    button.addEventListener("click", function() {
-        if(selectedSides >= numSides || numSides == 0){
-            alert("You cannot add any more sides.")
+async function getSideNames() {
+    try {
+        // Sends GET to the server
+        let result = await fetch("/sides", {
+            method: "GET"
+        });
+
+        if (result.ok) {
+            const sideNames = await result.json();
+            return sideNames;
+        } else {
+            const errorMessage = await result.json(); // Get error message from server
+            alert(`Error: ${errorMessage.message}`);
         }
-        else if(currentMeal[0] == "N/A"){
-            alert("Please select a meal size first.")
+    } catch (error) {
+        console.error("Failed to place order:", error);
+        alert("Failed to place order. Please try again.");
+    }
+}
+
+function sideButtonClick() {
+    if(selectedSides >= numSides || numSides == 0){
+        alert("You cannot add any more sides.")
+    }
+    else if(currentMeal[0] == "N/A"){
+        alert("Please select a meal size first.")
+    }
+    else{
+        const buttonText = this.textContent.trim().toLowerCase();
+        selectedSides += 1;
+        currentMeal[4] = buttonText;
+        sessionStorage.setItem("selectedSides", selectedSides);
+        sessionStorage.setItem("currentMeal", JSON.stringify(currentMeal));
+
+        if(currentPage.includes("employee")){
+            console.log("Redirecting to employee review page");
+            window.location.href = "employee-review.html";
         }
         else{
-            const buttonText = this.textContent.trim().toLowerCase();
-            selectedSides += 1;
-            currentMeal[4] = buttonText;
-            sessionStorage.setItem("selectedSides", selectedSides);
-            sessionStorage.setItem("currentMeal", JSON.stringify(currentMeal));
-
-            if(currentPage.includes("employee")){
-                console.log("Redirecting to employee review page");
-                window.location.href = "employee-review.html";
-            }
-            else{
-                console.log("Redirecting to customer displayMeal page");
-                window.location.href = "customer-displayMeal.html";
-            }
+            console.log("Redirecting to customer displayMeal page");
+            window.location.href = "customer-displayMeal.html";
         }
-    });
-});
+    }
+}
+
+async function setSideButton() {
+    let sideNames = await getSideNames();
+
+    const table = document.getElementById("side-table");
+    let tr;
+
+    for (let i = 0; i < sideNames.length; ++i) {
+        if (i % 4 === 0) {
+            tr = document.createElement("tr");
+            table.appendChild(tr);
+        }
+
+        const dt = document.createElement("td");
+        const button = document.createElement("button");
+    
+        const sideName = sideNames[i];
+        button.textContent = sideName;
+        button.className = "w-5/6 py-16 bg-red-500 text-white rounded hover:bg-red-600 entreeButton";
+        button.addEventListener("click", sideButtonClick);
+        
+        dt.appendChild(button);
+        tr.appendChild(dt);
+    }
+}
 
 // for review page: make buttons functional and display order values while also connecting and interacting with the server
 // refreshes page and current order when order is placed
-// document.addEventListener("DOMContentLoaded", () => {
-//     // Loads the current order after choosing food items
-//     if (window.location.pathname === "/employee-review.html") {
-//         updateOrderDisplay();
-//     }
-// });
-
 function updateOrderDisplay() {
     const mealDetailsElement = document.getElementById("order-display");
     const storedMeal = sessionStorage.getItem("currentMeal");
