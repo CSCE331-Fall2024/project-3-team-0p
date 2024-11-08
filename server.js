@@ -1,9 +1,11 @@
 // https://project-3-team-0p.onrender.com
 
+// Import statements
 const {Pool} = require("pg");
 const express = require("express");
 const path = require("path");
 
+// Connects to the database
 const app = express();
 app.use(express.static(path.join(__dirname, "src")));
 app.use(express.json());
@@ -16,7 +18,7 @@ const pool = new Pool ({
     "port": 5432
 });
 
-// Stes the starting page when web page loads
+// Sets the starting page when web page loads
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "src", "employee-mealsize.html"));
 });
@@ -24,7 +26,13 @@ app.get("/", (req, res) => {
 // Launches the web page
 app.listen(8080, () => console.log("app listening at http://localhost:8080"));
 
+app.get("/meal-size", async (req, res) => {
+    const rows = await readMealSizes();
+    res.setHeader("content-type", "application/json");
+    res.send(JSON.stringify(rows));
+});
 
+// http request to place order data into database
 app.post("/submit", async (req, res) => {
     try{
         const orderData = req.body;
@@ -36,6 +44,15 @@ app.post("/submit", async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 });
+
+async function readMealSizes() {
+    try {
+        const results = await pool.query("SELECT mealname FROM mealsizes");
+        return results.rows;
+    } catch(e) {
+        console.log("Query failed: ", e);
+    }
+}
 
 async function addOrder(orderData) {
     try{
@@ -99,7 +116,7 @@ process.on('exit', async () => {
 
 // async function readEmployees() {
     //     try {
-        //         const results = await client.query("SELECT name, username, position FROM employees");
+        //         const results = await pool.query("SELECT name, username, position FROM employees");
         //         return results.rows;
 //     } catch(e) {
 //         console.log("Query failed: ", e);
