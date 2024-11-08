@@ -230,3 +230,8 @@ async function placeOrder() {
         alert("Failed to place order. Please try again.");
     }
 }
+
+//save current meal into order and start new meal
+async function newItem() {
+    alert("worked");
+}

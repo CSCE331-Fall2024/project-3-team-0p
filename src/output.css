@@ -667,10 +667,6 @@ video {
   margin-bottom: calc(1rem * var(--tw-space-y-reverse));
 }
 
-.whitespace-pre-line {
-  white-space: pre-line;
-}
-
 .rounded {
   border-radius: 0.25rem;
 }
