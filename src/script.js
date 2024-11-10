@@ -20,14 +20,15 @@ if (storedMeal) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+    const loadedWindow = window.location.pathname;
     // Loads the current order after choosing food items
-    if (window.location.pathname === "/employee-review.html") {
+    if (loadedWindow === "/employee-review.html") {
         updateOrderDisplay();
-    } else if (window.location.pathname === "/employee-mealsize.html") {
+    } else if (loadedWindow === "/employee-mealsize.html" || loadedWindow === "/customer-mealsize.html") {
         setMealSizeButtons();
-    } else if (window.location.pathname === "/employee-entrees.html") {
+    } else if (loadedWindow === "/employee-entrees.html" || loadedWindow === "/customer-entrees.html") {
         setEntreeButton();
-    } else if (window.location.pathname === "/employee-sides.html") {
+    } else if (loadedWindow === "/employee-sides.html" || loadedWindow === "/customer-sides.html") {
         setSideButton();
     }
 });
