@@ -108,27 +108,36 @@ async function addOrder(orderData) {
         const orderTime = `${hours}:${minutes}:${seconds}`;
         
         // Get number of items in order
-        const numItems = 1;
-        
+        const numItems = orderData.length;
+        let orderPrice = 0;
+        let itemPrices = [];
+
         // Get total price of the order
-        const priceResult = await pool.query("select price from mealsizes where mealname = $1", [orderData[0]]);
-        const orderPrice = priceResult.rows[0].price;
+        for(let i = 0; i < numItems; ++i) {
+            const priceResult = await pool.query("select price from mealsizes where mealname = $1", [orderData[i][0]]);
+            itemPrices.push(priceResult.rows[0].price);
+            orderPrice += itemPrices[i];
+        }
         
         console.log(`Current order data: (${orderID}, ${orderDate}, ${orderTime}, ${numItems}, ${orderPrice})`);
         
-        // INFORMATION FOR ORDER ITEM
-        // Get id for this item in the order
-        const orderItemsResult = await pool.query("select max(id) as max_id from orderitems");
-        const orderItemsID = orderItemsResult.rows[0].max_id + 1;
-        
-        // Get price of this order item
-        const orderItemPrice = orderPrice;
-        
-        console.log(`Current orderitems data: (${orderItemsID}, ${orderID}, ${orderItemPrice}, ${orderData[0]}, ${orderData[1]}, ${orderData[2]}, ${orderData[3]}, ${orderData[4]}})`);
-        
-        // Insert into orders and orderitems tables
+        // Insert into orders
         await pool.query("INSERT INTO orders VALUES ($1, $2, $3, $4, $5)", [orderID, orderDate, orderTime, numItems, orderPrice]);
-        await pool.query("INSERT INTO orderitems VALUES ($1, $2, $3, $4, $5, $6, $7, $8)", [orderItemsID, orderID, orderItemPrice, orderData[0], orderData[1], orderData[2], orderData[3], orderData[4]]);
+
+        // INFORMATION FOR ORDER ITEM
+        for(let i = 0; i < numItems; ++i) {
+            // Get id for this item in the order
+            const orderItemsResult = await pool.query("select max(id) as max_id from orderitems");
+            const orderItemsID = orderItemsResult.rows[0].max_id + 1;
+            
+            // Get price of this order item
+            const orderItemPrice = itemPrices[i];
+            
+            console.log(`Current orderitems data: (${orderItemsID}, ${orderID}, ${orderItemPrice}, ${orderData[i][0]}, ${orderData[i][1]}, ${orderData[i][2]}, ${orderData[i][3]}, ${orderData[i][4]}})`);
+            
+            // Insert into orderitems table
+            await pool.query("INSERT INTO orderitems VALUES ($1, $2, $3, $4, $5, $6, $7, $8)", [orderItemsID, orderID, orderItemPrice, orderData[i][0], orderData[i][1], orderData[i][2], orderData[i][3], orderData[i][4]]);
+        }
     } catch(e) {
         console.error(`Query failed: ${e}`);
     }

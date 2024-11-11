@@ -1,5 +1,5 @@
-var currentOrder = [];
-let currentMeal = ["N/A", "N/A", "N/A", "N/A", "N/A"];
+var currentOrder = [["N/A", "N/A", "N/A", "N/A", "N/A"]];
+let currentMeal = 0;
 let numEntrees = 0;
 let numSides = 1;
 let selectedEntrees = 0;
@@ -13,9 +13,10 @@ selectedSides = parseInt(sessionStorage.getItem("selectedSides")) || 0;
 selectedEntrees = parseInt(sessionStorage.getItem("selectedEntrees")) || 0;
 currentPage = currentPage = window.location.pathname;
 
-const storedMeal = sessionStorage.getItem("currentMeal");
+const storedMeal = sessionStorage.getItem("currentOrder");
 if (storedMeal) {
-    currentMeal = JSON.parse(storedMeal);
+    currentOrder = JSON.parse(storedMeal);
+    currentMeal = currentOrder.length - 1;
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -64,19 +65,19 @@ async function getMealSizeNames() {
 }
 
 function mealSizeButtonClick() {
-    if(currentMeal[0] != "N/A"){
+    if(currentOrder[currentMeal][0] != "N/A"){
         alert("You have already selected a meal size. Please proceed with the order.")
     }
     else{
         const buttonText = this.textContent.trim().toLowerCase();
-        currentMeal[0] = buttonText;
+        currentOrder[currentMeal][0] = buttonText;
 
         if (buttonText.includes("side")) {
             // saving the items for a single session
             sessionStorage.setItem("numEntrees", numEntrees);
             sessionStorage.setItem("numSides", numSides);
             sessionStorage.setItem("selectedEntrees", selectedEntrees);
-            sessionStorage.setItem("currentMeal", JSON.stringify(currentMeal));
+            sessionStorage.setItem("currentOrder", JSON.stringify(currentOrder));
 
             if(currentPage.includes("employee")){
                 console.log("Redirecting to employee sides page");
@@ -105,7 +106,7 @@ function mealSizeButtonClick() {
             sessionStorage.setItem("numEntrees", numEntrees);
             sessionStorage.setItem("numSides", numSides);
             sessionStorage.setItem("selectedEntrees", selectedEntrees);
-            sessionStorage.setItem("currentMeal", JSON.stringify(currentMeal));
+            sessionStorage.setItem("currentOrder", JSON.stringify(currentOrder));
 
             if(currentPage.includes("employee")){
                 console.log("Redirecting to employee entrees page");
@@ -170,15 +171,15 @@ function entreeButtonClick() {
     if(selectedEntrees >= numEntrees || numEntrees == 0){
         alert("You cannot add any more entrees.")
     }
-    else if(currentMeal[0] == "N/A"){
+    else if(currentOrder[currentMeal][0] == "N/A"){
         alert("Please select a meal size first.")
     }
     else{
         const buttonText = this.textContent.trim().toLowerCase();
         selectedEntrees += 1;
-        currentMeal[selectedEntrees] = buttonText;
+        currentOrder[currentMeal][selectedEntrees] = buttonText;
         sessionStorage.setItem("selectedEntrees", selectedEntrees);
-        sessionStorage.setItem("currentMeal", JSON.stringify(currentMeal));
+        sessionStorage.setItem("currentOrder", JSON.stringify(currentOrder));
 
         if(numSides != 0 && selectedEntrees == numEntrees){
             if(currentPage.includes("employee")){
@@ -254,15 +255,15 @@ function sideButtonClick() {
     if(selectedSides >= numSides || numSides == 0){
         alert("You cannot add any more sides.")
     }
-    else if(currentMeal[0] == "N/A"){
+    else if(currentOrder[currentMeal][0] == "N/A"){
         alert("Please select a meal size first.")
     }
     else{
         const buttonText = this.textContent.trim().toLowerCase();
         selectedSides += 1;
-        currentMeal[4] = buttonText;
+        currentOrder[currentMeal][4] = buttonText;
         sessionStorage.setItem("selectedSides", selectedSides);
-        sessionStorage.setItem("currentMeal", JSON.stringify(currentMeal));
+        sessionStorage.setItem("currentOrder", JSON.stringify(currentOrder));
 
         if(currentPage.includes("employee")){
             console.log("Redirecting to employee review page");
@@ -304,17 +305,21 @@ async function setSideButton() {
 // refreshes page and current order when order is placed
 function updateOrderDisplay() {
     const mealDetailsElement = document.getElementById("order-display");
-    const storedMeal = sessionStorage.getItem("currentMeal");
+    const storedOrder = sessionStorage.getItem("currentOrder");
 
     if (storedMeal) {
-        const currentMeal = JSON.parse(storedMeal);
-        let validFood = [];
-        currentMeal.forEach(food => {
-            if (food !== "N/A") {
-                validFood.push(food);
-            }
+        const currentOrder = JSON.parse(storedOrder);
+        let prettyOrder = [];
+        currentOrder.forEach(meal => {
+            let validFood = [];
+            meal.forEach(food => {
+                if (food !== "N/A") {
+                    validFood.push(food);
+                }
+            })
+            prettyOrder.push(validFood.join("\n    "));
         })
-        mealDetailsElement.textContent = validFood.join("\n     ");
+        mealDetailsElement.textContent = prettyOrder.join("\n"); 
     } else {
         mealDetailsElement.textContent = "No meal selected.";
     }
@@ -325,14 +330,15 @@ function cancelOrder() {
     if (userConfirmed) {
         // User clicked "OK"
         // Resets the order and page to nothing
-        currentMeal = ["N/A", "N/A", "N/A", "N/A", "N/A"];
+        currentOrder = [["N/A", "N/A", "N/A", "N/A", "N/A"]];
+        currentMeal = 0;
         numEntrees = 0;
         numSides = 1;
         selectedEntrees = 0;
         selectedSides = 0;
         currentPrice = 0.0;
         sessionStorage.clear();
-        updateOrderDisplay();
+        window.location.href = "employee-mealsize.html";
     }
 }
 
@@ -348,7 +354,7 @@ if (placeOrderButton) {
 }
 
 async function placeOrder() {
-    const orderData = JSON.stringify(currentMeal);
+    const orderData = JSON.stringify(currentOrder);
     console.log("Order data being sent:", orderData);
     try {
         // Sends POST to the server
@@ -361,7 +367,8 @@ async function placeOrder() {
         if (result.ok) {
             alert("Order Placed!")
             // Resets the order and page to nothing
-            currentMeal = ["N/A", "N/A", "N/A", "N/A", "N/A"];
+            currentOrder = [["N/A", "N/A", "N/A", "N/A", "N/A"]];
+            currentMeal = 0;
             numEntrees = 0;
             numSides = 1;
             selectedEntrees = 0;
@@ -377,4 +384,24 @@ async function placeOrder() {
         console.error("Failed to place order:", error);
         alert("Failed to place order. Please try again.");
     }
+}
+
+const newItemButton = document.getElementById("new-item-button");
+if (newItemButton) {
+    newItemButton.addEventListener("click", newItem);
+}
+
+//save current meal into order and start new meal
+function newItem() {
+    currentOrder.push(["N/A", "N/A", "N/A", "N/A", "N/A"]);
+    numEntrees = 0;
+    numSides = 1;
+    selectedEntrees = 0;
+    selectedSides = 0;
+    sessionStorage.setItem("numEntrees", numEntrees);
+    sessionStorage.setItem("numSides", numSides);
+    sessionStorage.setItem("selectedEntrees", selectedEntrees);
+    sessionStorage.setItem("selectedSides", selectedSides);
+    sessionStorage.setItem("currentOrder", JSON.stringify(currentOrder));
+    window.location.href = "employee-mealsize.html";
 }
