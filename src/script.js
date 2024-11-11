@@ -11,7 +11,7 @@ numEntrees = parseInt(sessionStorage.getItem("numEntrees")) || 0;
 numSides = parseInt(sessionStorage.getItem("numSides"));
 selectedSides = parseInt(sessionStorage.getItem("selectedSides")) || 0;
 selectedEntrees = parseInt(sessionStorage.getItem("selectedEntrees")) || 0;
-currentPage = currentPage = window.location.pathname;
+currentPage = window.location.pathname;
 
 const storedMeal = sessionStorage.getItem("currentOrder");
 if (storedMeal) {
@@ -22,7 +22,7 @@ if (storedMeal) {
 document.addEventListener("DOMContentLoaded", () => {
     const loadedWindow = window.location.pathname;
     // Loads the current order after choosing food items
-    if (loadedWindow === "/employee-review.html") {
+    if (loadedWindow === "/employee-review.html" || loadedWindow === "/customer-review.html" || loadedWindow === "/customer-displayMeals.html") {
         updateOrderDisplay();
     } else if (loadedWindow === "/employee-mealsize.html" || loadedWindow === "/customer-mealsize.html") {
         setMealSizeButtons();
@@ -271,7 +271,7 @@ function sideButtonClick() {
         }
         else{
             console.log("Redirecting to customer displayMeal page");
-            window.location.href = "customer-displayMeal.html";
+            window.location.href = "customer-displayMeals.html";
         }
     }
 }
@@ -307,19 +307,31 @@ function updateOrderDisplay() {
     const mealDetailsElement = document.getElementById("order-display");
     const storedOrder = sessionStorage.getItem("currentOrder");
 
-    if (storedMeal) {
+    if (storedOrder) {
         const currentOrder = JSON.parse(storedOrder);
-        let prettyOrder = [];
-        currentOrder.forEach(meal => {
+        if(currentPage.includes("displayMeals")){
             let validFood = [];
-            meal.forEach(food => {
+            currentOrder[currentMeal].forEach(food => {
                 if (food !== "N/A") {
                     validFood.push(food);
                 }
             })
-            prettyOrder.push(validFood.join("\n    "));
-        })
-        mealDetailsElement.textContent = prettyOrder.join("\n"); 
+            mealDetailsElement.textContent = validFood.join("\n    ");
+        }
+        else{
+            let prettyOrder = [];
+            currentOrder.forEach(meal => {
+                let validFood = [];
+                meal.forEach(food => {
+                    if (food !== "N/A") {
+                        validFood.push(food);
+                    }
+                })
+                prettyOrder.push(validFood.join("\n    "));
+            })
+            mealDetailsElement.textContent = prettyOrder.join("\n"); 
+
+        }
     } else {
         mealDetailsElement.textContent = "No meal selected.";
     }
@@ -338,13 +350,23 @@ function cancelOrder() {
         selectedSides = 0;
         currentPrice = 0.0;
         sessionStorage.clear();
-        window.location.href = "employee-mealsize.html";
+        window.location.href = "index.html";
     }
 }
 
 const cancelButton = document.getElementById("cancel-order-button");
 if (cancelButton) {
     cancelButton.addEventListener("click", cancelOrder);
+}
+
+const removeMealButton = document.getElementById("remove-meal-button");
+if (removeMealButton) {
+    removeMealButton.addEventListener("click", removeMeal);
+}
+
+const addMealButton = document.getElementById("add-to-order-button");
+if (addMealButton) {
+    addMealButton.addEventListener("click", addMeal);
 }
 
 // Place order into the database
@@ -388,6 +410,7 @@ async function placeOrder() {
 
 const newItemButton = document.getElementById("new-item-button");
 if (newItemButton) {
+    console.log("adding item");
     newItemButton.addEventListener("click", newItem);
 }
 
@@ -403,5 +426,23 @@ function newItem() {
     sessionStorage.setItem("selectedEntrees", selectedEntrees);
     sessionStorage.setItem("selectedSides", selectedSides);
     sessionStorage.setItem("currentOrder", JSON.stringify(currentOrder));
-    window.location.href = "employee-mealsize.html";
+    if(currentPage.includes("employee")){
+        window.location.href = "employee-mealsize.html";
+    }
+    else{
+        window.location.href = "customer-mealsize.html";
+    }
+}
+
+function removeMeal(){
+    currentOrder.pop();
+    if(currentOrder.length == 1){
+        newItem();
+    }
+    currentMeal --;
+    window.location.href = "customer-review.html";
+}
+
+function addMeal(){
+    window.location.href = "customer-review.html";
 }
