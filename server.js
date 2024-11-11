@@ -56,6 +56,44 @@ app.get("/sides", async (req, res) => {
     res.json(sides);
 });
 
+//login
+app.get("/employees", async (req, res) => {
+    // Get data from the database
+    const rows = await readEmployees();
+
+    // Filter values to just managers
+    const managers = rows.filter(item => item.category === "Manager").map(item => item.name);
+    // Filter values to just cashiers
+    const cashiers = rows.filter(item => item.category === "Cashier").map(item => item.name);
+
+    // Send response as a JSON object
+    res.json(managers);
+    res.json(cashiers);
+});
+
+app.post("/login", async (req, res) => {
+const { username, password } = req.body;
+  
+  try {
+    const result = await pool.query(
+      "SELECT position FROM employees WHERE username = $1 AND password = $2",
+      [username, password]
+    );
+
+    if (result.rows.length > 0) {
+      const position = result.rows[0].position;
+      res.json({ success: true, position: position });
+    } else {
+      res.json({ success: false, message: "Invalid credentials" });
+    }
+  } catch (error) {
+    console.error("Login error:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
+//// end login ////
+
 // http request to place order data into database
 app.post("/submit", async (req, res) => {
     try{
@@ -163,7 +201,7 @@ app.get("/employees", async (req, res) => {
 
 async function readEmployees() {
     try {
-        const results = await pool.query("SELECT name, username, position FROM employees");
+        const results = await pool.query("SELECT name, username, password, position FROM employees");
         return results.rows;
     } catch(e) {
         console.log("Query failed: ", e);
