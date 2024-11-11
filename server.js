@@ -140,18 +140,23 @@ process.on('exit', async () => {
     console.log("Database client disconnected");
 });
 
-// CAN BE USED IN LATER SPRINT
-// app.get("/employees", async (req, res) => {
-//     const rows = await readEmployees();
-//     res.setHeader("content-type", "application/json");
-//     res.send(JSON.stringify(rows));
-// });
+// login page 
+app.get("/employees", async (req, res) => {
+    // Get data from the database
+    const rows = await readEmployees();
+    
+    //Filter values to just employees
+    res.setHeader("content-type", "application/json");
 
-// async function readEmployees() {
-    //     try {
-        //         const results = await pool.query("SELECT name, username, position FROM employees");
-        //         return results.rows;
-//     } catch(e) {
-//         console.log("Query failed: ", e);
-//     }
-// }
+    // Send response as a JSON object
+    res.send(JSON.stringify(rows));
+});
+
+async function readEmployees() {
+    try {
+        const results = await pool.query("SELECT name, username, position FROM employees");
+        return results.rows;
+    } catch(e) {
+        console.log("Query failed: ", e);
+    }
+}
