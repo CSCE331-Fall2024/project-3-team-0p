@@ -59,8 +59,8 @@ async function getMealSizeNames() {
             alert(`Error: ${errorMessage.message}`);
         }
     } catch (error) {
-        console.error("Failed to place order:", error);
-        alert("Failed to place order. Please try again.");
+        console.error("Failed to get meal size names from the server: ", error);
+        alert("Failed to get the meal size names. Please try again.");
     }
 }
 
@@ -162,8 +162,8 @@ async function getEntreeNames() {
             alert(`Error: ${errorMessage.message}`);
         }
     } catch (error) {
-        console.error("Failed to place order:", error);
-        alert("Failed to place order. Please try again.");
+        console.error("Failed to get entree names from the database: ", error);
+        alert("Failed to get entree names. Please try again.");
     }
 }
 
@@ -246,8 +246,8 @@ async function getSideNames() {
             alert(`Error: ${errorMessage.message}`);
         }
     } catch (error) {
-        console.error("Failed to place order:", error);
-        alert("Failed to place order. Please try again.");
+        console.error("Failed to get side names from the database: ", error);
+        alert("Failed to get side names. Please try again.");
     }
 }
 
@@ -307,21 +307,28 @@ function updateOrderDisplay() {
     const mealDetailsElement = document.getElementById("order-display");
     const storedOrder = sessionStorage.getItem("currentOrder");
 
-    if (storedMeal) {
-        const currentOrder = JSON.parse(storedOrder);
-        let prettyOrder = [];
-        currentOrder.forEach(meal => {
-            let validFood = [];
-            meal.forEach(food => {
-                if (food !== "N/A") {
-                    validFood.push(food);
-                }
+    try {
+        if (storedOrder) {
+            const currentOrder = JSON.parse(storedOrder);
+            let prettyOrder = [];
+            // console.log(currentOrder);
+            currentOrder.forEach(meal => {
+                // console.log(meal);
+                let validFood = [];
+                meal.forEach(food => {
+                    if (food !== "N/A") {
+                        validFood.push(food);
+                    }
+                })
+                prettyOrder.push(validFood.join("\n    "));
             })
-            prettyOrder.push(validFood.join("\n    "));
-        })
-        mealDetailsElement.textContent = prettyOrder.join("\n"); 
-    } else {
-        mealDetailsElement.textContent = "No meal selected.";
+            mealDetailsElement.textContent = prettyOrder.join("\n"); 
+        } else {
+            mealDetailsElement.textContent = "No meal selected.";
+        }
+    } catch(e) {
+        console.error("Error displaying the order: ", e);
+        alert("Error displaying the order.");
     }
 }
 
@@ -381,7 +388,7 @@ async function placeOrder() {
             alert(`Error: ${errorMessage.message}`);
         }
     } catch (error) {
-        console.error("Failed to place order:", error);
+        console.error("Failed to place order in the database:", error);
         alert("Failed to place order. Please try again.");
     }
 }
@@ -393,6 +400,12 @@ if (newItemButton) {
 
 //save current meal into order and start new meal
 function newItem() {
+    // For when you press new item when there is no order placed yet in review page
+    if (currentOrder[currentMeal][0] == "N/A") {
+        window.location.href = "employee-mealsize.html";
+        return;
+    }
+
     currentOrder.push(["N/A", "N/A", "N/A", "N/A", "N/A"]);
     numEntrees = 0;
     numSides = 1;
