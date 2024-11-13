@@ -69,6 +69,17 @@ app.post("/submit", async (req, res) => {
     }
 });
 
+app.get('/last-order-id', async (req, res) => {
+    try {
+        const result = await pool.query("select max(id) as max_id from orders");
+        const orderID = result.rows[0].max_id + 1;
+        res.json({ order_id: orderID });
+    } catch (error) {
+        console.error('Error fetching order ID:', error);
+        res.status(500).json({ error: 'Failed to fetch order ID' });
+    }
+});
+
 async function readMealSizes() {
     try {
         const results = await pool.query("SELECT mealname FROM mealsizes");

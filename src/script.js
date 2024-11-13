@@ -31,6 +31,9 @@ document.addEventListener("DOMContentLoaded", () => {
     } else if (loadedWindow === "/employee-sides.html" || loadedWindow === "/customer-sides.html") {
         setSideButton();
     }
+    else if (loadedWindow === "/customer-orderConfirmation.html") {
+        displayOrderID();
+    }
 });
 
 // for login page: redirect to correct page
@@ -304,8 +307,20 @@ async function setSideButton() {
 
 // gets the order id and displays it for the customer interface
 
-async function getOrderID(){
-    let orderID = 0;
+async function displayOrderID(){
+    let results = await fetch("/last-order-id", {
+        method: "GET",
+    });
+    if (results.ok) {
+        const data = await results.json();
+        const orderID = data.order_id;
+        const orderIDText = document.getElementById("order-id");
+        orderIDText.textContent = orderID;
+
+    } else {
+        const errorMessage = await result.json();
+        alert(`Error: ${errorMessage.message}`);
+    }
     
 }
 
