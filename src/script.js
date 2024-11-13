@@ -4,13 +4,14 @@ let numEntrees = 0;
 let numSides = 1;
 let selectedEntrees = 0;
 let selectedSides = 0;
-let currentPrice = 0.0;
+let orderPrice = 0.0;
 let currentPage = window.location.pathname;
 
 numEntrees = parseInt(sessionStorage.getItem("numEntrees")) || 0;
 numSides = parseInt(sessionStorage.getItem("numSides"));
 selectedSides = parseInt(sessionStorage.getItem("selectedSides")) || 0;
 selectedEntrees = parseInt(sessionStorage.getItem("selectedEntrees")) || 0;
+orderPrice = parseInt(sessionStorage.getItem("orderPrice")) || 0;
 currentPage = currentPage = window.location.pathname;
 
 const storedMeal = sessionStorage.getItem("currentOrder");
@@ -169,6 +170,30 @@ async function getEntreeNames() {
     }
 }
 
+//
+async function getOrderPrice() {
+    try {
+        // Sends GET to the server
+        const orderData = JSON.stringify(currentOrder);
+        const url = new URL("/get-order-price", window.location.origin);
+        url.searchParams.append("orderData", orderData);
+
+        let result = await fetch(url, {
+            method: "GET"
+        });
+
+        if (result.ok) {
+            const price = await result.json();
+            return price;
+        } else {
+            const errorMessage = await result.json(); // Get error message from server
+            alert(`Error: ${errorMessage.message}`);
+        }
+    } catch (error) {
+        console.error("Failed to get price: ", error);
+    }
+}
+
 function entreeButtonClick() {
     if(selectedEntrees >= numEntrees || numEntrees == 0){
         alert("You cannot add any more entrees.")
@@ -305,9 +330,11 @@ async function setSideButton() {
 
 // for review page: make buttons functional and display order values while also connecting and interacting with the server
 // refreshes page and current order when order is placed
-function updateOrderDisplay() {
+async function updateOrderDisplay() {
     const mealDetailsElement = document.getElementById("order-display");
+    const orderTotalElement = document.getElementById("total-display");
     const storedOrder = sessionStorage.getItem("currentOrder");
+    
 
     try {
         if (storedOrder) {
@@ -322,9 +349,12 @@ function updateOrderDisplay() {
                 })
                 prettyOrder.push(validFood.join("\n    "));
             })
-            mealDetailsElement.textContent = prettyOrder.join("\n"); 
-        } else {
+            mealDetailsElement.textContent = prettyOrder.join("\n");
+            gottenPrice = await getOrderPrice();
+        orderTotalElement.textContent = "Order Total: $" + gottenPrice;
+    } else {
             mealDetailsElement.textContent = "No meal selected.";
+            orderTotalElement.textContent = "Order Total: $0.00";
         }
     } catch(e) {
         console.error("Error displaying the order: ", e);
@@ -343,7 +373,7 @@ function cancelOrder() {
         numSides = 1;
         selectedEntrees = 0;
         selectedSides = 0;
-        currentPrice = 0.0;
+        orderPrice = 0.0;
         sessionStorage.clear();
         window.location.href = "employee-mealsize.html";
     }
@@ -380,7 +410,7 @@ async function placeOrder() {
             numSides = 1;
             selectedEntrees = 0;
             selectedSides = 0;
-            currentPrice = 0.0;
+            orderPrice = 0.0;
             sessionStorage.clear();
             updateOrderDisplay();
         } else {
