@@ -418,6 +418,7 @@ async function displayOrderID(){
 // for review page: make buttons functional and display order values while also connecting and interacting with the server
 // refreshes page and current order when order is placed
 async function updateOrderDisplay() {
+    console.log("current order: " + currentOrder);
     const mealDetailsElement = document.getElementById("order-display");
     const orderTotalElement = document.getElementById("total-display");
     const storedOrder = sessionStorage.getItem("currentOrder");
@@ -462,6 +463,7 @@ async function updateOrderDisplay() {
 }
 
 function cancelOrder() {
+    console.log("cancelling order");
     const userConfirmed = confirm("Are you sure you want to proceed?");
     if (userConfirmed) {
         // User clicked "OK"
@@ -487,14 +489,15 @@ function cancelOrder() {
 }
 
 const cancelButton = document.getElementById("cancel-order-button");
+console.log("cancelButton: " + cancelButton);
 if (cancelButton) {
+    console.log(cancelButton);
     cancelButton.addEventListener("click", cancelOrder);
 }
 
 const removeMealButton = document.getElementById("remove-meal-button");
-if (removeMealButton) {
-    removeMealButton.addEventListener("click", removeMeal);
-}
+// console.log(removeMealButton);
+// removeMealButton.addEventListener("click", removeMeal);
 
 const addMealButton = document.getElementById("add-to-order-button");
 if (addMealButton) {
@@ -556,9 +559,13 @@ if (newItemButton) {
 //save current meal into order and start new meal
 function newItem() {
     // For when you press new item when there is no order placed yet in review page
-    if (currentOrder[currentMeal][0] == "N/A") {
-        window.location.href = "employee-mealsize.html";
-        return;
+    if(currentOrder.length != 0){
+
+        if (currentOrder[currentMeal][0] == "N/A") {
+            window.location.href = "employee-mealsize.html";
+            return;
+        }
+
     }
 
     currentOrder.push(["N/A", "N/A", "N/A", "N/A", "N/A"]);
@@ -581,11 +588,11 @@ function newItem() {
 }
 
 function removeMeal(){
+    console.log("current order first: " + currentOrder);
     currentOrder.pop();
-    if(currentOrder.length == 1){
-        newItem();
-    }
+    console.log("current order second: " + currentOrder);
     currentMeal --;
+    sessionStorage.setItem("currentOrder", JSON.stringify(currentOrder));
     window.location.href = "customer-review.html";
 }
 
