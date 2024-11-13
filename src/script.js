@@ -361,34 +361,34 @@ async function updateOrderDisplay() {
     const orderTotalElement = document.getElementById("total-display");
     const storedOrder = sessionStorage.getItem("currentOrder");
     
-
-    if (storedOrder) {
-        const currentOrder = JSON.parse(storedOrder);
-        if(currentPage.includes("displayMeals")){
-            let validFood = [];
-            currentOrder[currentMeal].forEach(food => {
-                if (food !== "N/A") {
-                    validFood.push(food);
-                }
-            })
-            mealDetailsElement.textContent = validFood.join("\n    ");
-        }
-        else{
-            let prettyOrder = [];
-            currentOrder.forEach(meal => {
+    try {
+        if (storedOrder) {
+            const currentOrder = JSON.parse(storedOrder);
+            if(currentPage.includes("displayMeals")){
                 let validFood = [];
-                meal.forEach(food => {
+                currentOrder[currentMeal].forEach(food => {
                     if (food !== "N/A") {
                         validFood.push(food);
                     }
                 })
-                prettyOrder.push(validFood.join("\n    "));
-            })
-            mealDetailsElement.textContent = prettyOrder.join("\n"); 
+                mealDetailsElement.textContent = validFood.join("\n    ");
+            }
+            else{
+                let prettyOrder = [];
+                currentOrder.forEach(meal => {
+                    let validFood = [];
+                    meal.forEach(food => {
+                        if (food !== "N/A") {
+                            validFood.push(food);
+                        }
+                    })
+                    prettyOrder.push(validFood.join("\n    "));
+                })
+                mealDetailsElement.textContent = prettyOrder.join("\n"); 
 
-        }
+            }
 
-    } else {
+        } else {
             mealDetailsElement.textContent = "No meal selected.";
             orderTotalElement.textContent = "Order Total: $0.00";
         }
