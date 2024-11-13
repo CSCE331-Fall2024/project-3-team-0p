@@ -120,6 +120,7 @@ function mealSizeButtonClick() {
     }
 }
 
+// For the customer/cashier interface: Dynamically sets the meal size buttons.
 async function setMealSizeButtons() {
     let mealSizeNames = await getMealSizeNames();
 
@@ -301,6 +302,13 @@ async function setSideButton() {
     }
 }
 
+// gets the order id and displays it for the customer interface
+
+async function getOrderID(){
+    let orderID = 0;
+    
+}
+
 // for review page: make buttons functional and display order values while also connecting and interacting with the server
 // refreshes page and current order when order is placed
 function updateOrderDisplay() {
@@ -398,6 +406,12 @@ async function placeOrder() {
             currentPrice = 0.0;
             sessionStorage.clear();
             updateOrderDisplay();
+            if(currentPage.includes("customer")){
+                window.location.href = "/customer-orderConfirmation.html";
+            }
+            else{
+                window.location.href = "/employee-mealsize.html";
+            }
         } else {
             const errorMessage = await result.json(); // Get error message from server
             alert(`Error: ${errorMessage.message}`);
