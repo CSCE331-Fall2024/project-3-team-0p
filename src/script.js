@@ -32,8 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
         setEntreeButton();
     } else if (loadedWindow === "/employee-sides.html" || loadedWindow === "/customer-sides.html") {
         setSideButton();
-    }
-    else if (loadedWindow === "/customer-orderConfirmation.html") {
+    } else if (loadedWindow === "/customer-orderConfirmation.html") {
         displayOrderID();
     }
 });
@@ -336,7 +335,6 @@ async function setSideButton() {
 }
 
 // gets the order id and displays it for the customer interface
-
 async function displayOrderID(){
     let results = await fetch("/last-order-id", {
         method: "GET",
@@ -348,7 +346,7 @@ async function displayOrderID(){
         orderIDText.textContent = orderID;
 
     } else {
-        const errorMessage = await result.json();
+        const errorMessage = await results.json();
         alert(`Error: ${errorMessage.message}`);
     }
     
