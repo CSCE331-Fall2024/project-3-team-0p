@@ -383,7 +383,8 @@ async function updateOrderDisplay() {
                     prettyOrder.push(validFood.join("\n    "));
                 })
                 mealDetailsElement.textContent = prettyOrder.join("\n"); 
-
+                gottenPrice = await getOrderPrice();
+                orderTotalElement.textContent = "Order Total: $" + gottenPrice.toFixed(2);
             }
 
         } else {
