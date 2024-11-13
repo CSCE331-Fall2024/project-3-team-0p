@@ -38,6 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
+//layla 
 // for login page: redirect to correct page
 const loginButton = document.getElementById("login-button");
 if (loginButton) {
@@ -45,7 +46,6 @@ if (loginButton) {
         window.location.href = "employee-mealsize.html";
     });
 }
-
 
 // for meal size page: gets the text of each button and adds it to the array.
 // Also sets the price of the current item and also establishes the number of entrees and sides.
@@ -475,6 +475,7 @@ async function placeOrder() {
     }
 }
 
+
 const newItemButton = document.getElementById("new-item-button");
 if (newItemButton) {
     console.log("adding item");
@@ -499,6 +500,7 @@ function newItem() {
     sessionStorage.setItem("selectedEntrees", selectedEntrees);
     sessionStorage.setItem("selectedSides", selectedSides);
     sessionStorage.setItem("currentOrder", JSON.stringify(currentOrder));
+
     if(currentPage.includes("employee")){
         window.location.href = "employee-mealsize.html";
     }
