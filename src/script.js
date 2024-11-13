@@ -377,7 +377,8 @@ async function updateOrderDisplay() {
                     let validFood = [];
                     meal.forEach(food => {
                         if (food !== "N/A") {
-                            validFood.push(food);
+                            prettyFood = food.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+                            validFood.push(prettyFood);
                         }
                     })
                     prettyOrder.push(validFood.join("\n    "));
@@ -386,7 +387,6 @@ async function updateOrderDisplay() {
                 gottenPrice = await getOrderPrice();
                 orderTotalElement.textContent = "Order Total: $" + gottenPrice.toFixed(2);
             }
-
         } else {
             mealDetailsElement.textContent = "No meal selected.";
             orderTotalElement.textContent = "Order Total: $0.00";
