@@ -60,9 +60,7 @@ app.get("/sides", async (req, res) => {
 app.get("/get-order-price", async (req, res) => {
     try{
         const orderData = req.query.orderData;
-        console.log(orderData);
         price = await getOrderPrice(JSON.parse(orderData));
-        console.log(".get: " +price);
         res.json(price);
     } catch(e) {
         console.error(`HTTP request failed: ${e}`);
@@ -159,11 +157,7 @@ async function addOrder(orderData) {
 async function getOrderPrice(orderData) {
     try {
         let orderPrice = 0;
-        console.log(orderData);
-        console.log(orderData.length);
-        console.log(orderData[0][0]);
         for(let i = 0; i < orderData.length; ++i) {
-            //console.log("function: " + orderPrice);
             temp = await pool.query("select price from mealsizes where mealname = $1", [orderData[i][0]]);
             orderPrice += temp.rows[0].price;
         }

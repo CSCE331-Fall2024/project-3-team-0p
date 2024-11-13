@@ -90,13 +90,13 @@ function mealSizeButtonClick() {
             }
         }
         else {
-            if(buttonText.includes("bowl")){
+            if(buttonText.toLowerCase().includes("bowl")){
                 numEntrees = 1;
             }
-            else if(buttonText.includes("bigger")){
+            else if(buttonText.toLowerCase().includes("bigger")){
                 numEntrees = 3;
             }
-            else if(buttonText.includes("plate")){
+            else if(buttonText.toLowerCase().includes("plate")){
                 numEntrees = 2;
             }
             else{
@@ -138,6 +138,8 @@ async function setMealSizeButtons() {
     
         const mealName = mealSizeNames[i].mealname;
         button.textContent = mealName;
+        // Made the label for the buttons for meal sizes with capitalized words
+        button.textContent = mealName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
         button.className = "w-5/6 py-16 bg-red-500 text-white rounded hover:bg-red-600 sizeButton";
         button.addEventListener("click", mealSizeButtonClick);
         
@@ -338,20 +340,19 @@ async function updateOrderDisplay() {
         if (storedOrder) {
             const currentOrder = JSON.parse(storedOrder);
             let prettyOrder = [];
-            // console.log(currentOrder);
             currentOrder.forEach(meal => {
-                // console.log(meal);
                 let validFood = [];
                 meal.forEach(food => {
                     if (food !== "N/A") {
-                        validFood.push(food);
+                        prettyFood = food.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+                        validFood.push(prettyFood);
                     }
                 })
                 prettyOrder.push(validFood.join("\n    "));
             })
             mealDetailsElement.textContent = prettyOrder.join("\n");
             gottenPrice = await getOrderPrice();
-        orderTotalElement.textContent = "Order Total: $" + gottenPrice;
+        orderTotalElement.textContent = "Order Total: $" + gottenPrice.toFixed(2);
     } else {
             mealDetailsElement.textContent = "No meal selected.";
             orderTotalElement.textContent = "Order Total: $0.00";
