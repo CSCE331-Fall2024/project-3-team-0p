@@ -121,7 +121,7 @@ app.post("/submit", async (req, res) => {
 app.get('/last-order-id', async (req, res) => {
     try {
         const result = await pool.query("select max(id) as max_id from orders");
-        const orderID = result.rows[0].max_id + 1;
+        const orderID = result.rows[0].max_id;
         res.json({ order_id: orderID });
     } catch (error) {
         console.error('Error fetching order ID:', error);

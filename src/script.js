@@ -32,8 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
         setEntreeButton();
     } else if (loadedWindow === "/employee-sides.html" || loadedWindow === "/customer-sides.html") {
         setSideButton();
-    }
-    else if (loadedWindow === "/customer-orderConfirmation.html") {
+    } else if (loadedWindow === "/customer-orderConfirmation.html") {
         displayOrderID();
     }
 });
@@ -336,7 +335,6 @@ async function setSideButton() {
 }
 
 // gets the order id and displays it for the customer interface
-
 async function displayOrderID(){
     let results = await fetch("/last-order-id", {
         method: "GET",
@@ -348,7 +346,7 @@ async function displayOrderID(){
         orderIDText.textContent = orderID;
 
     } else {
-        const errorMessage = await result.json();
+        const errorMessage = await results.json();
         alert(`Error: ${errorMessage.message}`);
     }
     
@@ -379,15 +377,16 @@ async function updateOrderDisplay() {
                     let validFood = [];
                     meal.forEach(food => {
                         if (food !== "N/A") {
-                            validFood.push(food);
+                            prettyFood = food.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+                            validFood.push(prettyFood);
                         }
                     })
                     prettyOrder.push(validFood.join("\n    "));
                 })
                 mealDetailsElement.textContent = prettyOrder.join("\n"); 
-
+                gottenPrice = await getOrderPrice();
+                orderTotalElement.textContent = "Order Total: $" + gottenPrice.toFixed(2);
             }
-
         } else {
             mealDetailsElement.textContent = "No meal selected.";
             orderTotalElement.textContent = "Order Total: $0.00";
@@ -411,7 +410,15 @@ function cancelOrder() {
         selectedSides = 0;
         orderPrice = 0.0;
         sessionStorage.clear();
-        window.location.href = "index.html";
+
+        // Redirection once order is canceled
+        const loadedWindow = window.location.pathname;
+        console.log(loadedWindow);
+        if (loadedWindow == "/employee-review.html") {
+            window.location.href = "/employee-mealsize.html";
+        } else if (loadedWindow == "/customer-review.html") {
+            window.location.href = "index.html";
+        }
     }
 }
 
