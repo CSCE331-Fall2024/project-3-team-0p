@@ -133,7 +133,8 @@ async function setMealSizeButtons() {
             table.appendChild(tr);
         }
 
-        const dt = document.createElement("td");
+        const td = document.createElement("td");
+        td.className = "w-1/3";
         const button = document.createElement("button");
     
         const mealName = mealSizeNames[i].mealname;
@@ -143,8 +144,8 @@ async function setMealSizeButtons() {
         button.className = "w-5/6 py-16 bg-red-500 text-white rounded hover:bg-red-600 sizeButton";
         button.addEventListener("click", mealSizeButtonClick);
         
-        dt.appendChild(button);
-        tr.appendChild(dt);
+        td.appendChild(button);
+        tr.appendChild(td);
     }
 }
 
@@ -243,7 +244,8 @@ async function setEntreeButton() {
             table.appendChild(tr);
         }
 
-        const dt = document.createElement("td");
+        const td = document.createElement("td");
+        td.className = "w-1/3"
         const button = document.createElement("button");
     
         const entreeName = entreeNames[i];
@@ -251,8 +253,8 @@ async function setEntreeButton() {
         button.className = "w-5/6 py-16 bg-red-500 text-white rounded hover:bg-red-600 entreeButton";
         button.addEventListener("click", entreeButtonClick);
         
-        dt.appendChild(button);
-        tr.appendChild(dt);
+        td.appendChild(button);
+        tr.appendChild(td);
     }
 }
 
