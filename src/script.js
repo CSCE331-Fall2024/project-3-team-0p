@@ -366,7 +366,8 @@ async function updateOrderDisplay() {
                 let validFood = [];
                 currentOrder[currentMeal].forEach(food => {
                     if (food !== "N/A") {
-                        validFood.push(food);
+                        prettyFood = food.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+                        validFood.push(prettyFood);
                     }
                 })
                 mealDetailsElement.textContent = validFood.join("\n    ");
