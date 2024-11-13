@@ -410,7 +410,15 @@ function cancelOrder() {
         selectedSides = 0;
         orderPrice = 0.0;
         sessionStorage.clear();
-        window.location.href = "index.html";
+
+        // Redirection once order is canceled
+        const loadedWindow = window.location.pathname;
+        console.log(loadedWindow);
+        if (loadedWindow == "/employee-review.html") {
+            window.location.href = "/employee-mealsize.html";
+        } else if (loadedWindow == "/customer-review.html") {
+            window.location.href = "index.html";
+        }
     }
 }
 
