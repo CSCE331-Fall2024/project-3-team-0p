@@ -4,14 +4,16 @@ let numEntrees = 0;
 let numSides = 1;
 let selectedEntrees = 0;
 let selectedSides = 0;
-let currentPrice = 0.0;
+let orderPrice = 0.0;
 let currentPage = window.location.pathname;
 
 numEntrees = parseInt(sessionStorage.getItem("numEntrees")) || 0;
 numSides = parseInt(sessionStorage.getItem("numSides"));
 selectedSides = parseInt(sessionStorage.getItem("selectedSides")) || 0;
 selectedEntrees = parseInt(sessionStorage.getItem("selectedEntrees")) || 0;
-currentPage = window.location.pathname;
+orderPrice = parseInt(sessionStorage.getItem("orderPrice")) || 0;
+currentPage = currentPage = window.location.pathname;
+
 
 const storedMeal = sessionStorage.getItem("currentOrder");
 if (storedMeal) {
@@ -62,8 +64,8 @@ async function getMealSizeNames() {
             alert(`Error: ${errorMessage.message}`);
         }
     } catch (error) {
-        console.error("Failed to place order:", error);
-        alert("Failed to place order. Please try again.");
+        console.error("Failed to get meal size names from the server: ", error);
+        alert("Failed to get the meal size names. Please try again.");
     }
 }
 
@@ -92,13 +94,13 @@ function mealSizeButtonClick() {
             }
         }
         else {
-            if(buttonText.includes("bowl")){
+            if(buttonText.toLowerCase().includes("bowl")){
                 numEntrees = 1;
             }
-            else if(buttonText.includes("bigger")){
+            else if(buttonText.toLowerCase().includes("bigger")){
                 numEntrees = 3;
             }
-            else if(buttonText.includes("plate")){
+            else if(buttonText.toLowerCase().includes("plate")){
                 numEntrees = 2;
             }
             else{
@@ -136,16 +138,19 @@ async function setMealSizeButtons() {
             table.appendChild(tr);
         }
 
-        const dt = document.createElement("td");
+        const td = document.createElement("td");
+        td.className = "w-1/3";
         const button = document.createElement("button");
     
         const mealName = mealSizeNames[i].mealname;
         button.textContent = mealName;
+        // Made the label for the buttons for meal sizes with capitalized words
+        button.textContent = mealName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
         button.className = "w-5/6 py-16 bg-red-500 text-white rounded hover:bg-red-600 sizeButton";
         button.addEventListener("click", mealSizeButtonClick);
         
-        dt.appendChild(button);
-        tr.appendChild(dt);
+        td.appendChild(button);
+        tr.appendChild(td);
     }
 }
 
@@ -166,8 +171,32 @@ async function getEntreeNames() {
             alert(`Error: ${errorMessage.message}`);
         }
     } catch (error) {
-        console.error("Failed to place order:", error);
-        alert("Failed to place order. Please try again.");
+        console.error("Failed to get entree names from the database: ", error);
+        alert("Failed to get entree names. Please try again.");
+    }
+}
+
+//
+async function getOrderPrice() {
+    try {
+        // Sends GET to the server
+        const orderData = JSON.stringify(currentOrder);
+        const url = new URL("/get-order-price", window.location.origin);
+        url.searchParams.append("orderData", orderData);
+
+        let result = await fetch(url, {
+            method: "GET"
+        });
+
+        if (result.ok) {
+            const price = await result.json();
+            return price;
+        } else {
+            const errorMessage = await result.json(); // Get error message from server
+            alert(`Error: ${errorMessage.message}`);
+        }
+    } catch (error) {
+        console.error("Failed to get price: ", error);
     }
 }
 
@@ -220,7 +249,8 @@ async function setEntreeButton() {
             table.appendChild(tr);
         }
 
-        const dt = document.createElement("td");
+        const td = document.createElement("td");
+        td.className = "w-1/3"
         const button = document.createElement("button");
     
         const entreeName = entreeNames[i];
@@ -228,8 +258,8 @@ async function setEntreeButton() {
         button.className = "w-5/6 py-16 bg-red-500 text-white rounded hover:bg-red-600 entreeButton";
         button.addEventListener("click", entreeButtonClick);
         
-        dt.appendChild(button);
-        tr.appendChild(dt);
+        td.appendChild(button);
+        tr.appendChild(td);
     }
 }
 
@@ -250,8 +280,8 @@ async function getSideNames() {
             alert(`Error: ${errorMessage.message}`);
         }
     } catch (error) {
-        console.error("Failed to place order:", error);
-        alert("Failed to place order. Please try again.");
+        console.error("Failed to get side names from the database: ", error);
+        alert("Failed to get side names. Please try again.");
     }
 }
 
@@ -326,9 +356,11 @@ async function displayOrderID(){
 
 // for review page: make buttons functional and display order values while also connecting and interacting with the server
 // refreshes page and current order when order is placed
-function updateOrderDisplay() {
+async function updateOrderDisplay() {
     const mealDetailsElement = document.getElementById("order-display");
+    const orderTotalElement = document.getElementById("total-display");
     const storedOrder = sessionStorage.getItem("currentOrder");
+    
 
     if (storedOrder) {
         const currentOrder = JSON.parse(storedOrder);
@@ -355,8 +387,14 @@ function updateOrderDisplay() {
             mealDetailsElement.textContent = prettyOrder.join("\n"); 
 
         }
+
     } else {
-        mealDetailsElement.textContent = "No meal selected.";
+            mealDetailsElement.textContent = "No meal selected.";
+            orderTotalElement.textContent = "Order Total: $0.00";
+        }
+    } catch(e) {
+        console.error("Error displaying the order: ", e);
+        alert("Error displaying the order.");
     }
 }
 
@@ -371,7 +409,7 @@ function cancelOrder() {
         numSides = 1;
         selectedEntrees = 0;
         selectedSides = 0;
-        currentPrice = 0.0;
+        orderPrice = 0.0;
         sessionStorage.clear();
         window.location.href = "index.html";
     }
@@ -418,7 +456,7 @@ async function placeOrder() {
             numSides = 1;
             selectedEntrees = 0;
             selectedSides = 0;
-            currentPrice = 0.0;
+            orderPrice = 0.0;
             sessionStorage.clear();
             updateOrderDisplay();
             if(currentPage.includes("customer")){
@@ -432,7 +470,7 @@ async function placeOrder() {
             alert(`Error: ${errorMessage.message}`);
         }
     } catch (error) {
-        console.error("Failed to place order:", error);
+        console.error("Failed to place order in the database:", error);
         alert("Failed to place order. Please try again.");
     }
 }
@@ -445,6 +483,12 @@ if (newItemButton) {
 
 //save current meal into order and start new meal
 function newItem() {
+    // For when you press new item when there is no order placed yet in review page
+    if (currentOrder[currentMeal][0] == "N/A") {
+        window.location.href = "employee-mealsize.html";
+        return;
+    }
+
     currentOrder.push(["N/A", "N/A", "N/A", "N/A", "N/A"]);
     numEntrees = 0;
     numSides = 1;
