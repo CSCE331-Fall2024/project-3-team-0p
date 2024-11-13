@@ -10,8 +10,8 @@
 <body>
     <div class="flex relative">
         <div class="flex-grow p-5">
-            <h1 class="font-bold text-2xl">Review Order</h1>
-            <h2>These are the meals in your order!</h2>
+            <h1 class="font-bold text-2xl">Review Current Meal</h1>
+            <h2>This is what's in your current meal!</h2>
             <div class="relative flex flex-col space-y-4">
                 <div class="bg-red-500 text-white p-4 rounded">
                     <pre id="order-display">
@@ -20,10 +20,9 @@
                 </div>
             </div>
             <div class="fixed bottom-0 w-3/4 flex py-6">
-                <button id="new-item-button" class="bg-yellow-500 text-white py-2 px-4 hover:bg-yellow-600">Add Item</button>
                 <div class="ml-auto space-x-7">
-                    <button id="cancel-order-button" class="bg-red-500 text-white py-2 px-4 hover:bg-red-600">Cancel Order</button>
-                    <button id="place-order-button" onclick="placeOrder" class="bg-green-500 text-white py-2 px-4 hover:bg-green-600">Place Order</button>
+                    <button id="remove-meal-button" class="bg-red-500 text-white py-2 px-4 hover:bg-red-600">Delete Meal</button>
+                    <button id="add-to-order-button" onclick="placeOrder" class="bg-green-500 text-white py-2 px-4 hover:bg-green-600">Add Meal to Order</button>
                 </div>
             </div>
         </div>

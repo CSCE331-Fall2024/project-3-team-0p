@@ -4,14 +4,16 @@ let numEntrees = 0;
 let numSides = 1;
 let selectedEntrees = 0;
 let selectedSides = 0;
-let currentPrice = 0.0;
+let orderPrice = 0.0;
 let currentPage = window.location.pathname;
 
 numEntrees = parseInt(sessionStorage.getItem("numEntrees")) || 0;
 numSides = parseInt(sessionStorage.getItem("numSides"));
 selectedSides = parseInt(sessionStorage.getItem("selectedSides")) || 0;
 selectedEntrees = parseInt(sessionStorage.getItem("selectedEntrees")) || 0;
+orderPrice = parseInt(sessionStorage.getItem("orderPrice")) || 0;
 currentPage = currentPage = window.location.pathname;
+
 
 const storedMeal = sessionStorage.getItem("currentOrder");
 if (storedMeal) {
@@ -22,7 +24,7 @@ if (storedMeal) {
 document.addEventListener("DOMContentLoaded", () => {
     const loadedWindow = window.location.pathname;
     // Loads the current order after choosing food items
-    if (loadedWindow === "/employee-review.html") {
+    if (loadedWindow === "/employee-review.html" || loadedWindow === "/customer-review.html" || loadedWindow === "/customer-displayMeals.html") {
         updateOrderDisplay();
     } else if (loadedWindow === "/employee-mealsize.html" || loadedWindow === "/customer-mealsize.html") {
         setMealSizeButtons();
@@ -30,6 +32,9 @@ document.addEventListener("DOMContentLoaded", () => {
         setEntreeButton();
     } else if (loadedWindow === "/employee-sides.html" || loadedWindow === "/customer-sides.html") {
         setSideButton();
+    }
+    else if (loadedWindow === "/customer-orderConfirmation.html") {
+        displayOrderID();
     }
 });
 
@@ -59,8 +64,8 @@ async function getMealSizeNames() {
             alert(`Error: ${errorMessage.message}`);
         }
     } catch (error) {
-        console.error("Failed to place order:", error);
-        alert("Failed to place order. Please try again.");
+        console.error("Failed to get meal size names from the server: ", error);
+        alert("Failed to get the meal size names. Please try again.");
     }
 }
 
@@ -89,13 +94,13 @@ function mealSizeButtonClick() {
             }
         }
         else {
-            if(buttonText.includes("bowl")){
+            if(buttonText.toLowerCase().includes("bowl")){
                 numEntrees = 1;
             }
-            else if(buttonText.includes("bigger")){
+            else if(buttonText.toLowerCase().includes("bigger")){
                 numEntrees = 3;
             }
-            else if(buttonText.includes("plate")){
+            else if(buttonText.toLowerCase().includes("plate")){
                 numEntrees = 2;
             }
             else{
@@ -120,6 +125,7 @@ function mealSizeButtonClick() {
     }
 }
 
+// For the customer/cashier interface: Dynamically sets the meal size buttons.
 async function setMealSizeButtons() {
     let mealSizeNames = await getMealSizeNames();
 
@@ -132,16 +138,19 @@ async function setMealSizeButtons() {
             table.appendChild(tr);
         }
 
-        const dt = document.createElement("td");
+        const td = document.createElement("td");
+        td.className = "w-1/3";
         const button = document.createElement("button");
     
         const mealName = mealSizeNames[i].mealname;
         button.textContent = mealName;
+        // Made the label for the buttons for meal sizes with capitalized words
+        button.textContent = mealName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
         button.className = "w-5/6 py-16 bg-red-500 text-white rounded hover:bg-red-600 sizeButton";
         button.addEventListener("click", mealSizeButtonClick);
         
-        dt.appendChild(button);
-        tr.appendChild(dt);
+        td.appendChild(button);
+        tr.appendChild(td);
     }
 }
 
@@ -162,8 +171,32 @@ async function getEntreeNames() {
             alert(`Error: ${errorMessage.message}`);
         }
     } catch (error) {
-        console.error("Failed to place order:", error);
-        alert("Failed to place order. Please try again.");
+        console.error("Failed to get entree names from the database: ", error);
+        alert("Failed to get entree names. Please try again.");
+    }
+}
+
+//
+async function getOrderPrice() {
+    try {
+        // Sends GET to the server
+        const orderData = JSON.stringify(currentOrder);
+        const url = new URL("/get-order-price", window.location.origin);
+        url.searchParams.append("orderData", orderData);
+
+        let result = await fetch(url, {
+            method: "GET"
+        });
+
+        if (result.ok) {
+            const price = await result.json();
+            return price;
+        } else {
+            const errorMessage = await result.json(); // Get error message from server
+            alert(`Error: ${errorMessage.message}`);
+        }
+    } catch (error) {
+        console.error("Failed to get price: ", error);
     }
 }
 
@@ -216,7 +249,8 @@ async function setEntreeButton() {
             table.appendChild(tr);
         }
 
-        const dt = document.createElement("td");
+        const td = document.createElement("td");
+        td.className = "w-1/3"
         const button = document.createElement("button");
     
         const entreeName = entreeNames[i];
@@ -224,8 +258,8 @@ async function setEntreeButton() {
         button.className = "w-5/6 py-16 bg-red-500 text-white rounded hover:bg-red-600 entreeButton";
         button.addEventListener("click", entreeButtonClick);
         
-        dt.appendChild(button);
-        tr.appendChild(dt);
+        td.appendChild(button);
+        tr.appendChild(td);
     }
 }
 
@@ -246,8 +280,8 @@ async function getSideNames() {
             alert(`Error: ${errorMessage.message}`);
         }
     } catch (error) {
-        console.error("Failed to place order:", error);
-        alert("Failed to place order. Please try again.");
+        console.error("Failed to get side names from the database: ", error);
+        alert("Failed to get side names. Please try again.");
     }
 }
 
@@ -271,7 +305,7 @@ function sideButtonClick() {
         }
         else{
             console.log("Redirecting to customer displayMeal page");
-            window.location.href = "customer-displayMeal.html";
+            window.location.href = "customer-displayMeals.html";
         }
     }
 }
@@ -301,27 +335,66 @@ async function setSideButton() {
     }
 }
 
+// gets the order id and displays it for the customer interface
+
+async function displayOrderID(){
+    let results = await fetch("/last-order-id", {
+        method: "GET",
+    });
+    if (results.ok) {
+        const data = await results.json();
+        const orderID = data.order_id;
+        const orderIDText = document.getElementById("order-id");
+        orderIDText.textContent = orderID;
+
+    } else {
+        const errorMessage = await result.json();
+        alert(`Error: ${errorMessage.message}`);
+    }
+    
+}
+
 // for review page: make buttons functional and display order values while also connecting and interacting with the server
 // refreshes page and current order when order is placed
-function updateOrderDisplay() {
+async function updateOrderDisplay() {
     const mealDetailsElement = document.getElementById("order-display");
+    const orderTotalElement = document.getElementById("total-display");
     const storedOrder = sessionStorage.getItem("currentOrder");
+    
+    try {
+        if (storedOrder) {
+            const currentOrder = JSON.parse(storedOrder);
+            if(currentPage.includes("displayMeals")){
+                let validFood = [];
+                currentOrder[currentMeal].forEach(food => {
+                    if (food !== "N/A") {
+                        validFood.push(food);
+                    }
+                })
+                mealDetailsElement.textContent = validFood.join("\n    ");
+            }
+            else{
+                let prettyOrder = [];
+                currentOrder.forEach(meal => {
+                    let validFood = [];
+                    meal.forEach(food => {
+                        if (food !== "N/A") {
+                            validFood.push(food);
+                        }
+                    })
+                    prettyOrder.push(validFood.join("\n    "));
+                })
+                mealDetailsElement.textContent = prettyOrder.join("\n"); 
 
-    if (storedMeal) {
-        const currentOrder = JSON.parse(storedOrder);
-        let prettyOrder = [];
-        currentOrder.forEach(meal => {
-            let validFood = [];
-            meal.forEach(food => {
-                if (food !== "N/A") {
-                    validFood.push(food);
-                }
-            })
-            prettyOrder.push(validFood.join("\n    "));
-        })
-        mealDetailsElement.textContent = prettyOrder.join("\n"); 
-    } else {
-        mealDetailsElement.textContent = "No meal selected.";
+            }
+
+        } else {
+            mealDetailsElement.textContent = "No meal selected.";
+            orderTotalElement.textContent = "Order Total: $0.00";
+        }
+    } catch(e) {
+        console.error("Error displaying the order: ", e);
+        alert("Error displaying the order.");
     }
 }
 
@@ -336,15 +409,25 @@ function cancelOrder() {
         numSides = 1;
         selectedEntrees = 0;
         selectedSides = 0;
-        currentPrice = 0.0;
+        orderPrice = 0.0;
         sessionStorage.clear();
-        window.location.href = "employee-mealsize.html";
+        window.location.href = "index.html";
     }
 }
 
 const cancelButton = document.getElementById("cancel-order-button");
 if (cancelButton) {
     cancelButton.addEventListener("click", cancelOrder);
+}
+
+const removeMealButton = document.getElementById("remove-meal-button");
+if (removeMealButton) {
+    removeMealButton.addEventListener("click", removeMeal);
+}
+
+const addMealButton = document.getElementById("add-to-order-button");
+if (addMealButton) {
+    addMealButton.addEventListener("click", addMeal);
 }
 
 // Place order into the database
@@ -373,15 +456,21 @@ async function placeOrder() {
             numSides = 1;
             selectedEntrees = 0;
             selectedSides = 0;
-            currentPrice = 0.0;
+            orderPrice = 0.0;
             sessionStorage.clear();
             updateOrderDisplay();
+            if(currentPage.includes("customer")){
+                window.location.href = "/customer-orderConfirmation.html";
+            }
+            else{
+                window.location.href = "/employee-mealsize.html";
+            }
         } else {
             const errorMessage = await result.json(); // Get error message from server
             alert(`Error: ${errorMessage.message}`);
         }
     } catch (error) {
-        console.error("Failed to place order:", error);
+        console.error("Failed to place order in the database:", error);
         alert("Failed to place order. Please try again.");
     }
 }
@@ -389,11 +478,18 @@ async function placeOrder() {
 
 const newItemButton = document.getElementById("new-item-button");
 if (newItemButton) {
+    console.log("adding item");
     newItemButton.addEventListener("click", newItem);
 }
 
 //save current meal into order and start new meal
 function newItem() {
+    // For when you press new item when there is no order placed yet in review page
+    if (currentOrder[currentMeal][0] == "N/A") {
+        window.location.href = "employee-mealsize.html";
+        return;
+    }
+
     currentOrder.push(["N/A", "N/A", "N/A", "N/A", "N/A"]);
     numEntrees = 0;
     numSides = 1;
@@ -404,6 +500,24 @@ function newItem() {
     sessionStorage.setItem("selectedEntrees", selectedEntrees);
     sessionStorage.setItem("selectedSides", selectedSides);
     sessionStorage.setItem("currentOrder", JSON.stringify(currentOrder));
-    window.location.href = "employee-mealsize.html";
+
+    if(currentPage.includes("employee")){
+        window.location.href = "employee-mealsize.html";
+    }
+    else{
+        window.location.href = "customer-mealsize.html";
+    }
 }
 
+function removeMeal(){
+    currentOrder.pop();
+    if(currentOrder.length == 1){
+        newItem();
+    }
+    currentMeal --;
+    window.location.href = "customer-review.html";
+}
+
+function addMeal(){
+    window.location.href = "customer-review.html";
+}

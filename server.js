@@ -94,6 +94,17 @@ const { username, password } = req.body;
 
 //// end login ////
 
+//get cost of current order
+app.get("/get-order-price", async (req, res) => {
+    try{
+        const orderData = req.query.orderData;
+        price = await getOrderPrice(JSON.parse(orderData));
+        res.json(price);
+    } catch(e) {
+        console.error(`HTTP request failed: ${e}`);
+    }
+});
+
 // http request to place order data into database
 app.post("/submit", async (req, res) => {
     try{
@@ -104,6 +115,17 @@ app.post("/submit", async (req, res) => {
     } catch(e) {
         console.error(`HTTP request failed: ${e}`);
         res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+app.get('/last-order-id', async (req, res) => {
+    try {
+        const result = await pool.query("select max(id) as max_id from orders");
+        const orderID = result.rows[0].max_id + 1;
+        res.json({ order_id: orderID });
+    } catch (error) {
+        console.error('Error fetching order ID:', error);
+        res.status(500).json({ error: 'Failed to fetch order ID' });
     }
 });
 
@@ -178,6 +200,20 @@ async function addOrder(orderData) {
         }
     } catch(e) {
         console.error(`Query failed: ${e}`);
+    }
+}
+
+async function getOrderPrice(orderData) {
+    try {
+        let orderPrice = 0;
+        for(let i = 0; i < orderData.length; ++i) {
+            temp = await pool.query("select price from mealsizes where mealname = $1", [orderData[i][0]]);
+            orderPrice += temp.rows[0].price;
+        }
+        
+        return orderPrice;  
+    } catch(e) {
+        console.error(`Price fetch failed with error: ${e}`);
     }
 }
 
