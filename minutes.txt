@@ -1,3 +1,5 @@
+Sprint 1:
+
 SCRUM 1:
 Time: Sunday, October 27, 4:00-4:15 pm
 Location: Zachry
@@ -23,12 +25,12 @@ Agenda Items:
 Discussed what everyone did to begin coding
 Assign tasks
 Minutes:
-Ian integrated Tailwindcss into our project and created the entree page
+Ian integrated Tailwind CSS into our project and created the entree page
 Judy created the navbar and moving between pages
 Layla developed the sides page and started to connect to the database with Node.js
 Alana organized the backlog and sprint backlog as well as got familiar and started connecting to the database with Node.js
 Obstacles:
-Ian struggled with getting Tailwindcss to constantly update with added classes
+Ian struggled with getting Tailwind CSS to constantly update with added classes
 Judy struggled with making the navbar line up correctly and give space to the main page
 Layla and Alana struggled with figuring out how to get Node.js to work with html files
 
@@ -45,7 +47,62 @@ Judy created the buttons for the meal size, entrees, and sides based on info fro
 Layla developed the start page and connecting it to the cashier interface
 Alana connected to the database and created functionality to add orders to the database
 Obstacles:
-Ian struggled with getting the Tailwindcss to do what he wanted when it came to positioning
+Ian struggled with getting the Tailwind CSS to do what he wanted when it came to positioning
 Judy struggled with making sure the text of the buttons matched the database
 Layla struggled with getting the buttons for navigation to to match the cashier interface
 Alana struggled with making the html files to interact with the Node.js server and understanding POST
+
+
+
+
+
+Sprint 2:
+
+SCRUM 1:
+Time: 11/6/2024 9:55-10:00 am
+Location: Zachry
+Agenda Items:
+Discuss what everyone has completed
+Assign larger tasks
+Minutes:
+Judy created the customer interfaces base html pages based on what we already have for cashier.
+Layla made the customer display pages where the customers will view their order.
+Ian made the start page more aesthetic and professional as well as making the components for the login page.
+Alana got the sprint backlog finetuned and ensured that everyone knew their tasks for this sprint.
+Judy struggled with navigating the client's JavaScript file since it contains a lot of functionality.
+Layla struggled with getting the pages onto GitHUb in a way that would not conflict with other files.
+Ian struggled with formatting the start page to make it centered and looking nice.
+Alana struggled making sure that the tasks are all related for this sprint.
+
+
+SCRUM 2:
+Time: 11/8/2024 9:55-10:00 am
+Location: Zachry
+Agenda Items:
+Discuss how far we are in this sprint.
+Determine who want which tasks based on wanting the challenge or being familiar with it.
+Minutes:
+Ian completed the display and ordering of multiple items in a meal.
+Judy has started the customer interface displaying the correct orders.
+Layla is in the process of making the login page be functional for the correct credentials.
+Alana made the buttons for the meal sizes, entrees, and sides dynamic based on what is in the database.
+Ian struggled with an error that popped up after the order was placed even though it did everything successfully.
+Judy and Layla are struggling with how the client and server are interacting together.
+
+
+
+SCRUM 3:
+Time: 11/11/2024 1:50-2:00 pm
+Location: Zachry
+Agenda Items:
+Discuss what is left to complete in the backlog.
+Determine how to split up the remaining tasks.
+Minutes:
+Ian made the format of displaying orders more like the industry standard so that it is easier to read.
+Alana fixed errors in the Javascript files that would display in the user interface.
+Judy made the customer interface correctly display the order ID and is working on having the customer orders communicate.
+Layla completed the login page functionality as well as formatted the customer buttons to look nicer.
+Ian struggled with figuring out the best and easier way to format the orders.
+Alana struggled with figuring out the nuiances of JavaScript like adding button functionality when not on the page.
+Judy struggled with the client to send and receive the correct data when interacting with the database.
+Layla struggled with having the buttons format correctly with Tailwind.
