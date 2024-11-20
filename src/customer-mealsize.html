@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -8,10 +8,65 @@
     <link rel = "stylesheet" href = "./output.css">
 </head>
 <body>
-    <div class="flex relative">    
+    <div class="flex relative">
+        <div class="flex-shrink-0 w-1/5 h-screen bg-[#1A1B21]">
+            <h2 class="text-center text-white pt-5 pb-5">Cashier Navigation</h2>
+            <ul>
+                <li class="border-t border-white bg-[#C02827] hover:bg-[#ff7b7b]">
+                    <h2>This is what's in your current meal!</h2>
+                </li>
+                <li>
+                    <div class="relative flex flex-col space-y-4">
+                        <div class="bg-red-500 text-white p-4 rounded">
+                            <pre id="order-display">
+                                No meal selected.
+                            </pre>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="flex-grow p-5">
+        <h1 class="font-bold text-2xl">Select a meal size</h1>
+        <h2>Each meal has a different number of entrees and sides. Which is the best for you?</h2>
+        <table id="meal-size-table" class="w-full h-full">
+        </table>
+    </div>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Meal Size</title>
+    <script type = "text/javascript" defer src = "script.js"></script>
+    <link rel = "stylesheet" href = "./output.css">
+</head>
+<body>
+    <div class="flex relative">
+        <div class="flex-shrink-0 w-1/5 h-screen bg-[#1A1B21]">
+            <ul>
+                <li class="border-t border-white bg-[#C02827]">
+                    <h1 class="font-bold text-2xl">Review Current Meal</h1>
+                    <h2>This is what's in your current meal!</h2>
+                </li>
+                <div class="relative flex flex-col space-y-4">
+                <li class="border-t border-white bg-[#C02827]">
+                    <div class="bg-red-500 text-white p-4 rounded">
+                        <pre id="order-display">
+                            No meal selected.
+                        </pre>
+                    </div>
+                </li>
+                </div>
+            </ul>
+        </div>
+    
         <div class="flex-grow p-5">
-            <h1 class="font-bold text-2xl">Select a meal size</h1>
-            <h2>Each meal has a different number of entrees and sides. Which is the best for you?</h2>
             <table id="meal-size-table" class="w-full h-full">
             </table>
         </div>
