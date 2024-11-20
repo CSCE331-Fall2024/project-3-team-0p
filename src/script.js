@@ -40,73 +40,42 @@ document.addEventListener("DOMContentLoaded", () => {
 //layla 
 
 // for login page: redirect to correct page
-
 const loginButton = document.getElementById("login-button");
 
-const usernameInput = document.getElementById("username");
-
-const passwordInput = document.getElementById("password");
-
-
-
 if (loginButton) {
+    loginButton.addEventListener("click", function() {
+        const usernameInput = document.getElementById("username");
+        const passwordInput = document.getElementById("password");
+        const username = usernameInput.value;
+        const password = passwordInput.value;
 
-  loginButton.addEventListener("click", function() {
+        fetch("/login", {
+            method: "POST",
+            headers: {
+            "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ username, password }),
+        })
 
-    const username = usernameInput.value;
+        .then(response => response.json())
 
-    const password = passwordInput.value;
+        .then(data => {
+            if (data.success) {
+                if (data.position === "Manager") {
+                    window.location.href = "manager-statistics.html";
+                } else if (data.position === "Cashier") {
+                    window.location.href = "employee-mealsize.html";
+                }
+            } else {
+                alert(data.message);
+            }
+        })
 
-
-
-    fetch("/login", {
-
-      method: "POST",
-
-      headers: {
-
-        "Content-Type": "application/json",
-
-      },
-
-      body: JSON.stringify({ username, password }),
-
-    })
-
-    .then(response => response.json())
-
-    .then(data => {
-
-      if (data.success) {
-
-        if (data.position === "Manager") {
-
-          window.location.href = "manager.html";
-
-        } else if (data.position === "Cashier") {
-
-          window.location.href = "employee-mealsize.html";
-
-        }
-
-      } else {
-
-        alert(data.message);
-
-      }
-
-    })
-
-    .catch(error => {
-
-      console.error("Login error:", error);
-
-      alert("An error occurred during login");
-
+        .catch(error => {
+            console.error("Login error:", error);
+            alert("An error occurred during login");
+        });
     });
-
-  });
-
 }
 
 // for meal size page: gets the text of each button and adds it to the array.
