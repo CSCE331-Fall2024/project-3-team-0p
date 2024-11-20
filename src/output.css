@@ -699,6 +699,11 @@ video {
   border-top-width: 1px;
 }
 
+.review-order {
+  text-align: center;
+  color: white;
+}
+
 .border-b {
   border-bottom-width: 1px;
 }

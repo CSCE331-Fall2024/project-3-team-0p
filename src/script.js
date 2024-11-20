@@ -442,8 +442,9 @@ async function updateOrderDisplay() {
                     }
                 })
                 mealDetailsElement.textContent = validFood.join("\n    ");
-            }
-            else{
+            } else if (currentPage.includes("customer-mealsize")){
+                mealDetailsElement.textContent = "No meal selected.";
+            } else{
                 let prettyOrder = [];
                 currentOrder.forEach(meal => {
                     let validFood = [];
