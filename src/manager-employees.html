@@ -35,22 +35,47 @@
         </div>
 
         <div class="flex flex-col w-full">
-            <div class="flex-grow m-4">
+            <div class="flex-grow m-4 h-1/2">
                 <table id="employee-data-table" class="w-full box-border border-collapse text-center">
                 </table>
             </div>
 
-            <div class="flex flex-row">
-                <div>
-                    <p>Add Employee</p>
+            <div class="container flex flex-row h-1/2 justify-center">
+                <div class="container max-w-80">
+                    <p class="bg-red-500 text-white border-2 border-black text-center p-1">Add Employee</p>
+                    <div class="flex flex-col border-2 border-black p-4 h-60">
+                        <p>Name</p>
+                        <input type="text" class="border-2 border-black">
+                        <p>Username</p>
+                        <input type="text" class="border-2 border-black">
+                        <p>Password</p>
+                        <input type="text" class="border-2 border-black">
+                        <button class="bg-red-500 text-white font-semibold rounded mt-auto">Add</button>
+                    </div>
                 </div>
     
-                <div>
-                    <p>Remove Employee</p>
+                <div class="container max-w-80">
+                    <p class="bg-red-500 text-white border-2 border-black text-center p-1">Remove Employee</p>
+                    <div class="container flex flex-col border-2 border-black p-4 h-60">
+                        <p>Username</p>
+                        <input type="text" class="border-2 border-black">
+                        <button class="bg-red-500 text-white font-semibold rounded mt-auto">Remove</button>
+                    </div>
                 </div>
     
-                <div>
-                    <p>Manage Positions</p>
+                <div class="container max-w-80">
+                    <p class="bg-red-500 text-white border-2 border-black text-center p-1">Manage Positions</p>
+                    <div class="flex flex-col border-2 border-black p-4 h-60">
+                        <p>Username</p>
+                        <input type="text" class="border-2 border-black">
+                        <p>Position</p>
+                        <select name="" id="position-drop-down" class="border-2 border-black">
+                            <option value="">Select a position</option>
+                            <option value="cashier">Cashier</option>
+                            <option value="manager">Manager</option>
+                        </select>
+                        <button class="bg-red-500 text-white font-semibold rounded mt-auto">Change</button>
+                    </div>
                 </div>
             </div>
 
