@@ -39,6 +39,7 @@ async function populateEmployeeTable() {
         console.log(person);
         const personInfo = [person.name, person.username, person.password, person.position];
         tr = document.createElement("tr");
+        tr.id = person.username;
 
         personInfo.forEach(info => {
             const td = document.createElement("td");
