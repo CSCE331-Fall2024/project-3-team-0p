@@ -94,21 +94,6 @@ app.get("/sides", async (req, res) => {
     res.json(sides);
 });
 
-//login
-app.get("/employees", async (req, res) => {
-    // Get data from the database
-    const rows = await readEmployees();
-
-    // Filter values to just managers
-    const managers = rows.filter(item => item.category === "Manager").map(item => item.name);
-    // Filter values to just cashiers
-    const cashiers = rows.filter(item => item.category === "Cashier").map(item => item.name);
-
-    // Send response as a JSON object
-    res.json(managers);
-    res.json(cashiers);
-});
-
 app.post("/login", async (req, res) => {
 const { username, password } = req.body;
   
@@ -129,8 +114,6 @@ const { username, password } = req.body;
     res.status(500).json({ success: false, message: "Server error" });
   }
 });
-
-//// end login ////
 
 //get cost of current order
 app.get("/get-order-price", async (req, res) => {
@@ -266,11 +249,7 @@ app.get("/employees", async (req, res) => {
     // Get data from the database
     const rows = await readEmployees();
     
-    //Filter values to just employees
-    res.setHeader("content-type", "application/json");
-
-    // Send response as a JSON object
-    res.send(JSON.stringify(rows));
+    res.json(rows);
 });
 
 async function readEmployees() {

@@ -34,62 +34,48 @@ document.addEventListener("DOMContentLoaded", () => {
         setSideButton();
     } else if (loadedWindow === "/customer-orderConfirmation.html") {
         displayOrderID();
+    } else if (loadedWindow === "/manager-employees.html") {
+        populateEmployeeTable();
     }
 });
 
-//layla 
-
 // for login page: redirect to correct page
-
 const loginButton = document.getElementById("login-button");
 
-const usernameInput = document.getElementById("username");
-
-const passwordInput = document.getElementById("password");
-
-
-
 if (loginButton) {
+    loginButton.addEventListener("click", function() {
+        const usernameInput = document.getElementById("username");
+        const passwordInput = document.getElementById("password");
+        const username = usernameInput.value;
+        const password = passwordInput.value;
 
-  loginButton.addEventListener("click", function() {
-    const username = usernameInput.value;
-    const password = passwordInput.value;
+        fetch("/login", {
+            method: "POST",
+            headers: {
+            "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ username, password }),
+        })
 
-    fetch("/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ username, password }),
-    })
+        .then(response => response.json())
 
-    .then(response => response.json())
-    .then(data => {
+        .then(data => {
+            if (data.success) {
+                if (data.position === "Manager") {
+                    window.location.href = "manager-statistics.html";
+                } else if (data.position === "Cashier") {
+                    window.location.href = "employee-mealsize.html";
+                }
+            } else {
+                alert(data.message);
+            }
+        })
 
-      if (data.success) {
-        if (data.position === "Manager") {
-
-          window.location.href = "manager-statistics.html";
-
-        }
-        else if (data.position === "Cashier") {
-
-          window.location.href = "employee-mealsize.html";
-
-        }
-      }
-      else {
-        alert(data.message);
-      }
-    })
-
-    .catch(error => {
-      console.error("Login error:", error);
-      alert("An error occurred during login");
+        .catch(error => {
+            console.error("Login error:", error);
+            alert("An error occurred during login");
+        });
     });
-
-  });
-
 }
 
 // for meal size page: gets the text of each button and adds it to the array.
