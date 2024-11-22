@@ -52,57 +52,40 @@ const passwordInput = document.getElementById("password");
 if (loginButton) {
 
   loginButton.addEventListener("click", function() {
-
     const username = usernameInput.value;
-
     const password = passwordInput.value;
 
-
-
     fetch("/login", {
-
       method: "POST",
-
       headers: {
-
         "Content-Type": "application/json",
-
       },
-
       body: JSON.stringify({ username, password }),
-
     })
 
     .then(response => response.json())
-
     .then(data => {
 
       if (data.success) {
-
         if (data.position === "Manager") {
 
-          window.location.href = "manager.html";
+          window.location.href = "manager-statistics.html";
 
-        } else if (data.position === "Cashier") {
+        }
+        else if (data.position === "Cashier") {
 
           window.location.href = "employee-mealsize.html";
 
         }
-
-      } else {
-
-        alert(data.message);
-
       }
-
+      else {
+        alert(data.message);
+      }
     })
 
     .catch(error => {
-
       console.error("Login error:", error);
-
       alert("An error occurred during login");
-
     });
 
   });
