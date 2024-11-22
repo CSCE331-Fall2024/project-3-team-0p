@@ -38,7 +38,6 @@ async function populateEmployeeTable() {
 
     // Populates a row for each employee with all their data
     employeeData.forEach(person => {
-        console.log(person);
         const personInfo = [person.name, person.username, person.password, person.position];
         tr = document.createElement("tr");
         tr.id = person.username;
@@ -54,3 +53,35 @@ async function populateEmployeeTable() {
     });
 }
 
+const addEmployeeButton = document.getElementById("add-employee-button");
+if (addEmployeeButton) {
+    addEmployeeButton.addEventListener("click", addEmployee);
+}
+
+async function addEmployee() {
+    const newName = document.getElementById("add-name-input").value;
+    const newUsername = document.getElementById("add-username-input").value;
+    const newPassword = document.getElementById("add-password-input").value;
+    const newPosition = document.getElementById("add-position-drop-down").value;
+
+    const addEmployeeInfo = [newName, newUsername, newPassword, newPosition];
+
+    if (!newName || !newUsername || !newPassword || !newPosition) {
+        alert("Missing new employee info. Try again.");
+        return;
+    } else {
+        console.log(newName, newUsername, newPassword, newPosition);
+    }
+
+    try {
+        const addEmployeeData = JSON.stringify(addEmployeeInfo);
+        let result = await fetch("/add-employee", {
+            method: "POST",
+            headers: {"content-type": "application/json"},
+            body: addEmployeeData
+        });
+    } catch (error) {
+        console.error("Failed to send employee data to the database:", error);
+        alert("Failed to add new employee. Please try again.");
+    }
+}
