@@ -31,7 +31,7 @@ async function populateEmployeeTable() {
     for (let i = 0; i < 4; ++i) {
         const td = document.createElement("td");
         td.textContent = tableHeaders[i];
-        td.className = "bg-red-500 text-white";
+        td.className = "bg-red-500 text-white border-2 border-black";
         tr.appendChild(td);
     }
 
@@ -43,7 +43,7 @@ async function populateEmployeeTable() {
         personInfo.forEach(info => {
             const td = document.createElement("td");
             td.textContent = info;
-            td.className = "w-3/12";
+            td.className = "w-3/12 border-2 border-black";
             tr.appendChild(td);
         });
 
