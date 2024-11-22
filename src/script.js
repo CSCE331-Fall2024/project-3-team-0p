@@ -282,7 +282,12 @@ function entreeButtonClick() {
         currentOrder[currentMeal][selectedEntrees] = buttonText;
         sessionStorage.setItem("selectedEntrees", selectedEntrees);
         sessionStorage.setItem("currentOrder", JSON.stringify(currentOrder));
-
+        //add item to review order
+        if (selectedEntrees < numEntrees){
+            if(currentPage.includes("customer")){
+                updateOrderDisplay();
+            }
+        }
         if(numSides != 0 && selectedEntrees == numEntrees){
             if(currentPage.includes("employee")){
                 console.log("Redirecting to employee sides page");
