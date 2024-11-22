@@ -21,12 +21,13 @@ async function getEmployeeData() {
 
 async function populateEmployeeTable() {
     let employeeData = await getEmployeeData();
-    console.log(employeeData);
 
     const employeeTable = document.getElementById("employee-data-table");
+    // Creates the row element for the headers and adds it to the table
     let tr = document.createElement("tr");
     employeeTable.append(tr);
 
+    // Sets the header for the employee table
     const tableHeaders = ["Name", "Username", "Password", "Position"];
     for (let i = 0; i < 4; ++i) {
         const td = document.createElement("td");
@@ -35,6 +36,7 @@ async function populateEmployeeTable() {
         tr.appendChild(td);
     }
 
+    // Populates a row for each employee with all their data
     employeeData.forEach(person => {
         console.log(person);
         const personInfo = [person.name, person.username, person.password, person.position];
@@ -49,8 +51,6 @@ async function populateEmployeeTable() {
         });
 
         employeeTable.appendChild(tr);
-
-        console.log(`${person.name}, ${person.username}, ${person.password}, ${person.position}`)
     });
 }
 
