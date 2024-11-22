@@ -34,10 +34,10 @@ document.addEventListener("DOMContentLoaded", () => {
         setSideButton();
     } else if (loadedWindow === "/customer-orderConfirmation.html") {
         displayOrderID();
+    } else if (loadedWindow === "/manager-employees.html") {
+        populateEmployeeTable();
     }
 });
-
-//layla 
 
 // for login page: redirect to correct page
 const loginButton = document.getElementById("login-button");
