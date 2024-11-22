@@ -4,6 +4,8 @@
 const {Pool} = require("pg");
 const express = require("express");
 const path = require("path");
+const passport = require('passport');
+const { Strategy: GoogleStrategy } = require('passport-google-oauth20');
 
 // Connects to the database
 const app = express();
@@ -18,6 +20,26 @@ const pool = new Pool ({
     "port": 5432
 });
 
+// Configure Passport with Google OAuth strategy
+passport.use(
+    new GoogleStrategy(
+        {
+            clientID: '810621067928-6a9e9jkp7gokoo7b2d62249jf3nj5aju.apps.googleusercontent.com',
+            clientSecret: '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',
+            callbackURL: '/auth/google/callback',
+        },
+        (accessToken, refreshToken, profile, done) => {
+            // Process the user profile here
+            console.log('Google profile:', profile);
+            // Pass the profile and tokens to the next middleware
+            return done(null, { profile, accessToken, refreshToken });
+        }
+    )
+);
+
+// Initialize Passport
+app.use(passport.initialize());
+
 // Sets the starting page when web page loads
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "src", "employee-mealsize.html"));
@@ -25,6 +47,22 @@ app.get("/", (req, res) => {
 
 // Launches the web page
 app.listen(8080, () => console.log("app listening at http://localhost:8080"));
+
+// Start the Google login process
+app.get(
+    '/auth/google',
+    passport.authenticate('google', { scope: ['profile', 'email'] })
+);
+
+// Handle the callback from Google
+app.get(
+    '/auth/google/callback',
+    passport.authenticate('google', { session: false }),
+    (req, res) => {
+        // Successful authentication
+        res.redirect('/employee-mealsize.html');
+    }
+);
 
 app.get("/meal-size", async (req, res) => {
     // Get data from the database
