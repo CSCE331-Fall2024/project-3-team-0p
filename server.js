@@ -6,6 +6,7 @@ const express = require("express");
 const path = require("path");
 const passport = require('passport');
 const { Strategy: GoogleStrategy } = require('passport-google-oauth20');
+const { userInfo } = require("os");
 
 // Connects to the database
 const app = express();
@@ -150,6 +151,26 @@ app.get('/last-order-id', async (req, res) => {
     }
 });
 
+// login page 
+app.get("/employees", async (req, res) => {
+    // Get data from the database
+    const rows = await readEmployees();
+    
+    res.json(rows);
+});
+
+app.post("/add-employee", async (req, res) => {
+    try {
+        const employeeData = req.body;
+        console.log("Received new employee data:", employeeData);
+        await addEmployee(employeeData);
+        res.status(200).json({ message: "Employee received" });
+    } catch(e) {
+        console.error(`HTTP request failed: ${e}`);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
 async function readMealSizes() {
     try {
         const results = await pool.query("SELECT mealname FROM mealsizes");
@@ -238,20 +259,7 @@ async function getOrderPrice(orderData) {
     }
 }
 
-// Close the client when the application exits
-process.on('exit', async () => {
-    await pool.end();
-    console.log("Database client disconnected");
-});
-
-// login page 
-app.get("/employees", async (req, res) => {
-    // Get data from the database
-    const rows = await readEmployees();
-    
-    res.json(rows);
-});
-
+// Functions for manager-employee page
 async function readEmployees() {
     try {
         const results = await pool.query("SELECT name, username, password, position FROM employees");
@@ -260,3 +268,24 @@ async function readEmployees() {
         console.log("Query failed: ", e);
     }
 }
+
+async function addEmployee(employeeData) {
+    try {
+        const name = employeeData[0];
+        const username = employeeData[1];
+        const password = employeeData[2];
+        const position = employeeData[3];
+
+        console.log(name, username, password, position);
+    
+        pool.query("INSERT INTO employees VALUES ($1, $2, $3, $4)", [name, username, password, position]);
+    } catch (e) {
+        console.log("Query failed to add employee:", e);
+    }
+}
+
+// Close the client when the application exits
+process.on('exit', async () => {
+    await pool.end();
+    console.log("Database client disconnected");
+});
