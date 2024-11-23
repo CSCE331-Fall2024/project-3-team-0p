@@ -458,9 +458,7 @@ function cancelOrder() {
 }
 
 const cancelButton = document.getElementById("cancel-order-button");
-console.log("cancelButton: " + cancelButton);
 if (cancelButton) {
-    console.log(cancelButton);
     cancelButton.addEventListener("click", cancelOrder);
 }
 

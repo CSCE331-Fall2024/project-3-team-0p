@@ -38,7 +38,6 @@ async function populateEmployeeTable() {
 
     // Populates a row for each employee with all their data
     employeeData.forEach(person => {
-        console.log(person);
         const personInfo = [person.name, person.username, person.password, person.position];
         tr = document.createElement("tr");
         tr.id = person.username;
@@ -54,3 +53,112 @@ async function populateEmployeeTable() {
     });
 }
 
+const addEmployeeButton = document.getElementById("add-employee-button");
+if (addEmployeeButton) {
+    addEmployeeButton.addEventListener("click", addEmployee);
+}
+
+const removeEmployeeButton = document.getElementById("remove-employee-button");
+if (removeEmployeeButton) {
+    removeEmployeeButton.addEventListener("click", removeEmployee);
+}
+
+const changeEmployeeButton = document.getElementById("change-employee-button");
+if (changeEmployeeButton) {
+    changeEmployeeButton.addEventListener("click", changeEmployee);
+}
+
+async function addEmployee() {
+    const newName = document.getElementById("add-name-input").value;
+    const newUsername = document.getElementById("add-username-input").value;
+    const newPassword = document.getElementById("add-password-input").value;
+    const newPosition = document.getElementById("add-position-drop-down").value;
+
+    const addEmployeeInfo = [newName, newUsername, newPassword, newPosition];
+
+    if (!newName || !newUsername || !newPassword || !newPosition) {
+        alert("Missing new employee info. Try again.");
+        return;
+    } else {
+        console.log(newName, newUsername, newPassword, newPosition);
+    }
+
+    try {
+        const addEmployeeData = JSON.stringify(addEmployeeInfo);
+        let result = await fetch("/add-employee", {
+            method: "POST",
+            headers: {"content-type": "application/json"},
+            body: addEmployeeData
+        });
+
+        if (result.ok) {
+            alert("Employee added!");
+        } else {
+            const errorMessage = await result.json(); // Get error message from server
+            alert(`Error: ${errorMessage.message}`);
+        }
+    } catch (error) {
+        console.error("Failed to send employee data to add to the database:", error);
+        alert("Failed to add new employee. Please try again.");
+    }
+}
+
+async function removeEmployee() {
+    const removeUsername = document.getElementById("remove-username-input").value;
+    
+    if (!removeUsername) {
+        alert("Missing username to remove. Try again.");
+        return;
+    }
+
+    try {
+        let result = await fetch("/remove-employee", {
+            method: "POST",
+            headers: {"content-type": "text/plain"},
+            body: removeUsername
+        });
+
+        if (result.ok) {
+            const responseMessage = await result.json();
+            alert(responseMessage.message);
+        } else {
+            const errorMessage = await result.json(); // Get error message from server
+            alert(`Error: ${errorMessage.message}`);
+        }
+    } catch (error) {
+        console.error("Failed to send employee data to remove to the database:", error);
+        alert("Failed to remove employee. Please try again.");
+    }
+}
+
+async function changeEmployee() {
+    const username = document.getElementById("change-username-input").value;
+    const changedPosition = document.getElementById("change-position-drop-down").value;
+
+    if (!username || !changedPosition) {
+        alert("Missing username to remove. Try again.");
+        return;
+    }
+
+    const changeEmployeePosition = [username, changedPosition];
+
+    try {
+        const employeeData = JSON.stringify(changeEmployeePosition);
+        let result = await fetch("/change-employee-position", {
+            method: "POST",
+            headers: {"content-type": "application/json"},
+            body: employeeData
+        })
+
+        if (result.ok) {
+            const responseMessage = await result.json();
+            alert(responseMessage.message);
+        } else {
+            const errorMessage = await result.json(); // Get error message from server
+            alert(`Error: ${errorMessage.message}`);
+        }
+    } catch (error) {
+        console.error("Failed to send employee data to change position to the database:", error);
+        alert("Failed to change employee position. Please try again.");
+    }
+}
