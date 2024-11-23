@@ -12,6 +12,7 @@ const { userInfo } = require("os");
 const app = express();
 app.use(express.static(path.join(__dirname, "src")));
 app.use(express.json());
+app.use(express.text());
 
 const pool = new Pool ({
     "host": "csce-315-db.engr.tamu.edu",
@@ -164,8 +165,21 @@ app.post("/add-employee", async (req, res) => {
         const employeeData = req.body;
         console.log("Received new employee data:", employeeData);
         await addEmployee(employeeData);
-        res.status(200).json({ message: "Employee received" });
+        res.status(200).json({ message: "Employee added" });
     } catch(e) {
+        console.error(`HTTP request failed: ${e}`);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+app.post("/remove-employee", async (req, res) => {
+    try {
+        const username = req.body;
+        console.log("Received employee username:", username);
+        let returnMessage = await removeEmployee(username);
+        console.log(returnMessage);
+        res.status(200).json({ message: returnMessage });
+    } catch (e) {
         console.error(`HTTP request failed: ${e}`);
         res.status(500).json({ message: "Internal server error" });
     }
@@ -278,7 +292,21 @@ async function addEmployee(employeeData) {
 
         console.log(name, username, password, position);
     
-        pool.query("INSERT INTO employees VALUES ($1, $2, $3, $4)", [name, username, password, position]);
+        await pool.query("INSERT INTO employees VALUES ($1, $2, $3, $4)", [name, username, password, position]);
+    } catch (e) {
+        console.log("Query failed to add employee:", e);
+    }
+}
+
+async function removeEmployee(username) {
+    try {
+        let result = await pool.query("DELETE FROM employees WHERE username = $1", [username]);
+
+        if (result.rowCount === 0) {
+            return "Employee not found.";
+        } else {
+            return "Employee removed!";
+        }
     } catch (e) {
         console.log("Query failed to add employee:", e);
     }
