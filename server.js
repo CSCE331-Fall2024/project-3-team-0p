@@ -185,6 +185,19 @@ app.post("/remove-employee", async (req, res) => {
     }
 });
 
+app.post("/change-employee-position", async (req, res) => {
+    try {
+        const employeeData = req.body;
+        console.log("Received employee username and new position:", employeeData);
+        let returnMessage = await changeEmployeePosition(employeeData);
+        console.log(returnMessage);
+        res.status(200).json({ message: returnMessage });
+    } catch (e) {
+        console.error(`HTTP request failed: ${e}`);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
 async function readMealSizes() {
     try {
         const results = await pool.query("SELECT mealname FROM mealsizes");
@@ -289,8 +302,6 @@ async function addEmployee(employeeData) {
         const username = employeeData[1];
         const password = employeeData[2];
         const position = employeeData[3];
-
-        console.log(name, username, password, position);
     
         await pool.query("INSERT INTO employees VALUES ($1, $2, $3, $4)", [name, username, password, position]);
     } catch (e) {
@@ -309,6 +320,23 @@ async function removeEmployee(username) {
         }
     } catch (e) {
         console.log("Query failed to add employee:", e);
+    }
+}
+
+async function changeEmployeePosition(employeeData) {
+    try {
+        const username = employeeData[0];
+        const newPosition = employeeData[1];
+
+        const result = await pool.query("UPDATE employees SET position = $1 WHERE username = $2", [newPosition, username]);
+
+        if (result.rowCount === 0) {
+            return "Employee not found."
+        } else {
+            return `${username}'s position has successfully been changed to ${newPosition}!`;
+        }
+    } catch (e) {
+        console.log("Query failed to change employee's position:", e);
     }
 }
 
