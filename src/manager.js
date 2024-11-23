@@ -63,6 +63,11 @@ if (removeEmployeeButton) {
     removeEmployeeButton.addEventListener("click", removeEmployee);
 }
 
+const changeEmployeeButton = document.getElementById("change-employee-button");
+if (changeEmployeeButton) {
+    changeEmployeeButton.addEventListener("click", changeEmployee);
+}
+
 async function addEmployee() {
     const newName = document.getElementById("add-name-input").value;
     const newUsername = document.getElementById("add-username-input").value;
@@ -123,5 +128,37 @@ async function removeEmployee() {
     } catch (error) {
         console.error("Failed to send employee data to remove to the database:", error);
         alert("Failed to remove employee. Please try again.");
+    }
+}
+
+async function changeEmployee() {
+    const username = document.getElementById("change-username-input").value;
+    const changedPosition = document.getElementById("change-position-drop-down").value;
+
+    if (!username || !changedPosition) {
+        alert("Missing username to remove. Try again.");
+        return;
+    }
+
+    const changeEmployeePosition = [username, changedPosition];
+
+    try {
+        const employeeData = JSON.stringify(changeEmployeePosition);
+        let result = await fetch("/change-employee-position", {
+            method: "POST",
+            headers: {"content-type": "application/json"},
+            body: employeeData
+        })
+
+        if (result.ok) {
+            const responseMessage = await result.json();
+            alert(responseMessage.message);
+        } else {
+            const errorMessage = await result.json(); // Get error message from server
+            alert(`Error: ${errorMessage.message}`);
+        }
+    } catch (error) {
+        console.error("Failed to send employee data to change position to the database:", error);
+        alert("Failed to change employee position. Please try again.");
     }
 }
