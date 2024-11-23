@@ -58,6 +58,11 @@ if (addEmployeeButton) {
     addEmployeeButton.addEventListener("click", addEmployee);
 }
 
+const removeEmployeeButton = document.getElementById("remove-employee-button");
+if (removeEmployeeButton) {
+    removeEmployeeButton.addEventListener("click", removeEmployee);
+}
+
 async function addEmployee() {
     const newName = document.getElementById("add-name-input").value;
     const newUsername = document.getElementById("add-username-input").value;
@@ -80,8 +85,43 @@ async function addEmployee() {
             headers: {"content-type": "application/json"},
             body: addEmployeeData
         });
+
+        if (result.ok) {
+            alert("Employee added!");
+        } else {
+            const errorMessage = await result.json(); // Get error message from server
+            alert(`Error: ${errorMessage.message}`);
+        }
     } catch (error) {
-        console.error("Failed to send employee data to the database:", error);
+        console.error("Failed to send employee data to add to the database:", error);
         alert("Failed to add new employee. Please try again.");
+    }
+}
+
+async function removeEmployee() {
+    const removeUsername = document.getElementById("remove-username-input").value;
+    
+    if (!removeUsername) {
+        alert("Missing username to remove. Try again.");
+        return;
+    }
+
+    try {
+        let result = await fetch("/remove-employee", {
+            method: "POST",
+            headers: {"content-type": "text/plain"},
+            body: removeUsername
+        });
+
+        if (result.ok) {
+            const responseMessage = await result.json();
+            alert(responseMessage.message);
+        } else {
+            const errorMessage = await result.json(); // Get error message from server
+            alert(`Error: ${errorMessage.message}`);
+        }
+    } catch (error) {
+        console.error("Failed to send employee data to remove to the database:", error);
+        alert("Failed to remove employee. Please try again.");
     }
 }
