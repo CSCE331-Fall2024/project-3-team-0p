@@ -160,6 +160,13 @@ app.get("/employees", async (req, res) => {
     res.json(rows);
 });
 
+app.get("/prices", async (req, res) => {
+    // Get data from the database
+    const rows = await readMealPrices();
+    
+    res.json(rows);
+});
+
 app.post("/add-employee", async (req, res) => {
     try {
         const employeeData = req.body;
@@ -337,6 +344,15 @@ async function changeEmployeePosition(employeeData) {
         }
     } catch (e) {
         console.log("Query failed to change employee's position:", e);
+    }
+}
+
+async function readMealPrices() {
+    try {
+        const results = await pool.query("SELECT mealname, price FROM mealsizes");
+        return results.rows;
+    } catch(e) {
+        console.log("Query failed: ", e);
     }
 }
 
