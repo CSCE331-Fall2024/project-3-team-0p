@@ -3,11 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Meal Size</title>
+    <title>Customer Meal Size</title>
+    <script type = "text/javascript" defer src = "api.js"></script>
     <script type = "text/javascript" defer src = "script.js"></script>
     <link rel = "stylesheet" href = "./output.css">
 </head>
 <body>
+    <div id="translate-popup" class="absolute top-2 right-2 z-50 bg-white shadow-md rounded-lg p-3">
+        <select id="language-select" class="w-full p-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
+          <option value="" disabled selected>Select Language</option>
+          <option data-ignore value="null">English</option>
+          <option data-ignore value="es">Español</option>
+          <option data-ignore value="fr">Français</option>
+          <option data-ignore value="de">Deutsch</option>
+          <!-- Add more languages as needed -->
+        </select>
+    </div>   
+
     <div class="flex relative">
         <div class="flex-shrink-0 w-1/5 h-screen bg-[#1A1B21]">
             <ul>
@@ -32,8 +44,5 @@
             </table>
         </div>
     </div>
-    
-    
-    
 </body>
 </html>

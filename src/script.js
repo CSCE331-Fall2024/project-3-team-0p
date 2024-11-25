@@ -6,7 +6,9 @@ let selectedEntrees = 0;
 let selectedSides = 0;
 let orderPrice = 0.0;
 let currentPage = window.location.pathname;
+let targetLanguage = "null";
 
+targetLanguage = sessionStorage.getItem("language") || "";
 numEntrees = parseInt(sessionStorage.getItem("numEntrees")) || 0;
 numSides = parseInt(sessionStorage.getItem("numSides"));
 selectedSides = parseInt(sessionStorage.getItem("selectedSides")) || 0;
@@ -45,9 +47,12 @@ document.addEventListener("DOMContentLoaded", () => {
         displayOrderID();
     } else if (loadedWindow === "/manager-employees.html") {
         populateEmployeeTable();
-    }
-    else if(loadedWindow === "/manager-prices.html") {
+    } else if(loadedWindow === "/manager-prices.html") {
         populatePriceTable();
+    } else {
+        if(targetLanguage != "null") {
+            translatePage();
+        }
     }
 });
 
@@ -117,7 +122,7 @@ function mealSizeButtonClick() {
         alert("You have already selected a meal size. Please proceed with the order.")
     }
     else{
-        const buttonText = this.textContent.trim().toLowerCase();
+        const buttonText = this.getAttribute('data').trim().toLowerCase();
         currentOrder[currentMeal][0] = buttonText;
 
         if (buttonText.includes("side")) {
@@ -189,11 +194,15 @@ async function setMealSizeButtons() {
         button.textContent = mealName;
         // Made the label for the buttons for meal sizes with capitalized words
         button.textContent = mealName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+        button.setAttribute('data', button.textContent);
         button.className = "w-5/6 py-16 bg-red-500 text-white rounded hover:bg-red-600 sizeButton";
         button.addEventListener("click", mealSizeButtonClick);
         
         td.appendChild(button);
         tr.appendChild(td);
+    }
+    if(targetLanguage != "null") {
+        translatePage();
     }
 }
 
@@ -251,7 +260,7 @@ function entreeButtonClick() {
         alert("Please select a meal size first.")
     }
     else{
-        const buttonText = this.textContent.trim().toLowerCase();
+        const buttonText = this.getAttribute('data').trim().toLowerCase();
         selectedEntrees += 1;
         currentOrder[currentMeal][selectedEntrees] = buttonText;
         sessionStorage.setItem("selectedEntrees", selectedEntrees);
@@ -303,11 +312,15 @@ async function setEntreeButton() {
     
         const entreeName = entreeNames[i];
         button.textContent = entreeName;
+        button.setAttribute('data', button.textContent);
         button.className = "w-5/6 py-16 bg-red-500 text-white rounded hover:bg-red-600 entreeButton";
         button.addEventListener("click", entreeButtonClick);
         
         td.appendChild(button);
         tr.appendChild(td);
+    }
+    if(targetLanguage != "null") {
+        translatePage();
     }
 }
 
@@ -341,7 +354,7 @@ function sideButtonClick() {
         alert("Please select a meal size first.")
     }
     else{
-        const buttonText = this.textContent.trim().toLowerCase();
+        const buttonText = this.getAttribute('data').trim().toLowerCase();
         selectedSides += 1;
         currentOrder[currentMeal][4] = buttonText;
         sessionStorage.setItem("selectedSides", selectedSides);
@@ -375,11 +388,15 @@ async function setSideButton() {
     
         const sideName = sideNames[i];
         button.textContent = sideName;
+        button.setAttribute('data', button.textContent);
         button.className = "w-5/6 py-16 bg-red-500 text-white rounded hover:bg-red-600 entreeButton";
         button.addEventListener("click", sideButtonClick);
         
         dt.appendChild(button);
         tr.appendChild(dt);
+    }
+    if(targetLanguage != "null") {
+        translatePage();
     }
 }
 
@@ -398,7 +415,10 @@ async function displayOrderID(){
         const errorMessage = await results.json();
         alert(`Error: ${errorMessage.message}`);
     }
-    
+
+    if(targetLanguage != "null") {
+        translatePage();
+    }
 }
 
 // for review page: make buttons functional and display order values while also connecting and interacting with the server
@@ -449,6 +469,9 @@ async function updateOrderDisplay() {
     } catch(e) {
         console.error("Error displaying the order: ", e);
         alert("Error displaying the order.");
+    }
+    if(targetLanguage != "null") {
+        translatePage();
     }
 }
 function cancelOrder() {
@@ -586,3 +609,39 @@ function removeMeal(){
 function addMeal(){
     window.location.href = "customer-review.html";
 }
+
+// const languageSelector = document.getElementById('language-select');
+// languageSelector.addEventListener('change', (event) => {
+//     targetLanguage = event.target.value;
+//     sessionStorage.setItem("language", targetLanguage);
+//     window.location.reload();
+// });
+
+// //translates text in page
+// async function translatePage() {
+//     const apiKey = 'AIzaSyBBXNpFEe3ng4ydNNgHXK_s6cNgwjt-_so';
+//     if (targetLanguage == "null") return;
+
+//     const elementsToTranslate = Array.from(document.body.querySelectorAll('*')).filter((el) =>
+//         el.childNodes.length === 1 && 
+//         el.childNodes[0].nodeType === Node.TEXT_NODE && 
+//         el.textContent.trim() !== '' &&
+//         !el.hasAttribute('data-ignore')
+//     );
+  
+//     for (const element of elementsToTranslate) {
+//         const textToTranslate = element.textContent.trim();
+//         console.log("translating " + textToTranslate + " to " + targetLanguage);
+//         try {
+//             const response = await fetch(`https://translation.googleapis.com/language/translate/v2?key=${apiKey}`, {
+//                 method: 'POST',
+//                 headers: { 'Content-Type': 'application/json' },
+//                 body: JSON.stringify({q: textToTranslate, target: targetLanguage,}),
+//             });
+//             const data = await response.json();
+//             element.textContent = data.data.translations[0].translatedText;
+//         } catch(error) {
+//             console.error('Translation error:', error);
+//         }
+//     }
+// }
