@@ -592,38 +592,38 @@ function addMeal(){
     window.location.href = "customer-review.html";
 }
 
-const languageSelector = document.getElementById('language-select');
-languageSelector.addEventListener('change', (event) => {
-    targetLanguage = event.target.value;
-    sessionStorage.setItem("language", targetLanguage);
-    window.location.reload();
-});
+// const languageSelector = document.getElementById('language-select');
+// languageSelector.addEventListener('change', (event) => {
+//     targetLanguage = event.target.value;
+//     sessionStorage.setItem("language", targetLanguage);
+//     window.location.reload();
+// });
 
-//translates text in page
-async function translatePage() {
-    const apiKey = 'AIzaSyBBXNpFEe3ng4ydNNgHXK_s6cNgwjt-_so';
-    if (targetLanguage == "null") return;
+// //translates text in page
+// async function translatePage() {
+//     const apiKey = 'AIzaSyBBXNpFEe3ng4ydNNgHXK_s6cNgwjt-_so';
+//     if (targetLanguage == "null") return;
 
-    const elementsToTranslate = Array.from(document.body.querySelectorAll('*')).filter((el) =>
-        el.childNodes.length === 1 && 
-        el.childNodes[0].nodeType === Node.TEXT_NODE && 
-        el.textContent.trim() !== '' &&
-        !el.hasAttribute('data-ignore')
-    );
+//     const elementsToTranslate = Array.from(document.body.querySelectorAll('*')).filter((el) =>
+//         el.childNodes.length === 1 && 
+//         el.childNodes[0].nodeType === Node.TEXT_NODE && 
+//         el.textContent.trim() !== '' &&
+//         !el.hasAttribute('data-ignore')
+//     );
   
-    for (const element of elementsToTranslate) {
-        const textToTranslate = element.textContent.trim();
-        console.log("translating " + textToTranslate + " to " + targetLanguage);
-        try {
-            const response = await fetch(`https://translation.googleapis.com/language/translate/v2?key=${apiKey}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({q: textToTranslate, target: targetLanguage,}),
-            });
-            const data = await response.json();
-            element.textContent = data.data.translations[0].translatedText;
-        } catch(error) {
-            console.error('Translation error:', error);
-        }
-    }
-}
+//     for (const element of elementsToTranslate) {
+//         const textToTranslate = element.textContent.trim();
+//         console.log("translating " + textToTranslate + " to " + targetLanguage);
+//         try {
+//             const response = await fetch(`https://translation.googleapis.com/language/translate/v2?key=${apiKey}`, {
+//                 method: 'POST',
+//                 headers: { 'Content-Type': 'application/json' },
+//                 body: JSON.stringify({q: textToTranslate, target: targetLanguage,}),
+//             });
+//             const data = await response.json();
+//             element.textContent = data.data.translations[0].translatedText;
+//         } catch(error) {
+//             console.error('Translation error:', error);
+//         }
+//     }
+// }
