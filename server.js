@@ -235,6 +235,19 @@ app.post("/change-price", async (req, res) => {
     }
 });
 
+app.post("/order-inventory", async (req, res) => {
+    try {
+        const orderInventoryData = req.body;
+        console.log("Received item and amount to order:", orderInventoryData);
+        let returnMessage = await orderInventory(orderInventoryData);
+        console.log(returnMessage);
+        res.status(200).json({ message: returnMessage });
+    } catch (e) {
+        console.error(`HTTP request failed: ${e}`);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
 async function readMealSizes() {
     try {
         const results = await pool.query("SELECT mealname FROM mealsizes");
@@ -409,6 +422,23 @@ async function changePrice(newPriceData) {
         }
     } catch (e) {
         console.log("Query failed to change the meal's price:", e);
+    }
+}
+
+async function orderInventory(orderInventoryData) {
+    try {
+        const item_name = orderInventoryData[0];
+        const amount = orderInventoryData[1];
+
+        const result = await pool.query("UPDATE inventory SET amount = amount + $1 WHERE item_name = $2", [amount, item_name]);
+
+        if (result.rowCount === 0) {
+            return "Inventory item not found."
+        } else {
+            return `Successfully ordered ${amount} units of ${item_name}!`;
+        }
+    } catch (e) {
+        console.log("Query failed to order inventory:", e);
     }
 }
 
