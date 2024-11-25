@@ -6,11 +6,13 @@ const express = require("express");
 const path = require("path");
 const passport = require('passport');
 const { Strategy: GoogleStrategy } = require('passport-google-oauth20');
+const { userInfo } = require("os");
 
 // Connects to the database
 const app = express();
 app.use(express.static(path.join(__dirname, "src")));
 app.use(express.json());
+app.use(express.text());
 
 const pool = new Pool ({
     "host": "csce-315-db.engr.tamu.edu",
@@ -94,21 +96,6 @@ app.get("/sides", async (req, res) => {
     res.json(sides);
 });
 
-//login
-app.get("/employees", async (req, res) => {
-    // Get data from the database
-    const rows = await readEmployees();
-
-    // Filter values to just managers
-    const managers = rows.filter(item => item.category === "Manager").map(item => item.name);
-    // Filter values to just cashiers
-    const cashiers = rows.filter(item => item.category === "Cashier").map(item => item.name);
-
-    // Send response as a JSON object
-    res.json(managers);
-    res.json(cashiers);
-});
-
 app.post("/login", async (req, res) => {
 const { username, password } = req.body;
   
@@ -129,8 +116,6 @@ const { username, password } = req.body;
     res.status(500).json({ success: false, message: "Server error" });
   }
 });
-
-//// end login ////
 
 //get cost of current order
 app.get("/get-order-price", async (req, res) => {
@@ -164,6 +149,52 @@ app.get('/last-order-id', async (req, res) => {
     } catch (error) {
         console.error('Error fetching order ID:', error);
         res.status(500).json({ error: 'Failed to fetch order ID' });
+    }
+});
+
+// login page 
+app.get("/employees", async (req, res) => {
+    // Get data from the database
+    const rows = await readEmployees();
+    
+    res.json(rows);
+});
+
+app.post("/add-employee", async (req, res) => {
+    try {
+        const employeeData = req.body;
+        console.log("Received new employee data:", employeeData);
+        await addEmployee(employeeData);
+        res.status(200).json({ message: "Employee added" });
+    } catch(e) {
+        console.error(`HTTP request failed: ${e}`);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+app.post("/remove-employee", async (req, res) => {
+    try {
+        const username = req.body;
+        console.log("Received employee username:", username);
+        let returnMessage = await removeEmployee(username);
+        console.log(returnMessage);
+        res.status(200).json({ message: returnMessage });
+    } catch (e) {
+        console.error(`HTTP request failed: ${e}`);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+app.post("/change-employee-position", async (req, res) => {
+    try {
+        const employeeData = req.body;
+        console.log("Received employee username and new position:", employeeData);
+        let returnMessage = await changeEmployeePosition(employeeData);
+        console.log(returnMessage);
+        res.status(200).json({ message: returnMessage });
+    } catch (e) {
+        console.error(`HTTP request failed: ${e}`);
+        res.status(500).json({ message: "Internal server error" });
     }
 });
 
@@ -255,24 +286,7 @@ async function getOrderPrice(orderData) {
     }
 }
 
-// Close the client when the application exits
-process.on('exit', async () => {
-    await pool.end();
-    console.log("Database client disconnected");
-});
-
-// login page 
-app.get("/employees", async (req, res) => {
-    // Get data from the database
-    const rows = await readEmployees();
-    
-    //Filter values to just employees
-    res.setHeader("content-type", "application/json");
-
-    // Send response as a JSON object
-    res.send(JSON.stringify(rows));
-});
-
+// Functions for manager-employee page
 async function readEmployees() {
     try {
         const results = await pool.query("SELECT name, username, password, position FROM employees");
@@ -281,3 +295,53 @@ async function readEmployees() {
         console.log("Query failed: ", e);
     }
 }
+
+async function addEmployee(employeeData) {
+    try {
+        const name = employeeData[0];
+        const username = employeeData[1];
+        const password = employeeData[2];
+        const position = employeeData[3];
+    
+        await pool.query("INSERT INTO employees VALUES ($1, $2, $3, $4)", [name, username, password, position]);
+    } catch (e) {
+        console.log("Query failed to add employee:", e);
+    }
+}
+
+async function removeEmployee(username) {
+    try {
+        let result = await pool.query("DELETE FROM employees WHERE username = $1", [username]);
+
+        if (result.rowCount === 0) {
+            return "Employee not found.";
+        } else {
+            return "Employee removed!";
+        }
+    } catch (e) {
+        console.log("Query failed to add employee:", e);
+    }
+}
+
+async function changeEmployeePosition(employeeData) {
+    try {
+        const username = employeeData[0];
+        const newPosition = employeeData[1];
+
+        const result = await pool.query("UPDATE employees SET position = $1 WHERE username = $2", [newPosition, username]);
+
+        if (result.rowCount === 0) {
+            return "Employee not found."
+        } else {
+            return `${username}'s position has successfully been changed to ${newPosition}!`;
+        }
+    } catch (e) {
+        console.log("Query failed to change employee's position:", e);
+    }
+}
+
+// Close the client when the application exits
+process.on('exit', async () => {
+    await pool.end();
+    console.log("Database client disconnected");
+});
