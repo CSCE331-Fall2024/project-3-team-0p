@@ -9,6 +9,24 @@
 </head>
 <body>
     <div class="flex relative">
+        <div class="flex-shrink-0 w-1/5 h-screen bg-[#1A1B21]">
+            <ul>
+                <li class="review-order">
+                    <h1 class="font-bold text-2xl">Review Current Meal</h1>
+                    <h2>This is what's in your current meal!</h2>
+                </li>
+                <div class="relative flex flex-col space-y-4">
+                <li class="border-t border-white bg-[#C02827]">
+                    <div class="bg-red-500 text-white p-4 rounded">
+                        <pre id="order-display">
+                            No meal selected.
+                        </pre>
+                    </div>
+                </li>
+                </div>
+            </ul>
+        </div>
+
         <div class="flex-grow p-5">
             <h1 class="font-bold text-2xl">Select a side</h1>
             <h2>Choose a side for your meal!</h2>

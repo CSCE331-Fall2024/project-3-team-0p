@@ -24,13 +24,22 @@ if (storedMeal) {
 document.addEventListener("DOMContentLoaded", () => {
     const loadedWindow = window.location.pathname;
     // Loads the current order after choosing food items
-    if (loadedWindow === "/employee-review.html" || loadedWindow === "/customer-review.html" || loadedWindow === "/customer-displayMeals.html") {
+    if (loadedWindow === "/employee-review.html" || loadedWindow === "/customer-review.html" || loadedWindow === "/customer-displayMeals.html" ){
         updateOrderDisplay();
-    } else if (loadedWindow === "/employee-mealsize.html" || loadedWindow === "/customer-mealsize.html") {
+    } else if (loadedWindow === "/customer-mealsize.html"){
+        updateOrderDisplay();
         setMealSizeButtons();
-    } else if (loadedWindow === "/employee-entrees.html" || loadedWindow === "/customer-entrees.html") {
+    } else if (loadedWindow === "/customer-entrees.html") {
+        updateOrderDisplay();
         setEntreeButton();
-    } else if (loadedWindow === "/employee-sides.html" || loadedWindow === "/customer-sides.html") {
+    } else if (loadedWindow === "/customer-sides.html"){
+        updateOrderDisplay();
+        setSideButton();
+    } else if (loadedWindow === "/employee-mealsize.html") {
+        setMealSizeButtons();
+    } else if (loadedWindow === "/employee-entrees.html") {
+        setEntreeButton();
+    } else if (loadedWindow === "/employee-sides.html") {
         setSideButton();
     } else if (loadedWindow === "/customer-orderConfirmation.html") {
         displayOrderID();
@@ -244,7 +253,12 @@ function entreeButtonClick() {
         currentOrder[currentMeal][selectedEntrees] = buttonText;
         sessionStorage.setItem("selectedEntrees", selectedEntrees);
         sessionStorage.setItem("currentOrder", JSON.stringify(currentOrder));
-
+        //add item to review order
+        if (selectedEntrees < numEntrees){
+            if(currentPage.includes("customer")){
+                updateOrderDisplay();
+            }
+        }
         if(numSides != 0 && selectedEntrees == numEntrees){
             if(currentPage.includes("employee")){
                 console.log("Redirecting to employee sides page");
@@ -395,7 +409,7 @@ async function updateOrderDisplay() {
     try {
         if (storedOrder) {
             const currentOrder = JSON.parse(storedOrder);
-            if(currentPage.includes("displayMeals")){
+            if(currentPage.includes("displayMeals") || currentPage.includes("customer-entrees") || currentPage.includes("customer-sides")){
                 let validFood = [];
                 currentOrder[currentMeal].forEach(food => {
                     if (food !== "N/A") {
@@ -404,8 +418,9 @@ async function updateOrderDisplay() {
                     }
                 })
                 mealDetailsElement.textContent = validFood.join("\n    ");
-            }
-            else{
+            } else if (currentPage.includes("customer-mealsize")){
+                mealDetailsElement.textContent = "No meal selected.";
+            } else{
                 let prettyOrder = [];
                 currentOrder.forEach(meal => {
                     let validFood = [];
@@ -421,7 +436,10 @@ async function updateOrderDisplay() {
                 gottenPrice = await getOrderPrice();
                 orderTotalElement.textContent = "Order Total: $" + gottenPrice.toFixed(2);
             }
-        } else {
+        } else if (currentPage.includes("customer-mealsize")){
+            mealDetailsElement.textContent = "No meal selected.";
+        }
+        else {
             mealDetailsElement.textContent = "No meal selected.";
             orderTotalElement.textContent = "Order Total: $0.00";
         }
@@ -430,7 +448,6 @@ async function updateOrderDisplay() {
         alert("Error displaying the order.");
     }
 }
-
 function cancelOrder() {
     console.log("cancelling order");
     const userConfirmed = confirm("Are you sure you want to proceed?");
