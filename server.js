@@ -160,6 +160,13 @@ app.get("/employees", async (req, res) => {
     res.json(rows);
 });
 
+app.get("/prices", async (req, res) => {
+    // Get data from the database
+    const rows = await readMealPrices();
+    
+    res.json(rows);
+});
+
 app.post("/add-employee", async (req, res) => {
     try {
         const employeeData = req.body;
@@ -190,6 +197,19 @@ app.post("/change-employee-position", async (req, res) => {
         const employeeData = req.body;
         console.log("Received employee username and new position:", employeeData);
         let returnMessage = await changeEmployeePosition(employeeData);
+        console.log(returnMessage);
+        res.status(200).json({ message: returnMessage });
+    } catch (e) {
+        console.error(`HTTP request failed: ${e}`);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+app.post("/change-price", async (req, res) => {
+    try {
+        const newPriceData = req.body;
+        console.log("Received meal size and new price:", newPriceData);
+        let returnMessage = await changePrice(newPriceData);
         console.log(returnMessage);
         res.status(200).json({ message: returnMessage });
     } catch (e) {
@@ -337,6 +357,32 @@ async function changeEmployeePosition(employeeData) {
         }
     } catch (e) {
         console.log("Query failed to change employee's position:", e);
+    }
+}
+
+async function readMealPrices() {
+    try {
+        const results = await pool.query("SELECT mealname, price FROM mealsizes");
+        return results.rows;
+    } catch(e) {
+        console.log("Query failed: ", e);
+    }
+}
+
+async function changePrice(newPriceData) {
+    try {
+        const mealName = newPriceData[0];
+        const newPrice = newPriceData[1];
+
+        const result = await pool.query("UPDATE mealsizes SET price = $1 WHERE mealname = $2", [newPrice, mealName]);
+
+        if (result.rowCount === 0) {
+            return "Meal Size not found."
+        } else {
+            return `${mealName}'s price has successfully been changed to ${newPrice}!`;
+        }
+    } catch (e) {
+        console.log("Query failed to change the meal's price:", e);
     }
 }
 

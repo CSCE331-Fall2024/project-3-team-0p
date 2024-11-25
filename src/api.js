@@ -1,5 +1,6 @@
 const weather_api = "https://api.weatherbit.io/v2.0/current?lat=30.628&lon=-96.3344&key=59b64ecfcc1e48d99f3c00e333c61f97&include=minutely"; 
 
+// updates the weather every time the statistic page shows up. Shows the temperature, a description, and the precipitation.
 async function updateWeather() {
     try {
         const response = await fetch(weather_api);
@@ -8,12 +9,13 @@ async function updateWeather() {
         }
         const data = await response.json();
         
-        // Extract weather data (adjust according to API response)
         const temp = data.data[0].temp;
         const precip = data.data[0].precip;
         const description = data.data[0].weather.description;
 
-        document.getElementById("weather-info").textContent = `The temperature is: ${temp}°C, Description: ${description}`;
+        const newTemp = (temp * (9 / 5) + 32).toFixed(2);
+
+        document.getElementById("weather-info").textContent = `The temperature is: ${newTemp}°F, Description: ${description}`;
 
         if(precip == 0){
             document.getElementById("suggestion").textContent = "Expect more customers because there is no precipitation!";
