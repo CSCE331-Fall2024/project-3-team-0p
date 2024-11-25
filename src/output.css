@@ -663,6 +663,10 @@ video {
   height: 16rem;
 }
 
+.h-75 {
+  height: 20rem;
+}
+
 .h-72 {
   height: 18rem;
 }
