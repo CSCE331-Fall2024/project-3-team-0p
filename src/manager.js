@@ -96,7 +96,30 @@ async function addEmployee() {
         } else {
             const errorMessage = await result.json(); // Get error message from server
             alert(`Error: ${errorMessage.message}`);
+            return;
         }
+
+        // Update the table display
+        const newUserInfo = [newName, newUsername, newPassword, newPosition];
+
+        const employeeTable = document.getElementById("employee-data-table");
+        const tr = document.createElement("tr");
+        tr.id = newUsername;
+
+        newUserInfo.forEach(info => {
+            const td = document.createElement("td");
+            td.textContent = info;
+            td.className = "w-3/12 border-2 border-black";
+            tr.appendChild(td);
+        });
+
+        employeeTable.appendChild(tr);
+
+        document.getElementById("add-name-input").value = "";
+        document.getElementById("add-username-input").value = "";
+        document.getElementById("add-password-input").value = "";
+        document.getElementById("add-position-drop-down").value = "";
+        
     } catch (error) {
         console.error("Failed to send employee data to add to the database:", error);
         alert("Failed to add new employee. Please try again.");
@@ -124,7 +147,16 @@ async function removeEmployee() {
         } else {
             const errorMessage = await result.json(); // Get error message from server
             alert(`Error: ${errorMessage.message}`);
+            return;
         }
+
+        // Update the table display
+        const employeeTable = document.getElementById("employee-data-table");
+        const tr = document.getElementById(removeUsername);
+        employeeTable.deleteRow(tr.rowIndex);
+
+        document.getElementById("remove-username-input").value = "";
+
     } catch (error) {
         console.error("Failed to send employee data to remove to the database:", error);
         alert("Failed to remove employee. Please try again.");
@@ -150,13 +182,27 @@ async function changeEmployee() {
             body: employeeData
         })
 
+        const responseData = await result.json();
+        const responseMessage = responseData.message;
         if (result.ok) {
-            const responseMessage = await result.json();
-            alert(responseMessage.message);
+            alert(responseMessage);
+
+            if (responseMessage === "Employee not found.") {
+                return;
+            }
         } else {
-            const errorMessage = await result.json(); // Get error message from server
-            alert(`Error: ${errorMessage.message}`);
+            // const errorMessage = await result.json(); // Get error message from server
+            alert(`Error: ${responseMessage}`);
+            return;
         }
+
+        // Update the table display
+        const tr = document.getElementById(username);
+        tr.querySelectorAll('td')[3].textContent = changedPosition;
+
+        document.getElementById("change-username-input").value = "";
+        document.getElementById("change-position-drop-down").value = "";
+
     } catch (error) {
         console.error("Failed to send employee data to change position to the database:", error);
         alert("Failed to change employee position. Please try again.");
