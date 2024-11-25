@@ -67,6 +67,13 @@ if (changeEmployeeButton) {
     changeEmployeeButton.addEventListener("click", changeEmployee);
 }
 
+// -------------------------------------- manage price elements --------------------------
+
+const changePriceButton = document.getElementById("change-price-button");
+if (changePriceButton) {
+    changePriceButton.addEventListener("click", changePrice);
+}
+
 async function addEmployee() {
     const newName = document.getElementById("add-name-input").value;
     const newUsername = document.getElementById("add-username-input").value;
@@ -190,6 +197,7 @@ async function populatePriceTable() {
     }
 
     const priceTable = document.getElementById("meal-price-table");
+    priceTable.innerHTML = "";
     // Creates the row element for the headers and adds it to the table
     let tr = document.createElement("tr");
     priceTable.append(tr);
@@ -205,7 +213,7 @@ async function populatePriceTable() {
 
     // Populates a row for each meal with all their data
     mealPriceData.forEach(meal => {
-        const mealInfo = [meal.mealname, meal.price];
+        const mealInfo = [meal.mealname, parseFloat(meal.price).toFixed(2)];
         tr = document.createElement("tr");
         tr.id = meal.mealname;
 
@@ -218,4 +226,44 @@ async function populatePriceTable() {
 
         priceTable.appendChild(tr);
     });
+}
+
+async function changePrice() {
+    const mealSize = document.getElementById("meal-size-drop-down").value;
+    const price = document.getElementById("new-price-input").value.trim();
+    const newPrice = parseFloat(price);
+
+    if (!mealSize || !newPrice) {
+        alert("Please insert a new price for the selected meal size.");
+        return;
+    }
+    else if (isNaN(newPrice) && !(newPrice.toString() === value)) {
+        alert("Inserted invalid value for new price. Please try again.");
+        return;
+    }
+    else{
+        const changeMealPrice = [mealSize, newPrice];
+
+        try {
+            const newPriceData = JSON.stringify(changeMealPrice);
+            let result = await fetch("/change-price", {
+                method: "POST",
+                headers: {"content-type": "application/json"},
+                body: newPriceData
+            })
+
+            if (result.ok) {
+                const responseMessage = await result.json();
+                alert(responseMessage.message);
+                populatePriceTable()
+            } else {
+                const errorMessage = await result.json(); // Get error message from server
+                alert(`Error: ${errorMessage.message}`);
+            }
+        } catch (error) {
+            console.error("Failed to send new price data to change position to the database:", error);
+            alert("Failed to change the meal price. Please try again.");
+        }
+
+    }
 }

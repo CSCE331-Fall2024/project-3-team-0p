@@ -37,6 +37,9 @@ document.addEventListener("DOMContentLoaded", () => {
     } else if (loadedWindow === "/manager-employees.html") {
         populateEmployeeTable();
     }
+    else if(loadedWindow === "/manager-prices.html") {
+        populatePriceTable();
+    }
 });
 
 // for login page: redirect to correct page
