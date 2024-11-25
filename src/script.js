@@ -49,6 +49,9 @@ document.addEventListener("DOMContentLoaded", () => {
         populateEmployeeTable();
     } else if(loadedWindow === "/manager-prices.html") {
         populatePriceTable();
+    } else if(loadedWindow ==="/manager-inventory.html"){
+        populateInventoryTable();
+        populateInventoryDropdown()
     } else {
         if(targetLanguage != "null") {
             translatePage();

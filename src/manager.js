@@ -230,8 +230,8 @@ async function getMealPriceData() {
             alert(`Error: ${errorMessage.message}`);
         }
     } catch (error) {
-        console.error("Failed to get meal data from the server: ", error);
-        alert("Failed to get meal data. Please try again.");
+        console.error("Failed to get inventory data from the server: ", error);
+        alert("Failed to get inventory data. Please try again.");
     }
 }
 
@@ -311,5 +311,83 @@ async function changePrice() {
             alert("Failed to change the meal price. Please try again.");
         }
 
+    }
+}
+
+// Manage inventory page
+async function getInventoryData() {
+    try {
+        let result = await fetch("/inventory", {
+            method: "GET",
+        });
+    
+        if (result.ok) {
+            const inventoryData = await result.json();
+            return inventoryData;
+        } else {
+            const errorMessage = await result.json(); // Get error message from server
+            alert(`Error: ${errorMessage.message}`);
+        }
+    } catch (error) {
+        console.error("Failed to get meal data from the server: ", error);
+        alert("Failed to get meal data. Please try again.");
+    }
+}
+
+async function populateInventoryTable() {
+    let inventoryData = await getInventoryData();
+
+    if(!inventoryData){
+        return;
+    }
+
+    const inventoryTable = document.getElementById("inventory-table");
+    inventoryTable.innerHTML = "";
+    // Creates the row element for the headers and adds it to the table
+    let tr = document.createElement("tr");
+    inventoryTable.append(tr);
+
+    // Sets the header for the meal price table
+    const tableHeaders = ["Item Name", "Amount (lbs)"];
+    for (let i = 0; i < 2; ++i) {
+        const td = document.createElement("td");
+        td.textContent = tableHeaders[i];
+        td.className = "bg-red-500 text-white border-2 border-black";
+        tr.appendChild(td);
+    }
+
+    // Populates a row for each meal with all their data
+    inventoryData.forEach(inventory => {
+        const inventoryInfo = [inventory.item_name, parseFloat(inventory.amount).toFixed(2)];
+        tr = document.createElement("tr");
+        tr.id = inventoryInfo.item_name;
+
+        inventoryInfo.forEach(info => {
+            const td = document.createElement("td");
+            td.textContent = info;
+            td.className = "w-3/12 border-2 border-black";
+            tr.appendChild(td);
+        });
+
+        inventoryTable.appendChild(tr);
+    });
+}
+
+async function populateInventoryDropdown() {
+    try {
+        const dropdown = document.getElementById('inventory-dropdown');
+
+        dropdown.innerHTML = '';
+
+        const response = await fetch('/inventoryItems');
+        const items = await response.json();
+
+        items.forEach(item => {
+            const option = document.createElement('option');
+            option.textContent = item.item_name;
+            dropdown.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Error fetching inventory:', error);
     }
 }

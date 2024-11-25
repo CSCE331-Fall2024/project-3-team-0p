@@ -160,6 +160,23 @@ app.get("/employees", async (req, res) => {
     res.json(rows);
 });
 
+app.get("/inventory", async (req, res) => {
+    // Get data from the database
+    const rows = await readInventory();
+    
+    res.json(rows);
+});
+
+app.get('/inventoryItems', async (req, res) => {
+    try {
+        const result = await pool.query('SELECT item_name FROM inventory');
+        res.json(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error fetching inventory names');
+    }
+});
+
 app.get("/prices", async (req, res) => {
     // Get data from the database
     const rows = await readMealPrices();
@@ -363,6 +380,15 @@ async function changeEmployeePosition(employeeData) {
 async function readMealPrices() {
     try {
         const results = await pool.query("SELECT mealname, price FROM mealsizes");
+        return results.rows;
+    } catch(e) {
+        console.log("Query failed: ", e);
+    }
+}
+
+async function readInventory() {
+    try {
+        const results = await pool.query("SELECT item_name, amount FROM inventory");
         return results.rows;
     } catch(e) {
         console.log("Query failed: ", e);
