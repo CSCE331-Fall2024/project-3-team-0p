@@ -1,4 +1,3 @@
-
 // manager-employees.html
 async function getEmployeeData() {
     try {
@@ -66,6 +65,13 @@ if (removeEmployeeButton) {
 const changeEmployeeButton = document.getElementById("change-employee-button");
 if (changeEmployeeButton) {
     changeEmployeeButton.addEventListener("click", changeEmployee);
+}
+
+// -------------------------------------- manage price elements --------------------------
+
+const changePriceButton = document.getElementById("change-price-button");
+if (changePriceButton) {
+    changePriceButton.addEventListener("click", changePrice);
 }
 
 async function addEmployee() {
@@ -206,5 +212,104 @@ async function changeEmployee() {
     } catch (error) {
         console.error("Failed to send employee data to change position to the database:", error);
         alert("Failed to change employee position. Please try again.");
+    }
+}
+
+// Manage Meal Prices Page
+async function getMealPriceData() {
+    try {
+        let result = await fetch("/prices", {
+            method: "GET",
+        });
+    
+        if (result.ok) {
+            const mealPriceData = await result.json();
+            return mealPriceData;
+        } else {
+            const errorMessage = await result.json(); // Get error message from server
+            alert(`Error: ${errorMessage.message}`);
+        }
+    } catch (error) {
+        console.error("Failed to get meal data from the server: ", error);
+        alert("Failed to get meal data. Please try again.");
+    }
+}
+
+async function populatePriceTable() {
+    let mealPriceData = await getMealPriceData();
+
+    if(!mealPriceData){
+        return;
+    }
+
+    const priceTable = document.getElementById("meal-price-table");
+    priceTable.innerHTML = "";
+    // Creates the row element for the headers and adds it to the table
+    let tr = document.createElement("tr");
+    priceTable.append(tr);
+
+    // Sets the header for the meal price table
+    const tableHeaders = ["Meal Size", "Price"];
+    for (let i = 0; i < 2; ++i) {
+        const td = document.createElement("td");
+        td.textContent = tableHeaders[i];
+        td.className = "bg-red-500 text-white border-2 border-black";
+        tr.appendChild(td);
+    }
+
+    // Populates a row for each meal with all their data
+    mealPriceData.forEach(meal => {
+        const mealInfo = [meal.mealname, parseFloat(meal.price).toFixed(2)];
+        tr = document.createElement("tr");
+        tr.id = meal.mealname;
+
+        mealInfo.forEach(info => {
+            const td = document.createElement("td");
+            td.textContent = info;
+            td.className = "w-3/12 border-2 border-black";
+            tr.appendChild(td);
+        });
+
+        priceTable.appendChild(tr);
+    });
+}
+
+async function changePrice() {
+    const mealSize = document.getElementById("meal-size-drop-down").value;
+    const price = document.getElementById("new-price-input").value.trim();
+    const newPrice = parseFloat(price);
+
+    if (!mealSize || !newPrice) {
+        alert("Please insert a new price for the selected meal size.");
+        return;
+    }
+    else if (isNaN(newPrice) && !(newPrice.toString() === value)) {
+        alert("Inserted invalid value for new price. Please try again.");
+        return;
+    }
+    else{
+        const changeMealPrice = [mealSize, newPrice];
+
+        try {
+            const newPriceData = JSON.stringify(changeMealPrice);
+            let result = await fetch("/change-price", {
+                method: "POST",
+                headers: {"content-type": "application/json"},
+                body: newPriceData
+            })
+
+            if (result.ok) {
+                const responseMessage = await result.json();
+                alert(responseMessage.message);
+                populatePriceTable()
+            } else {
+                const errorMessage = await result.json(); // Get error message from server
+                alert(`Error: ${errorMessage.message}`);
+            }
+        } catch (error) {
+            console.error("Failed to send new price data to change position to the database:", error);
+            alert("Failed to change the meal price. Please try again.");
+        }
+
     }
 }
