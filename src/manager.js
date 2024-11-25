@@ -212,7 +212,7 @@ async function populateMenuTable() {
         itemInfo.forEach(info => {
             const td = document.createElement("td");
             td.textContent = info;
-            td.className = "w-3/12 border-2 border-black";
+            td.className = "w-1/5 border-2 border-black";
             tr.appendChild(td);
         });
 
