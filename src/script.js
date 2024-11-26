@@ -383,12 +383,13 @@ async function setSideButton() {
     let tr;
 
     for (let i = 0; i < sideNames.length; ++i) {
-        if (i % 4 === 0) {
+        if (i % 3 === 0) {
             tr = document.createElement("tr");
             table.appendChild(tr);
         }
 
-        const dt = document.createElement("td");
+        const td = document.createElement("td");
+        td.className = "w-1/3";
         const button = document.createElement("button");
     
         const sideName = sideNames[i];
@@ -397,8 +398,8 @@ async function setSideButton() {
         button.className = "w-5/6 py-16 my-5 bg-red-500 text-white rounded hover:bg-red-600 entreeButton";
         button.addEventListener("click", sideButtonClick);
         
-        dt.appendChild(button);
-        tr.appendChild(dt);
+        td.appendChild(button);
+        tr.appendChild(td);
     }
     if(targetLanguage != "null") {
         translatePage();
