@@ -7,6 +7,7 @@ const path = require("path");
 const passport = require('passport');
 const { Strategy: GoogleStrategy } = require('passport-google-oauth20');
 const { userInfo } = require("os");
+const { exit } = require("process");
 
 // Connects to the database
 const app = express();
@@ -248,18 +249,45 @@ app.post("/order-inventory", async (req, res) => {
     }
 });
 
+////////////////////////////////////////////////////////////////////////////////////////////////
+// Functions for manager-meals page
+
+app.get("/menuitems", async (req, res) => {
+    // Get data from the database
+    const rows = await readMenuItems();
+    
+    res.json(rows);
+});
+
+app.post("/add-menu-item", async (req, res) => {
+    try {
+        const menuItemData = req.body;
+        console.log("Received new menu item data:", menuItemData);
+        await addMenuItem(menuItemData);
+        res.status(200).json({ message: "Menu item added" });
+    } catch(e) {
+        console.error(`HTTP request failed: ${e}`);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+app.post("/delete-menu-item", async (req, res) => {
+    try {
+        const name = req.body;
+        console.log("Received menu item name:", name);
+        let returnMessage = await deleteMenuItem(name);
+        console.log(returnMessage);
+        res.status(200).json({ message: returnMessage });
+    } catch (e) {
+        console.error(`HTTP request failed: ${e}`);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+//////////////////////////////////////////////////////////////////////////////////////////////
 async function readMealSizes() {
     try {
         const results = await pool.query("SELECT mealname FROM mealsizes");
-        return results.rows;
-    } catch(e) {
-        console.log("Query failed: ", e);
-    }
-}
-
-async function readMenuItems() {
-    try {
-        const results = await pool.query("SELECT name, category FROM menuitems");
         return results.rows;
     } catch(e) {
         console.log("Query failed: ", e);
@@ -389,6 +417,46 @@ async function changeEmployeePosition(employeeData) {
         console.log("Query failed to change employee's position:", e);
     }
 }
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Functions for manager-meals page
+async function readMenuItems() {
+    try {
+        const results = await pool.query("SELECT name, category, ingredient1, ingredient2, ingredient3 FROM menuitems");
+        return results.rows;
+    } catch(e) {
+        console.log("Query failed: ", e);
+    }
+}
+
+async function addMenuItem(menuItemData) {
+    try {
+        const name = menuItemData[0];
+        const category = menuItemData[1];
+        const ingredient1 = menuItemData[2];
+        const ingredient2 = menuItemData[3];
+        const ingredient3 = menuItemData[4];
+    
+        await pool.query("INSERT INTO menuitems VALUES ($1, $2, $3, $4, $5)", [name, category, ingredient1, ingredient2, ingredient3]);
+    } catch (e) {
+        console.log("Query failed to add menu item:", e);
+    }
+}
+
+async function deleteMenuItem(name) {
+    try {
+        let result = await pool.query("DELETE FROM menuitems WHERE name = $1", [name]);
+
+        if (result.rowCount === 0) {
+            return "Menu item not found.";
+        } else {
+            return "Menu item removed!";
+        }
+    } catch (e) {
+        console.log("Query failed to add menu item:", e);
+    }
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 async function readMealPrices() {
     try {
