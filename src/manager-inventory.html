@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Entrees</title>
+    <title>Manage Inventory</title>
     <script type = "text/javascript" defer src = "api.js"></script>
     <script type = "text/javascript" defer src = "script.js"></script>
+    <script type = "text/javascript" defer src = "manager.js"></script>
     <link rel = "stylesheet" href = "./output.css">
 </head>
 <body>
@@ -20,7 +21,7 @@
         </select>
     </div>
     <div class="flex relative">
-        <div class="flex-shrink-0 w-1/5 h-screen bg-[#1A1B21]">
+        <div class="flex-shrink-0 w-1/5 h-screen bg-[#1A1B21] fixed">
             <h2 class="text-center text-white pt-5 pb-5">Cashier Navigation</h2>
             <ul>
                 <li class="border-t border-white bg-[#C02827] hover:bg-[#ff7b7b]">
@@ -44,8 +45,27 @@
             </ul>
         </div>
 
-        <div class="flex-grow p-5">
-            <p>manager inventory</p>
+        <div class="flex flex-col w-full ml-[20%]">
+            <div class="flex-grow m-4 h-1/2">
+                <table id="inventory-table" class="w-full box-border border-collapse text-center">
+                </table>
+            </div>
+
+            <div class="container flex flex-row justify-center">
+                <div class="container max-w-80">
+                    <p class="bg-red-500 text-white border-2 border-black text-center p-1">Manage Iventory</p>
+                        <div class="flex flex-col border-2 border-black p-4 h-72">
+                            <p>Select Inventory</p>
+                            <select id="inventory-dropdown" class="border-2 border-black">
+                            </select>
+
+                            <p>Amount to Order</p>
+                            <input id="order-inventory-input" type="text" class="border-2 border-black">
+
+                            <button id="order-inventory-button" class="bg-red-500 text-white font-semibold rounded mt-auto">Order Inventory</button>
+                        </div>
+                </div>
+            </div>
         </div>
     </div>
 </body>

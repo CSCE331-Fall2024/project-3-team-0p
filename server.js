@@ -9,7 +9,6 @@ const { Strategy: GoogleStrategy } = require('passport-google-oauth20');
 const { userInfo } = require("os");
 const { exit } = require("process");
 
-
 // Connects to the database
 const app = express();
 app.use(express.static(path.join(__dirname, "src")));
@@ -162,6 +161,23 @@ app.get("/employees", async (req, res) => {
     res.json(rows);
 });
 
+app.get("/inventory", async (req, res) => {
+    // Get data from the database
+    const rows = await readInventory();
+    
+    res.json(rows);
+});
+
+app.get('/inventoryItems', async (req, res) => {
+    try {
+        const result = await pool.query('SELECT item_name FROM inventory');
+        res.json(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error fetching inventory names');
+    }
+});
+
 app.get("/prices", async (req, res) => {
     // Get data from the database
     const rows = await readMealPrices();
@@ -212,6 +228,19 @@ app.post("/change-price", async (req, res) => {
         const newPriceData = req.body;
         console.log("Received meal size and new price:", newPriceData);
         let returnMessage = await changePrice(newPriceData);
+        console.log(returnMessage);
+        res.status(200).json({ message: returnMessage });
+    } catch (e) {
+        console.error(`HTTP request failed: ${e}`);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+app.post("/order-inventory", async (req, res) => {
+    try {
+        const orderInventoryData = req.body;
+        console.log("Received item and amount to order:", orderInventoryData);
+        let returnMessage = await orderInventory(orderInventoryData);
         console.log(returnMessage);
         res.status(200).json({ message: returnMessage });
     } catch (e) {
@@ -438,6 +467,15 @@ async function readMealPrices() {
     }
 }
 
+async function readInventory() {
+    try {
+        const results = await pool.query("SELECT item_name, amount FROM inventory");
+        return results.rows;
+    } catch(e) {
+        console.log("Query failed: ", e);
+    }
+}
+
 async function changePrice(newPriceData) {
     try {
         const mealName = newPriceData[0];
@@ -452,6 +490,23 @@ async function changePrice(newPriceData) {
         }
     } catch (e) {
         console.log("Query failed to change the meal's price:", e);
+    }
+}
+
+async function orderInventory(orderInventoryData) {
+    try {
+        const item_name = orderInventoryData[0];
+        const amount = orderInventoryData[1];
+
+        const result = await pool.query("UPDATE inventory SET amount = amount + $1 WHERE item_name = $2", [amount, item_name]);
+
+        if (result.rowCount === 0) {
+            return "Inventory item not found."
+        } else {
+            return `Successfully ordered ${amount} units of ${item_name}!`;
+        }
+    } catch (e) {
+        console.log("Query failed to order inventory:", e);
     }
 }
 

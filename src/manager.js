@@ -67,13 +67,6 @@ if (changeEmployeeButton) {
     changeEmployeeButton.addEventListener("click", changeEmployee);
 }
 
-// -------------------------------------- manage price elements --------------------------
-
-const changePriceButton = document.getElementById("change-price-button");
-if (changePriceButton) {
-    changePriceButton.addEventListener("click", changePrice);
-}
-
 async function addEmployee() {
     const newName = document.getElementById("add-name-input").value;
     const newUsername = document.getElementById("add-username-input").value;
@@ -350,6 +343,12 @@ async function deleteMenuItem() {
 
 
 // Manage Meal Prices Page
+const changePriceButton = document.getElementById("change-price-button");
+if (changePriceButton) {
+    changePriceButton.addEventListener("click", changePrice);
+}
+
+// gets all of the meal sizes and their prices to populate the price table
 async function getMealPriceData() {
     try {
         let result = await fetch("/prices", {
@@ -364,11 +363,12 @@ async function getMealPriceData() {
             alert(`Error: ${errorMessage.message}`);
         }
     } catch (error) {
-        console.error("Failed to get meal data from the server: ", error);
-        alert("Failed to get meal data. Please try again.");
+        console.error("Failed to get inventory data from the server: ", error);
+        alert("Failed to get inventory data. Please try again.");
     }
 }
 
+// updates the price table
 async function populatePriceTable() {
     let mealPriceData = await getMealPriceData();
 
@@ -408,6 +408,7 @@ async function populatePriceTable() {
     });
 }
 
+// changes the price of the selected meal size based on what the user inputs.
 async function changePrice() {
     const mealSize = document.getElementById("meal-size-drop-down").value;
     const price = document.getElementById("new-price-input").value.trim();
@@ -445,5 +446,132 @@ async function changePrice() {
             alert("Failed to change the meal price. Please try again.");
         }
 
+    }
+}
+
+// Manage inventory page
+const orderInventoryButton = document.getElementById("order-inventory-button");
+if (orderInventoryButton) {
+    orderInventoryButton.addEventListener("click", orderInventory);
+}
+
+// gets all of the inventory data to populate the inventory table with
+async function getInventoryData() {
+    try {
+        let result = await fetch("/inventory", {
+            method: "GET",
+        });
+    
+        if (result.ok) {
+            const inventoryData = await result.json();
+            return inventoryData;
+        } else {
+            const errorMessage = await result.json(); // Get error message from server
+            alert(`Error: ${errorMessage.message}`);
+        }
+    } catch (error) {
+        console.error("Failed to get meal data from the server: ", error);
+        alert("Failed to get meal data. Please try again.");
+    }
+}
+
+// updates the inventory table
+async function populateInventoryTable() {
+    let inventoryData = await getInventoryData();
+
+    if(!inventoryData){
+        return;
+    }
+
+    const inventoryTable = document.getElementById("inventory-table");
+    inventoryTable.innerHTML = "";
+    // Creates the row element for the headers and adds it to the table
+    let tr = document.createElement("tr");
+    inventoryTable.append(tr);
+
+    // Sets the header for the meal price table
+    const tableHeaders = ["Item Name", "Amount (lbs)"];
+    for (let i = 0; i < 2; ++i) {
+        const td = document.createElement("td");
+        td.textContent = tableHeaders[i];
+        td.className = "bg-red-500 text-white border-2 border-black";
+        tr.appendChild(td);
+    }
+
+    // Populates a row for each meal with all their data
+    inventoryData.forEach(inventory => {
+        const inventoryInfo = [inventory.item_name, parseFloat(inventory.amount).toFixed(2)];
+        tr = document.createElement("tr");
+        tr.id = inventoryInfo.item_name;
+
+        inventoryInfo.forEach(info => {
+            const td = document.createElement("td");
+            td.textContent = info;
+            td.className = "w-3/12 border-2 border-black";
+            tr.appendChild(td);
+        });
+
+        inventoryTable.appendChild(tr);
+    });
+}
+
+// updates the inventory dropdown
+async function populateInventoryDropdown() {
+    try {
+        const dropdown = document.getElementById('inventory-dropdown');
+
+        dropdown.innerHTML = '';
+
+        const response = await fetch('/inventoryItems');
+        const items = await response.json();
+
+        items.forEach(item => {
+            const option = document.createElement('option');
+            option.textContent = item.item_name;
+            dropdown.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Error fetching inventory:', error);
+    }
+}
+
+// updates the amount of inventory based on the amount of inventory the user is trying to order
+async function orderInventory() {
+    const item_name = document.getElementById("inventory-dropdown").value;
+    const amount = document.getElementById("order-inventory-input").value.trim();
+    const amountToOrder = parseFloat(amount);
+
+    if (!item_name || !amountToOrder) {
+        alert("Please insert an amount of inventory to order.");
+        return;
+    }
+    else if (isNaN(amountToOrder) && !(amountToOrder.toString() === value)) {
+        alert("Inserted invalid value for new price. Please try again.");
+        return;
+    }
+    else{
+        const orderAmount = [item_name, amountToOrder];
+
+        try {
+            const newPriceData = JSON.stringify(orderAmount);
+            let result = await fetch("/order-inventory", {
+                method: "POST",
+                headers: {"content-type": "application/json"},
+                body: newPriceData
+            })
+
+            if (result.ok) {
+                const responseMessage = await result.json();
+                alert(responseMessage.message);
+                populateInventoryTable();
+                populateInventoryDropdown();
+            } else {
+                const errorMessage = await result.json(); // Get error message from server
+                alert(`Error: ${errorMessage.message}`);
+            }
+        } catch (error) {
+            console.error("Failed to send new price data to change position to the database:", error);
+            alert("Failed to change the meal price. Please try again.");
+        }
     }
 }
