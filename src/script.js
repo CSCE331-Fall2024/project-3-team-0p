@@ -200,7 +200,7 @@ async function setMealSizeButtons() {
         // Made the label for the buttons for meal sizes with capitalized words
         button.textContent = mealName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
         button.setAttribute('data', button.textContent);
-        button.className = "w-5/6 py-16 bg-red-500 text-white rounded hover:bg-red-600 sizeButton";
+        button.className = "w-5/6 py-16 my-5 bg-red-500 text-white rounded hover:bg-red-600 sizeButton";
         button.addEventListener("click", mealSizeButtonClick);
         
         td.appendChild(button);
@@ -383,22 +383,23 @@ async function setSideButton() {
     let tr;
 
     for (let i = 0; i < sideNames.length; ++i) {
-        if (i % 4 === 0) {
+        if (i % 3 === 0) {
             tr = document.createElement("tr");
             table.appendChild(tr);
         }
 
-        const dt = document.createElement("td");
+        const td = document.createElement("td");
+        td.className = "w-1/3";
         const button = document.createElement("button");
     
         const sideName = sideNames[i];
         button.textContent = sideName;
         button.setAttribute('data', button.textContent);
-        button.className = "w-5/6 py-16 bg-red-500 text-white rounded hover:bg-red-600 entreeButton";
+        button.className = "w-5/6 py-16 my-5 bg-red-500 text-white rounded hover:bg-red-600 entreeButton";
         button.addEventListener("click", sideButtonClick);
         
-        dt.appendChild(button);
-        tr.appendChild(dt);
+        td.appendChild(button);
+        tr.appendChild(td);
     }
     if(targetLanguage != "null") {
         translatePage();
@@ -614,39 +615,3 @@ function removeMeal(){
 function addMeal(){
     window.location.href = "customer-review.html";
 }
-
-// const languageSelector = document.getElementById('language-select');
-// languageSelector.addEventListener('change', (event) => {
-//     targetLanguage = event.target.value;
-//     sessionStorage.setItem("language", targetLanguage);
-//     window.location.reload();
-// });
-
-// //translates text in page
-// async function translatePage() {
-//     const apiKey = 'AIzaSyBBXNpFEe3ng4ydNNgHXK_s6cNgwjt-_so';
-//     if (targetLanguage == "null") return;
-
-//     const elementsToTranslate = Array.from(document.body.querySelectorAll('*')).filter((el) =>
-//         el.childNodes.length === 1 && 
-//         el.childNodes[0].nodeType === Node.TEXT_NODE && 
-//         el.textContent.trim() !== '' &&
-//         !el.hasAttribute('data-ignore')
-//     );
-  
-//     for (const element of elementsToTranslate) {
-//         const textToTranslate = element.textContent.trim();
-//         console.log("translating " + textToTranslate + " to " + targetLanguage);
-//         try {
-//             const response = await fetch(`https://translation.googleapis.com/language/translate/v2?key=${apiKey}`, {
-//                 method: 'POST',
-//                 headers: { 'Content-Type': 'application/json' },
-//                 body: JSON.stringify({q: textToTranslate, target: targetLanguage,}),
-//             });
-//             const data = await response.json();
-//             element.textContent = data.data.translations[0].translatedText;
-//         } catch(error) {
-//             console.error('Translation error:', error);
-//         }
-//     }
-// }
