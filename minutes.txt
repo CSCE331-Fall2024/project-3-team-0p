@@ -106,3 +106,58 @@ Ian struggled with figuring out the best and easier way to format the orders.
 Alana struggled with figuring out the nuiances of JavaScript like adding button functionality when not on the page.
 Judy struggled with the client to send and receive the correct data when interacting with the database.
 Layla struggled with having the buttons format correctly with Tailwind.
+
+
+
+
+
+Sprint 3:
+
+SCRUM 1:
+Time: 11/20/24 9:10-9:20am
+Location: Zachry
+Agenda Items:
+Delegate tasks for sprint 3
+Understand manager project requirements
+Minutes:
+To start off, we discussed what our goals are for this sprint and what is left in the project. We all decided
+that the main points of focus are implementing the manager interface, including our APIs, and making the cashier
+interface more aesthetically pleasing. Judy was assigned to creating the manager HTML pages and implementing the
+weather API. Ian was assigned to implement the authentication API. Layla was assigned making the customer
+interface show the current order throughout the whole ordering process. Alana worked on getting the sprint backlog
+in order as well as was assigned to make the manager interface of managing employees be functional.
+
+
+SCRUM 2:
+Time: 11/22/24 9:10-9:20am
+Location: Zachry
+Agenda Items:
+Discuss progress
+Decide on weekend tasks
+Minutes:
+Ian mentioned that he completed third party authentication. He struggled because he thought he was supposed to do two
+factor authentication but then realized that it was wrong. Judy was working on getting the weather API as well as
+completed making all the HTML files for the manager interface. She is struggling with figuring out how APIs work and
+how to call it so that it displays on the screen. Layla worked on showing the current meal at all times for the customer.
+She wants to make a change to it so that every entree shows up as the user clicks. Right now it is showing after all the
+entrees have finished. Alana worked on displaying the employee table to display employee information for the manager. She
+struggled with having the table display on the whole page.
+
+
+
+SCRUM 3:
+Time: 11/25/24 9:10-9:20am
+Location: Zachry
+Agenda Items:
+Discuss what all should make it into sprint 3 release
+Review task assignments
+Minutes:
+Alana completed the manager employee on the manager interface. She found difficulty in retrieving the username for all the
+changing manager employees and putting it in SQL commands. Ian integrated the google translate API. His main struggles were
+getting everything to still work after it got translated. At first translating pages messed up the formatting of the HTML
+files so he had to get the script to loop through each page and properly translate everything.  Judy finished the manager
+prices page and the weather API. Her main difficulty was getting the table to display in the manager price section. She
+realized that she forgot to call the table, so calling it fixed that problem. She also struggled with figuring out how to
+get all the values to display for the weather API in the manager statistics page. Layla completed the manager meals
+interface where the manager can add and remove meals. She also fixed the button placement on the customer review order and
+display meal pages. She had difficulty with making the table for the manager meal page fit properly on the page.
