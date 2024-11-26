@@ -47,6 +47,8 @@ document.addEventListener("DOMContentLoaded", () => {
         displayOrderID();
     } else if (loadedWindow === "/manager-employees.html") {
         populateEmployeeTable();
+    } else if (loadedWindow === "/manager-meals.html") {
+        populateMenuTable();
     } else if(loadedWindow === "/manager-prices.html") {
         populatePriceTable();
     } else {
