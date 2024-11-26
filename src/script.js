@@ -200,7 +200,7 @@ async function setMealSizeButtons() {
         // Made the label for the buttons for meal sizes with capitalized words
         button.textContent = mealName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
         button.setAttribute('data', button.textContent);
-        button.className = "w-5/6 py-16 bg-red-500 text-white rounded hover:bg-red-600 sizeButton";
+        button.className = "w-5/6 py-16 my-5 bg-red-500 text-white rounded hover:bg-red-600 sizeButton";
         button.addEventListener("click", mealSizeButtonClick);
         
         td.appendChild(button);
@@ -394,7 +394,7 @@ async function setSideButton() {
         const sideName = sideNames[i];
         button.textContent = sideName;
         button.setAttribute('data', button.textContent);
-        button.className = "w-5/6 py-16 bg-red-500 text-white rounded hover:bg-red-600 entreeButton";
+        button.className = "w-5/6 py-16 my-5 bg-red-500 text-white rounded hover:bg-red-600 entreeButton";
         button.addEventListener("click", sideButtonClick);
         
         dt.appendChild(button);
