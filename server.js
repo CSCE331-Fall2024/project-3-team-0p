@@ -249,6 +249,19 @@ app.post("/order-inventory", async (req, res) => {
     }
 });
 
+app.post("/decrease-inventory", async (req, res) => {
+    try {
+        const orderInventoryData = req.body;
+        console.log("Received item and amount to order:", orderInventoryData);
+        let returnMessage = await decreaseInventory(orderInventoryData);
+        console.log(returnMessage);
+        res.status(200).json({ message: returnMessage });
+    } catch (e) {
+        console.error(`HTTP request failed: ${e}`);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // Functions for manager-meals page
 
@@ -348,6 +361,49 @@ async function addOrder(orderData) {
     } catch(e) {
         console.error(`Query failed: ${e}`);
     }
+}
+
+async function decreaseInventory(orderData){
+    const numItems = orderData.length;
+    let amountNeeded = .3;
+    for(let i = 0; i < numItems; ++i){
+
+        // get the meal size item to decrease like bowls, cartons, etc and decrease it
+        let mealSizeItem = "";
+        if(orderData[i][0].includes("a la carte")){
+            if(orderData[i][0].includes("small")){
+                mealSizeItem = "small cartons";
+                amountNeeded = .6;
+            }else if(orderData[i][0].includes("med")){
+                mealSizeItem = "medium cartons";
+                amountNeeded = .8;
+            }else if(orderData[i][0].includes("large")){
+                mealSizeItem = "large cartons";
+                amountNeeded = 1;
+            }
+        }else{
+            mealSizeItem = orderData[i][0] + "s";
+        }
+
+        await pool.query("UPDATE inventory SET amount = amount - 1 WHERE item_name = $1", [mealSizeItem]);
+        await pool.query("UPDATE inventory SET amount = amount - 1 WHERE item_name = $1", ["plastic utensils"]);         
+        await pool.query("UPDATE inventory SET amount = amount - 1 WHERE item_name = $1", ["napkins"]);  
+
+        for(let j = 1; j < 5; ++j){
+            console.log(`orderdata[${i}][${j}]`, orderData[i][j])
+            // Capitalize the menu item so it matches the value in SQL
+            const menuItem = orderData[i][j].replace(/\b\w/g, char => char.toUpperCase());
+            if(!orderData[i][j].includes("N/A")){
+                const ingredients = await pool.query("SELECT ingredient1, ingredient2, ingredient3 FROM menuitems WHERE name = $1", [menuItem]);
+                let ingredientArray = [ingredients.rows[0].ingredient1, ingredients.rows[0].ingredient2, ingredients.rows[0].ingredient3]
+                for(let k = 0; k < 3; ++k){
+                    await pool.query("UPDATE inventory SET amount = amount - $1 WHERE item_name = $2", [amountNeeded, ingredientArray[k]]);
+                }
+            }
+        }
+    }
+
+
 }
 
 async function getOrderPrice(orderData) {
