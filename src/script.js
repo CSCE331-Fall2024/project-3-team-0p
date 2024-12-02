@@ -261,7 +261,7 @@ async function setMealSizeButtonCustomer() {
 
         if (image) {
             const img = document.createElement("img");
-            img.src = `./imgs/${image.image}`;
+            img.src = `./menu-imgs/${image.image}`;
             img.alt = mealName;
             img.style.width = '100%';
             img.style.height = '100%';
@@ -441,7 +441,7 @@ async function setEntreeButtonCustomer() {
 
         if (image) {
             const img = document.createElement("img");
-            img.src = `./imgs/${image.image}`;
+            img.src = `./menu-imgs/${image.image}`;
             img.alt = entreeName;
             img.style.width = '100%';
             img.style.height = '100%';
@@ -580,7 +580,7 @@ async function setSideButtonCustomer() {
 
         if (image) {
             const img = document.createElement("img");
-            img.src = `./imgs/${image.image}`;
+            img.src = `./menu-imgs/${image.image}`;
             img.alt = sideName;
             img.style.width = '100%';
             img.style.height = '100%';
