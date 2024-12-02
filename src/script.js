@@ -30,15 +30,15 @@ document.addEventListener("DOMContentLoaded", () => {
         updateOrderDisplay();
     } else if (loadedWindow === "/customer-mealsize.html"){
         updateOrderDisplay();
-        setMealSizeButtons();
+        setMealSizeButtonCustomer();
     } else if (loadedWindow === "/customer-entrees.html") {
         updateOrderDisplay();
-        setEntreeButton();
+        setEntreeButtonCustomer();
     } else if (loadedWindow === "/customer-sides.html"){
         updateOrderDisplay();
-        setSideButton();
+        setSideButtonCustomer();
     } else if (loadedWindow === "/employee-mealsize.html") {
-        setMealSizeButtons();
+        setMealSizeButton();
     } else if (loadedWindow === "/employee-entrees.html") {
         setEntreeButton();
     } else if (loadedWindow === "/employee-sides.html") {
@@ -122,6 +122,21 @@ async function getMealSizeNames() {
     }
 }
 
+//loading image data
+async function loadImageData() {
+    try {
+        const response = await fetch('images.json');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('Error loading image data:', error);
+        console.log('Response:', error.response);
+        return [];
+    }
+  }
+
 function mealSizeButtonClick() {
     if(currentOrder[currentMeal][0] != "N/A"){
         alert("You have already selected a meal size. Please proceed with the order.")
@@ -178,8 +193,8 @@ function mealSizeButtonClick() {
     }
 }
 
-// For the customer/cashier interface: Dynamically sets the meal size buttons.
-async function setMealSizeButtons() {
+// For the cashier interface: Dynamically sets the meal size buttons.
+async function setMealSizeButton() {
     let mealSizeNames = await getMealSizeNames();
 
     const table = document.getElementById("meal-size-table");
@@ -210,6 +225,73 @@ async function setMealSizeButtons() {
         translatePage();
     }
 }
+
+// For the customer interface: Dynamically sets the meal size buttons and images.
+async function setMealSizeButtonCustomer() {
+    let mealSizeNames = await getMealSizeNames();
+
+    const table = document.getElementById("meal-size-table");
+    let tr;
+
+    // Fetch image data from JSON file
+    const imageData = await loadImageData();
+    
+    for (let i = 0; i < mealSizeNames.length; ++i) {
+        if (i % 3 === 0) {
+            tr = document.createElement("tr");
+            table.appendChild(tr);
+        }
+
+        const td = document.createElement("td");
+        td.className = "w-1/3";
+        const button = document.createElement("button");
+    
+        const mealName = mealSizeNames[i].mealname;
+
+        button.textContent = mealName;
+       
+        // Made the label for the buttons for meal sizes with capitalized words
+        button.textContent = mealName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+        button.setAttribute('data', button.textContent);
+        button.className = "w-5/6 py-16 my-5 bg-red-500 text-white rounded hover:bg-red-600 sizeButton";
+        button.addEventListener("click", mealSizeButtonClick);
+        
+        // Find the corresponding image for the current meal name
+        const image = imageData.find(entry => entry.name === mealName);
+
+        if (image) {
+            const img = document.createElement("img");
+            img.src = `./imgs/${image.image}`;
+            img.alt = mealName;
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.objectFit = 'cover';
+            img.style.position = 'absolute';
+            img.style.top = '0';
+            img.style.left = '0';
+            img.style.zIndex = '1';
+            
+            button.style.position = 'relative';
+            button.style.overflow = 'hidden';
+            const textSpan = document.createElement('span');
+
+            textSpan.textContent = button.textContent;
+            textSpan.style.position = 'relative';
+            textSpan.style.zIndex = '2';
+            
+            button.textContent = '';
+            button.appendChild(img);
+            button.appendChild(textSpan);
+        }
+
+        td.appendChild(button);
+        tr.appendChild(td);
+    }
+    if(targetLanguage != "null") {
+        translatePage();
+    }
+}
+
 
 // for entrees page: gets the text of each button and adds it to the array. Allows 1-3 entrees to be selected depending on the type of meal.
 // Redirects to either the sides page or review page if we finish selecting entrees.
@@ -298,7 +380,7 @@ function entreeButtonClick() {
         }
     }
 }
-
+//entree buttons for cashier
 async function setEntreeButton() {
     let entreeNames = await getEntreeNames();
 
@@ -328,6 +410,68 @@ async function setEntreeButton() {
         translatePage();
     }
 }
+
+//entree buttons for customer with images
+async function setEntreeButtonCustomer() {
+    let entreeNames = await getEntreeNames();
+
+    const table = document.getElementById("entree-table");
+    let tr;
+
+    // Fetch image data from your JSON file
+    const imageData = await loadImageData();
+
+    for (let i = 0; i < entreeNames.length; ++i) {
+        if (i % 3 === 0) {
+            tr = document.createElement("tr");
+            table.appendChild(tr);
+        }
+
+        const td = document.createElement("td");
+        td.className = "w-1/3"
+        const button = document.createElement("button");
+    
+        const entreeName = entreeNames[i];
+        button.textContent = entreeName;
+        button.setAttribute('data', button.textContent);
+        button.className = "w-5/6 py-16 bg-red-500 text-white rounded hover:bg-red-600 entreeButton";
+        button.addEventListener("click", entreeButtonClick);
+        
+        const image = imageData.find(entry => entry.name === entreeName);
+
+        if (image) {
+            const img = document.createElement("img");
+            img.src = `./imgs/${image.image}`;
+            img.alt = entreeName;
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.objectFit = 'cover';
+            img.style.position = 'absolute';
+            img.style.top = '0';
+            img.style.left = '0';
+            img.style.zIndex = '1';
+            
+            button.style.position = 'relative';
+            button.style.overflow = 'hidden';
+            const textSpan = document.createElement('span');
+
+            textSpan.textContent = button.textContent;
+            textSpan.style.position = 'relative';
+            textSpan.style.zIndex = '2';
+            
+            button.textContent = '';
+            button.appendChild(img);
+            button.appendChild(textSpan);
+        }
+        
+        td.appendChild(button);
+        tr.appendChild(td);
+    }
+    if(targetLanguage != "null") {
+        translatePage();
+    }
+}
+
 
 // for sides page: gets the text of each button and adds it to the array. Allows 0-1 sides depending on the size.
 // Redirects to the review order page once finished selecting.
@@ -375,7 +519,7 @@ function sideButtonClick() {
         }
     }
 }
-
+//side buttons for cashier 
 async function setSideButton() {
     let sideNames = await getSideNames();
 
@@ -397,6 +541,67 @@ async function setSideButton() {
         button.setAttribute('data', button.textContent);
         button.className = "w-5/6 py-16 my-5 bg-red-500 text-white rounded hover:bg-red-600 entreeButton";
         button.addEventListener("click", sideButtonClick);
+        
+        td.appendChild(button);
+        tr.appendChild(td);
+    }
+    if(targetLanguage != "null") {
+        translatePage();
+    }
+}
+
+//side buttons for customer with images
+async function setSideButtonCustomer() {
+    let sideNames = await getSideNames();
+
+    const table = document.getElementById("side-table");
+    let tr;
+
+    // Fetch image data from your JSON file
+    const imageData = await loadImageData();
+
+    for (let i = 0; i < sideNames.length; ++i) {
+        if (i % 3 === 0) {
+            tr = document.createElement("tr");
+            table.appendChild(tr);
+        }
+
+        const td = document.createElement("td");
+        td.className = "w-1/3";
+        const button = document.createElement("button");
+    
+        const sideName = sideNames[i];
+        button.textContent = sideName;
+        button.setAttribute('data', button.textContent);
+        button.className = "w-5/6 py-16 my-5 bg-red-500 text-white rounded hover:bg-red-600 entreeButton";
+        button.addEventListener("click", sideButtonClick);
+        
+        const image = imageData.find(entry => entry.name === sideName);
+
+        if (image) {
+            const img = document.createElement("img");
+            img.src = `./imgs/${image.image}`;
+            img.alt = sideName;
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.objectFit = 'cover';
+            img.style.position = 'absolute';
+            img.style.top = '0';
+            img.style.left = '0';
+            img.style.zIndex = '1';
+            
+            button.style.position = 'relative';
+            button.style.overflow = 'hidden';
+            const textSpan = document.createElement('span');
+
+            textSpan.textContent = button.textContent;
+            textSpan.style.position = 'relative';
+            textSpan.style.zIndex = '2';
+            
+            button.textContent = '';
+            button.appendChild(img);
+            button.appendChild(textSpan);
+        }
         
         td.appendChild(button);
         tr.appendChild(td);
