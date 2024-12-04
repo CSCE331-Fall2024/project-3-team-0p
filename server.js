@@ -390,7 +390,6 @@ async function decreaseInventory(orderData){
         await pool.query("UPDATE inventory SET amount = amount - 1 WHERE item_name = $1", ["napkins"]);  
 
         for(let j = 1; j < 5; ++j){
-            console.log(`orderdata[${i}][${j}]`, orderData[i][j])
             // Capitalize the menu item so it matches the value in SQL
             const menuItem = orderData[i][j].replace(/\b\w/g, char => char.toUpperCase());
             if(!orderData[i][j].includes("N/A")){
