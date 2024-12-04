@@ -20,7 +20,7 @@
         </select>
     </div>
     <div class="flex relative">
-        <div class="flex-shrink-0 w-1/4 h-screen bg-[#1A1B21]">
+        <div class="fixed flex-shrink-0 w-1/4 h-screen bg-[#1A1B21]">
             <ul>
                 <li class="review-order text-white text-center">
                     <h1 class="font-bold text-2xl">Review Current Meal</h1>
@@ -37,15 +37,15 @@
                 </div>
             </ul>
             <div class = "fixed bottom-3.5 left-1">
-                <a href="index.html" class="rounded-md px-6 py-3 bottom-0 left-0 bg-[#C02827] hover:bg-[#ff7b7b] text-white font-semibold shadow-lg transition duration-300">
+                <button onclick = "cancelOrder()" class="rounded-md px-6 py-3 bottom-0 left-0 bg-[#C02827] hover:bg-[#ff7b7b] text-white font-semibold shadow-lg transition duration-300">
                     Back to start
                 </a>
             </div>
         </div>
 
-        <div class="flex-grow p-5 overflow-auto">
+        <div class="flex-grow ml-[27%]">
             <div class="text-center mb-4">
-                <img src="progress_imgs/progress-bar2.png" alt="Progress" class="mx-auto mb-2 w-3/4">
+                <img src="progress_imgs/progress-bar2.png" alt="Progress" class="mx-auto mb-2 w-3/4 h-3/4">
                 <h1 class="font-bold text-2xl">Select your entree(s)</h1>
                 <h2>Select the entree(s) you want for your meal!</h2>
             </div>
