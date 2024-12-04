@@ -362,6 +362,8 @@ function entreeButtonClick() {
         if (selectedEntrees < numEntrees){
             if(currentPage.includes("customer")){
                 updateOrderDisplay();
+            } else {
+                this.textContent = `${this.getAttribute('data')} (${currentOrder[currentMeal].filter(item => item === buttonText).length})`;
             }
         }
         if(numSides != 0 && selectedEntrees == numEntrees){
