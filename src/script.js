@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } else if (loadedWindow === "/employee-mealsize.html") {
         setMealSizeButton();
     } else if (loadedWindow === "/employee-entrees.html") {
-        setEntreeButton();
+        setEntreeButtonEmployee();
     } else if (loadedWindow === "/employee-sides.html") {
         setSideButton();
     } else if (loadedWindow === "/customer-orderConfirmation.html") {
@@ -387,7 +387,7 @@ function entreeButtonClick() {
     }
 }
 //entree buttons for cashier
-async function setEntreeButton() {
+async function setEntreeButtonEmployee() {
     let entreeNames = await getEntreeNames();
 
     const table = document.getElementById("entree-table");
