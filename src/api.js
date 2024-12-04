@@ -1,4 +1,5 @@
-const weather_api = "https://api.weatherbit.io/v2.0/current?lat=30.628&lon=-96.3344&key=59b64ecfcc1e48d99f3c00e333c61f97&include=minutely"; 
+// const weather_api = "https://api.weatherbit.io/v2.0/current?lat=30.628&lon=-96.3344&key=59b64ecfcc1e48d99f3c00e333c61f97&include=minutely";
+const weather_api = "https://api.weatherbit.io/v2.0/current?lat=30.628&lon=-96.3344&key=c606812b4de3452d8c4469b67f368633&include=minutely"; 
 
 // updates the weather every time the statistic page shows up. Shows the temperature, a description, and the precipitation.
 async function updateWeather() {
@@ -19,18 +20,23 @@ async function updateWeather() {
 
         if(precip == 0){
             document.getElementById("suggestion").textContent = "Expect more customers because there is no precipitation!";
+            document.getElementById("weather-icon").textContent = "☀️";
         }
         else if(precip < 0.5){
             document.getElementById("suggestion").textContent = "Because it is drizzling, expect fewer customers than usual.";
+            document.getElementById("weather-icon").textContent = "🌦️";
         }
         else if(precip < 4){
             document.getElementById("suggestion").textContent = "There is moderate rain, so expect less customers.";
+            document.getElementById("weather-icon").textContent = "🌦️";
         }
         else if(precip < 8){
             document.getElementById("suggestion").textContent = "There is heavy rain, do not expect many customers.";
+            document.getElementById("weather-icon").textContent = "🌧️";
         }
         else{
             document.getElementById("suggestion").textContent = "There is very heavy rain. Maybe you should close the store.";
+            document.getElementById("weather-icon").textContent = "⛈️";
         }
     }
     catch (error) {
