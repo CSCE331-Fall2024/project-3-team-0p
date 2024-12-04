@@ -698,7 +698,7 @@ function cancelOrder() {
         console.log(loadedWindow);
         if (loadedWindow == "/employee-review.html") {
             window.location.href = "/employee-mealsize.html";
-        } else if (loadedWindow == "/customer-review.html") {
+        } else if (loadedWindow.includes("customer")) {
             window.location.href = "index.html";
         }
     }
