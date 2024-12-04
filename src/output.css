@@ -684,6 +684,10 @@ video {
 .w-1\/4 {
   width: 25%;
 }
+  
+.w-8\/12 {
+  width: 60%;
+}
 
 .w-1\/5 {
   width: 20%;
@@ -1059,3 +1063,4 @@ video {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgb(59 130 246 / var(--tw-ring-opacity));
 }
+
