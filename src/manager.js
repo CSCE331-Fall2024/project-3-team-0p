@@ -278,11 +278,12 @@ if (deleteItemButton) {
 
 async function addMenuItem() {
     const newItem = document.getElementById("add-name-input").value;
+    const newCategory = document.getElementById("add-category").value;
     const newIngredient1 = document.getElementById("add-ingredient1-input").value;
     const newIngredient2 = document.getElementById("add-ingredient2-input").value;
     const newIngredient3 = document.getElementById("add-ingredient3-input").value;
 
-    const addItemInfo = [newItem, newIngredient1, newIngredient2, newIngredient3];
+    const addItemInfo = [newItem, newCategory, newIngredient1, newIngredient2, newIngredient3];
 
     if (!newItem || !newIngredient1 || !newIngredient2 || !newIngredient3) {
         alert("Missing new menu item info. Try again.");
