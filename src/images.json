@@ -1,0 +1,101 @@
+
+[   
+    {
+        "name": "bowl",
+        "image": "Bowl.png"
+    },
+    {
+        "name": "plate",
+        "image": "Plate.png"
+    },
+    {
+        "name": "bigger plate",
+        "image": "BiggerPlate.png"
+    },
+    {
+        "name": "a la carte small entree",
+        "image": "ALaCarteSmallEntree.png"
+    },
+    {
+        "name": "a la carte med entree",
+        "image": "ALaCarteMediumEntree.png"
+    },
+    {
+        "name": "a la carte large entree",
+        "image": "ALaCarteLargeEntree.png"
+    },
+    {
+        "name": "a la carte med side",
+        "image": "ALaCarteMediumSide.png"
+    },
+    {
+        "name": "a la carte large side",
+        "image": "ALaCarteLargeSide.png"
+    },
+
+
+    {
+        "name": "Black Pepper Sirloin Steak",
+        "image": "BlackPepperSirloinSteak.png"
+    },
+    {
+        "name": "Broccoli Beef",
+        "image": "BroccoliBeef.png"
+    },
+    {
+        "name": "Kung Pao Chicken",
+        "image": "KungPaoChicken.png"
+    },
+    {
+        "name": "Honey Sesame Chicken",
+        "image": "HoneySesameChicken.png"
+    },
+    {
+        "name": "Beijing Beef",
+        "image": "BeijingBeef.png"
+    },
+    {
+        "name": "String Bean Chicken Breast",
+        "image": "StringBeanChickenBreast.png"
+    },
+    {
+        "name": "Grilled Teriyaki Chicken",
+        "image": "GrilledTeriyakiChicken.png"
+    },
+    {
+        "name": "Black Pepper Chicken",
+        "image": "BlackPepperChicken.png"
+    }, 
+    {
+        "name": "Sweetfire Chicken Breast",
+        "image": "SweetfireChickenBreast.png"
+    },
+    {
+        "name": "White Rice",
+        "image": "WhiteRice.png"
+    },
+    {
+        "name": "Fried Rice",
+        "image": "FriedRice.png"
+    },
+    {
+        "name": "Chow Mein",
+        "image": "ChowMein.png"
+    },
+    {
+        "name": "Super Greens",
+        "image": "SuperGreens.png"
+    },
+    {
+        "name": "Honey Walnut Shrimp",
+        "image": "HoneyWalnutShrimp.png"
+    },
+    {
+        "name": "Orange Chicken",
+        "image": "OrangeChicken.png"
+    },
+    {
+        "name": "Mushroom Chicken",
+        "image": "MushroomChicken.png"
+    }
+]

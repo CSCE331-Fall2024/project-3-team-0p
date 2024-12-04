@@ -575,3 +575,40 @@ async function orderInventory() {
         }
     }
 }
+
+console.log("hi");
+//STATS GRPAH CONTENT
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        //Get data from server
+        const response = await fetch('/api/sales-data');
+        const data = await response.json();
+
+        // Extract labels and sales data
+        const labels = data.map(item => item.month);
+        const salesData = data.map(item => parseFloat(item.total_sales));
+
+        //Make Chart
+        const ctx = document.getElementById('salesChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+            datasets: [{
+                label: 'Sales (USD)',
+                data: salesData,
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1,
+            }],
+            },
+            options: {
+            scales: {
+                y: { beginAtZero: true },
+            },
+            },
+        });
+    } catch(e) {
+
+    }
+});
