@@ -33,12 +33,13 @@ async function updateWeather() {
             document.getElementById("suggestion").textContent = "There is very heavy rain. Maybe you should close the store.";
         }
     }
-    
     catch (error) {
         console.error("Error fetching weather data:", error);
         document.getElementById("weather-info").textContent = "Error loading weather data.";
     }
 }
+
+updateWeather();
 
 const languageSelector = document.getElementById('language-select');
 languageSelector.addEventListener('change', (event) => {
@@ -75,7 +76,3 @@ async function translatePage() {
         }
     }
 }
-
-
-
-updateWeather();
