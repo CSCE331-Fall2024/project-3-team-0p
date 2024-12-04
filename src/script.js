@@ -248,11 +248,11 @@ async function setMealSizeButtonCustomer() {
     
         const mealName = mealSizeNames[i].mealname;
 
-        button.textContent = mealName;
-       
+        //button.textContent = mealName;
+
         // Made the label for the buttons for meal sizes with capitalized words
-        button.textContent = mealName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
-        button.setAttribute('data', button.textContent);
+        const newItemealName = mealName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+        button.setAttribute('data', newItemealName);
         button.className = "w-5/6 py-16 my-5 bg-red-500 text-white rounded hover:bg-red-600 sizeButton";
         button.addEventListener("click", mealSizeButtonClick);
         
@@ -261,32 +261,24 @@ async function setMealSizeButtonCustomer() {
 
         if (image) {
             const img = document.createElement("img");
-            img.src = `./menu-imgs/${image.image}`;
-            img.alt = mealName;
-            img.style.width = '100%';
-            img.style.height = '100%';
-            img.style.objectFit = 'cover';
-            img.style.position = 'absolute';
-            img.style.top = '0';
-            img.style.left = '0';
-            img.style.zIndex = '1';
+            img.src = `./menu_imgs/${image.image}`;
+            img.alt = newItemealName;
+            img.className = "w-full h-3/4 object-cover mb-2";
             
-            button.style.position = 'relative';
-            button.style.overflow = 'hidden';
             const textSpan = document.createElement('span');
-
-            textSpan.textContent = button.textContent;
-            textSpan.style.position = 'relative';
-            textSpan.style.zIndex = '2';
+            textSpan.textContent = newItemealName;
+            textSpan.className = "mt-2";
             
-            button.textContent = '';
             button.appendChild(img);
             button.appendChild(textSpan);
+        } else {
+            button.textContent = newItemealName;
         }
-
+        
         td.appendChild(button);
         tr.appendChild(td);
     }
+
     if(targetLanguage != "null") {
         translatePage();
     }
@@ -432,8 +424,7 @@ async function setEntreeButtonCustomer() {
         const button = document.createElement("button");
     
         const entreeName = entreeNames[i];
-        button.textContent = entreeName;
-        button.setAttribute('data', button.textContent);
+        button.setAttribute('data', entreeName);
         button.className = "w-5/6 py-16 bg-red-500 text-white rounded hover:bg-red-600 entreeButton";
         button.addEventListener("click", entreeButtonClick);
         
@@ -441,32 +432,27 @@ async function setEntreeButtonCustomer() {
 
         if (image) {
             const img = document.createElement("img");
-            img.src = `./menu-imgs/${image.image}`;
+            img.src = `./menu_imgs/${image.image}`;
             img.alt = entreeName;
-            img.style.width = '100%';
-            img.style.height = '100%';
-            img.style.objectFit = 'cover';
-            img.style.position = 'absolute';
-            img.style.top = '0';
-            img.style.left = '0';
-            img.style.zIndex = '1';
+            img.className = "w-full h-3/4 object-cover mb-2";
             
-            button.style.position = 'relative';
-            button.style.overflow = 'hidden';
+            // Created a new span for text
             const textSpan = document.createElement('span');
-
-            textSpan.textContent = button.textContent;
-            textSpan.style.position = 'relative';
-            textSpan.style.zIndex = '2';
+            textSpan.textContent = entreeName;
+            textSpan.className = "mt-2";
             
-            button.textContent = '';
+            // Changed the order of appending
             button.appendChild(img);
             button.appendChild(textSpan);
+        } else {
+            // If no image, just set the text content
+            button.textContent = entreeName;
         }
         
         td.appendChild(button);
         tr.appendChild(td);
     }
+        
     if(targetLanguage != "null") {
         translatePage();
     }
@@ -571,36 +557,29 @@ async function setSideButtonCustomer() {
         const button = document.createElement("button");
     
         const sideName = sideNames[i];
-        button.textContent = sideName;
-        button.setAttribute('data', button.textContent);
-        button.className = "w-5/6 py-16 my-5 bg-red-500 text-white rounded hover:bg-red-600 entreeButton";
+        button.setAttribute('data', sideName);
+        button.className = "w-5/6 py-16 my-5 bg-red-500 text-white rounded hover:bg-red-600 entreeButton flex flex-col items-center justify-center";
         button.addEventListener("click", sideButtonClick);
         
         const image = imageData.find(entry => entry.name === sideName);
 
         if (image) {
             const img = document.createElement("img");
-            img.src = `./menu-imgs/${image.image}`;
+            img.src = `./menu_imgs/${image.image}`;
             img.alt = sideName;
-            img.style.width = '100%';
-            img.style.height = '100%';
-            img.style.objectFit = 'cover';
-            img.style.position = 'absolute';
-            img.style.top = '0';
-            img.style.left = '0';
-            img.style.zIndex = '1';
+            img.className = "w-full h-3/4 object-cover mb-2";
             
-            button.style.position = 'relative';
-            button.style.overflow = 'hidden';
+            // Created a new span for text
             const textSpan = document.createElement('span');
-
-            textSpan.textContent = button.textContent;
-            textSpan.style.position = 'relative';
-            textSpan.style.zIndex = '2';
+            textSpan.textContent = sideName;
+            textSpan.className = "mt-2";
             
-            button.textContent = '';
+            // Changed the order of appending
             button.appendChild(img);
             button.appendChild(textSpan);
+        } else {
+            // If no image, just set the text content
+            button.textContent = sideName;
         }
         
         td.appendChild(button);
