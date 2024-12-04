@@ -9,16 +9,6 @@
     <link rel = "stylesheet" href = "./output.css">
 </head>
 <body>
-    <div id="translate-popup" class="absolute top-2 right-2 z-50 bg-white shadow-md rounded-lg p-3">
-        <select id="language-select" class="w-full p-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
-          <option value="" disabled selected>Select Language</option>
-          <option data-ignore value="null">English</option>
-          <option data-ignore value="es">Español</option>
-          <option data-ignore value="fr">Français</option>
-          <option data-ignore value="de">Deutsch</option>
-          <!-- Add more languages as needed -->
-        </select>
-    </div>
     <div class="flex relative">
         <div class="flex-shrink-0 w-1/5 h-screen bg-[#1A1B21]">
             <h2 class="text-center text-white pt-5 pb-5">Cashier Navigation</h2>
@@ -29,7 +19,7 @@
                 <li class="border-t border-white bg-[#C02827] hover:bg-[#ff7b7b]">
                     <a href="employee-entrees.html" class="block text-white p-6">Entrees</a>
                 </li>
-                <li class="border-t border-white bg-[#C02827] hover:bg-[#ff7b7b]">
+                <li class="border-t border-white bg-[#601515] hover:bg-[#601515]">
                     <a href="employee-sides.html" class="block text-white p-6">Sides</a>
                 </li>
                 <li class="border-t border-white bg-[#C02827] hover:bg-[#ff7b7b]">
@@ -42,7 +32,7 @@
         </div>
         
         <div class="flex-grow p-5">
-            <table id="side-table" class="w-full h-full">
+            <table id="side-table" class="w-full">
             </table>
         </div>
     </div>

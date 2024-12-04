@@ -723,6 +723,7 @@ async function placeOrder() {
 
         if (result.ok) {
             alert("Order Placed!")
+            decreaseInventory();
             // Resets the order and page to nothing
             currentOrder = [["N/A", "N/A", "N/A", "N/A", "N/A"]];
             currentMeal = 0;
@@ -746,6 +747,30 @@ async function placeOrder() {
     } catch (error) {
         console.error("Failed to place order in the database:", error);
         alert("Failed to place order. Please try again.");
+    }
+}
+
+async function decreaseInventory(){
+    const orderData = JSON.stringify(currentOrder);
+    console.log("Order inventory to decrease:", orderData);
+
+    try {
+        // Sends POST to the server
+        let result = await fetch("/decrease-inventory", {
+            method: "POST",
+            headers: {"content-type": "application/json"},
+            body: orderData
+        });
+
+        if (result.ok) {
+            alert("Decreased inventory")
+        } else {
+            const errorMessage = await result.json(); // Get error message from server
+            alert(`Error: ${errorMessage.message}`);
+        }
+    } catch (error) {
+            console.error("Failed to decrease inventory:", error);
+            alert("Failed to decrease inventory. Please try again.");
     }
 }
 
