@@ -572,7 +572,7 @@ async function setSideButtonCustomer() {
     
         const sideName = sideNames[i];
         button.setAttribute('data', sideName);
-        button.className = "w-5/6 py-16 my-5 bg-red-500 text-white rounded hover:bg-red-600 entreeButton flex flex-col items-center justify-center";
+        button.className = "w-5/6 py-16 my-5 bg-red-500 text-white rounded hover:bg-red-600 entreeButton";
         button.addEventListener("click", sideButtonClick);
         
         const image = imageData.find(entry => entry.name === sideName);
