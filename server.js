@@ -69,7 +69,7 @@ app.get(
 
 app.get("/meal-size", async (req, res) => {
     // Get data from the database
-    const rows = await readMealSizes();
+    const rows = await readMealSizesInfo();
     
     // Send response as a JSON object
     res.json(rows);
@@ -298,9 +298,9 @@ app.post("/delete-menu-item", async (req, res) => {
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////
-async function readMealSizes() {
+async function readMealSizesInfo() {
     try {
-        const results = await pool.query("SELECT mealname FROM mealsizes");
+        const results = await pool.query("SELECT mealname, numberofentrees, numberofsides FROM mealsizes");
         return results.rows;
     } catch(e) {
         console.log("Query failed: ", e);
@@ -390,7 +390,6 @@ async function decreaseInventory(orderData){
         await pool.query("UPDATE inventory SET amount = amount - 1 WHERE item_name = $1", ["napkins"]);  
 
         for(let j = 1; j < 5; ++j){
-            console.log(`orderdata[${i}][${j}]`, orderData[i][j])
             // Capitalize the menu item so it matches the value in SQL
             const menuItem = orderData[i][j].replace(/\b\w/g, char => char.toUpperCase());
             if(!orderData[i][j].includes("N/A")){

@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } else if (loadedWindow === "/employee-mealsize.html") {
         setMealSizeButton();
     } else if (loadedWindow === "/employee-entrees.html") {
-        setEntreeButton();
+        setEntreeButtonEmployee();
     } else if (loadedWindow === "/employee-sides.html") {
         setSideButton();
     } else if (loadedWindow === "/customer-orderConfirmation.html") {
@@ -102,7 +102,7 @@ if (loginButton) {
 
 // for meal size page: gets the text of each button and adds it to the array.
 // Also sets the price of the current item and also establishes the number of entrees and sides.
-async function getMealSizeNames() {
+async function getMealSizeInfo() {
     try {
         // Sends GET to the server
         let result = await fetch("/meal-size", {
@@ -111,6 +111,7 @@ async function getMealSizeNames() {
 
         if (result.ok) {
             const mealSizeNames = await result.json();
+            console.log(mealSizeNames);
             return mealSizeNames;
         } else {
             const errorMessage = await result.json(); // Get error message from server
@@ -195,7 +196,7 @@ function mealSizeButtonClick() {
 
 // For the cashier interface: Dynamically sets the meal size buttons.
 async function setMealSizeButton() {
-    let mealSizeNames = await getMealSizeNames();
+    let mealSizeNames = await getMealSizeInfo();
 
     const table = document.getElementById("meal-size-table");
     let tr;
@@ -228,7 +229,7 @@ async function setMealSizeButton() {
 
 // For the customer interface: Dynamically sets the meal size buttons and images.
 async function setMealSizeButtonCustomer() {
-    let mealSizeNames = await getMealSizeNames();
+    let mealSizeInfo = await getMealSizeInfo();
 
     const table = document.getElementById("meal-size-table");
     let tr;
@@ -236,7 +237,7 @@ async function setMealSizeButtonCustomer() {
     // Fetch image data from JSON file
     const imageData = await loadImageData();
     
-    for (let i = 0; i < mealSizeNames.length; ++i) {
+    for (let i = 0; i < mealSizeInfo.length; ++i) {
         if (i % 3 === 0) {
             tr = document.createElement("tr");
             table.appendChild(tr);
@@ -246,9 +247,9 @@ async function setMealSizeButtonCustomer() {
         td.className = "w-1/3";
         const button = document.createElement("button");
     
-        const mealName = mealSizeNames[i].mealname;
-
-        //button.textContent = mealName;
+        const mealName = mealSizeInfo[i].mealname;
+        const entreeNum = mealSizeInfo[i].numberofentrees;
+        const sideNum = mealSizeInfo[i].numberofsides;
 
         // Made the label for the buttons for meal sizes with capitalized words
         const newItemealName = mealName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
@@ -266,7 +267,20 @@ async function setMealSizeButtonCustomer() {
             img.className = "w-full h-3/4 object-cover mb-2";
             
             const textSpan = document.createElement('span');
-            textSpan.textContent = newItemealName;
+            // textSpan.textContent = `${newItemealName}\n${entreeNum}&${sideNum}`;
+
+            if (sideNum == 0) {
+                textSpan.innerHTML = `${newItemealName}<br>${entreeNum} entree`;
+            } else if (entreeNum == 0) {
+                textSpan.innerHTML = `${newItemealName}<br>${sideNum} side`;
+            } else {
+                if (entreeNum == 1) {
+                    textSpan.innerHTML = `${newItemealName}<br>${sideNum} side & ${entreeNum} entree`;
+                } else {
+                    textSpan.innerHTML = `${newItemealName}<br>${sideNum} side & ${entreeNum} entrees`;
+                }
+            }
+
             textSpan.className = "mt-2";
             
             button.appendChild(img);
@@ -348,6 +362,8 @@ function entreeButtonClick() {
         if (selectedEntrees < numEntrees){
             if(currentPage.includes("customer")){
                 updateOrderDisplay();
+            } else {
+                this.textContent = `${this.getAttribute('data')} (${currentOrder[currentMeal].filter(item => item === buttonText).length})`;
             }
         }
         if(numSides != 0 && selectedEntrees == numEntrees){
@@ -373,7 +389,7 @@ function entreeButtonClick() {
     }
 }
 //entree buttons for cashier
-async function setEntreeButton() {
+async function setEntreeButtonEmployee() {
     let entreeNames = await getEntreeNames();
 
     const table = document.getElementById("entree-table");
@@ -558,7 +574,7 @@ async function setSideButtonCustomer() {
     
         const sideName = sideNames[i];
         button.setAttribute('data', sideName);
-        button.className = "w-5/6 py-16 my-5 bg-red-500 text-white rounded hover:bg-red-600 entreeButton flex flex-col items-center justify-center";
+        button.className = "w-5/6 py-16 my-5 bg-red-500 text-white rounded hover:bg-red-600 entreeButton";
         button.addEventListener("click", sideButtonClick);
         
         const image = imageData.find(entry => entry.name === sideName);
