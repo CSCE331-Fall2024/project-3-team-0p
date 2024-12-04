@@ -566,6 +566,28 @@ async function orderInventory(orderInventoryData) {
     }
 }
 
+// Gets sales data from database
+app.get('/api/sales-data', async (req, res) => {
+    try {
+        const result = await pool.query(`
+            SELECT
+                TO_CHAR(date, 'YYYY-MM') AS month,
+                SUM(price * num_of_items) AS total_sales
+            FROM
+                orders
+            GROUP BY
+                month
+            ORDER BY
+                month;
+        `);
+      
+      res.json(result.rows);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      res.status(500).send('Server Error');
+    }
+});
+
 // Close the client when the application exits
 process.on('exit', async () => {
     await pool.end();

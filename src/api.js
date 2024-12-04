@@ -50,7 +50,7 @@ languageSelector.addEventListener('change', (event) => {
 //translates text in page
 async function translatePage() {
     const apiKey = 'AIzaSyBBXNpFEe3ng4ydNNgHXK_s6cNgwjt-_so';
-    if (targetLanguage == "null") return;
+    if (targetLanguage == "null" || targetLanguage == "") return;
 
     const elementsToTranslate = Array.from(document.body.querySelectorAll('*')).filter((el) =>
         el.childNodes.length === 1 && 
