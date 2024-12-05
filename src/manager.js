@@ -211,7 +211,12 @@ async function changeEmployee() {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 // manager-meals.html
-
+/**
+ * Gets all menu items from the server and returns them as a JSON object.
+ * @async
+ * @function getMenuData
+ * @returns {Promise<Object[]>} The menu items, or an error message if the request fails.
+ */
 async function getMenuData() {
     try {
         let result = await fetch("/menuitems", {
@@ -219,9 +224,11 @@ async function getMenuData() {
         });
     
         if (result.ok) {
-            const menuData = result.json();  // Missing await
+            // The JSON response is an array of objects, each with keys name, category, ingredient1, ingredient2, and ingredient3.
+            const menuData = await result.json();
             return menuData;
         } else {
+            // The JSON response is an object with an error message.
             const errorMessage = await result.json(); 
             alert(`Error: ${errorMessage.message}`);
         }
@@ -232,15 +239,25 @@ async function getMenuData() {
 }
 
 
+/**
+ * Gets the menu data from the server and populates the menu table with it.
+ * The menu table has columns for the name, category, and three ingredients.
+ * The function is async, so it returns a Promise that resolves when the table is populated.
+ * @async
+ * @function populateMenuTable
+ */
 async function populateMenuTable() {
+    // Get the menu data from the server
     let menuData = await getMenuData();
 
+    // Get the menu table element
     const menuTable = document.getElementById("menu-table");
-    // Creates the row element for the headers and adds it to the table
+
+    // Create the row element for the headers and add it to the table
     let tr = document.createElement("tr");
     menuTable.append(tr);
 
-    // Sets the header for the menu item table
+    // Set the header for the menu item table
     const tableHeaders = ["Name", "Category", "Ingredient 1", "Ingredient 2", "Ingredient 3"];
     for (let i = 0; i < 5; ++i) {
         const td = document.createElement("td");
@@ -249,12 +266,14 @@ async function populateMenuTable() {
         tr.appendChild(td);
     }
 
-    // Populates a row for each menu item with all its data
+    // Populate a row for each menu item with all its data
     menuData.forEach(item => {
-        const itemInfo = [item.name, item.category, item.ingredient1, item.ingredient2, item.ingredient3];
+        // Create a row element for this menu item
         tr = document.createElement("tr");
         tr.id = item.name;
 
+        // Create table cells for each of the menu item's properties
+        const itemInfo = [item.name, item.category, item.ingredient1, item.ingredient2, item.ingredient3];
         itemInfo.forEach(info => {
             const td = document.createElement("td");
             td.textContent = info;
@@ -262,29 +281,50 @@ async function populateMenuTable() {
             tr.appendChild(td);
         });
 
+        // Add the row to the menu table
         menuTable.appendChild(tr);
     });
 }
 
+/**
+ * Adds an event listener to the "Add Menu Item" button.
+ * When the button is clicked, the addMenuItem function is called.
+ * @function
+ */
 const addItemButton = document.getElementById("add-menu-item-button");
 if (addItemButton) {
     addItemButton.addEventListener("click", addMenuItem);
 }
 
+/**
+ * Adds an event listener to the "Delete Menu Item" button.
+ * When the button is clicked, the deleteMenuItem function is called.
+ * @function
+ */
 const deleteItemButton = document.getElementById("delete-item-button");
 if (deleteItemButton) {
     deleteItemButton.addEventListener("click", deleteMenuItem);
 }
 
+/**
+ * Adds a new menu item to the menu table and the database.
+ * This function retrieves input values from the form, sends them to the server,
+ * and updates the menu table upon success.
+ * @async
+ * @function addMenuItem
+ */
 async function addMenuItem() {
+    // Retrieve input values for the new menu item
     const newItem = document.getElementById("add-name-input").value;
     const newCategory = document.getElementById("add-category").value;
     const newIngredient1 = document.getElementById("add-ingredient1-input").value;
     const newIngredient2 = document.getElementById("add-ingredient2-input").value;
     const newIngredient3 = document.getElementById("add-ingredient3-input").value;
 
+    // Create an array to hold the new menu item's data
     const addItemInfo = [newItem, newCategory, newIngredient1, newIngredient2, newIngredient3];
 
+    // Check if all required fields are filled in
     if (!newItem || !newIngredient1 || !newIngredient2 || !newIngredient3) {
         alert("Missing new menu item info. Try again.");
         return;
@@ -293,25 +333,31 @@ async function addMenuItem() {
     }
 
     try {
+        // Convert the menu item data to JSON
         const addItemData = JSON.stringify(addItemInfo);
+
+        // Send a POST request to add the new menu item to the database
         let result = await fetch("/add-menu-item", {
             method: "POST",
             headers: {"content-type": "application/json"},
             body: addItemData
         });
 
+        // Check if the request was successful
         if (result.ok) {
             alert("Menu item added!");
         } else {
-            const errorMessage = await result.json(); 
+            // Get the error message from the server and display it
+            const errorMessage = await result.json();
             alert(`Error: ${errorMessage.message}`);
         }
 
-        // Update the table display
+        // Update the menu table with the new menu item
         const menuTable = document.getElementById("menu-table");
         const tr = document.createElement("tr");
         tr.id = newItem;
 
+        // Create table cells for each piece of the menu item's data
         addItemInfo.forEach(info => {
             const td = document.createElement("td");
             td.textContent = info;
@@ -319,8 +365,10 @@ async function addMenuItem() {
             tr.appendChild(td);
         });
 
+        // Add the new row to the menu table
         menuTable.appendChild(tr);
 
+        // Clear input fields after adding the menu item
         document.getElementById("add-name-input").value = "";
         document.getElementById("add-ingredient1-input").value = "";
         document.getElementById("add-ingredient2-input").value = "";
@@ -328,11 +376,16 @@ async function addMenuItem() {
         document.getElementById("add-category").value = "";
 
     } catch (error) {
+        // Log and alert if there was a problem sending the data
         console.error("Failed to send menu item data to add to the database:", error);
         alert("Failed to add new menu item. Please try again.");
     }
 }
 
+/**
+ * Deletes a menu item from the database.
+ * @returns {Promise<void>}
+ */
 async function deleteMenuItem() {
     const deleteItem = document.getElementById("delete-item-input").value;
     
@@ -342,16 +395,19 @@ async function deleteMenuItem() {
     }
 
     try {
+        // Send the request to the server
         let result = await fetch("/delete-menu-item", {
             method: "POST",
             headers: {"content-type": "text/plain"},
             body: deleteItem
         });
 
+        // Check if the request was successful
         if (result.ok) {
             const responseMessage = await result.json();
             alert(responseMessage.message);
         } else {
+            // Get the error message from the server and display it
             const errorMessage = await result.json(); 
             alert(`Error: ${errorMessage.message}`);
         }
@@ -361,9 +417,11 @@ async function deleteMenuItem() {
         const tr = document.getElementById(deleteItem);
         menuTable.deleteRow(tr.rowIndex);
         
+        // Clear the input field after deleting the menu item
         document.getElementById("delete-item-input").value = "";
 
     } catch (error) {
+        // Log and alert if there was a problem sending the data
         console.error("Failed to send menu item data to delete to the database:", error);
         alert("Failed to delete menu item. Please try again.");
     }

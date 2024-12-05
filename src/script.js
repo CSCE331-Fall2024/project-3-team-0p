@@ -123,20 +123,29 @@ async function getMealSizeInfo() {
     }
 }
 
-//loading image data
+/**
+ * Loads image data from the JSON file.
+ * @returns {Promise<Array>} An array of objects, each containing the name and image URL of a menu item.
+ */
 async function loadImageData() {
     try {
+        // Fetch the JSON file
         const response = await fetch('images.json');
+
+        // Check if the response was successful
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
+
+        // Return the JSON data
         return await response.json();
     } catch (error) {
         console.error('Error loading image data:', error);
         console.log('Response:', error.response);
+        // Return an empty array if there was an error
         return [];
     }
-  }
+}
 
 function mealSizeButtonClick() {
     if(currentOrder[currentMeal][0] != "N/A"){
@@ -228,8 +237,14 @@ async function setMealSizeButton() {
 }
 
 // For the customer interface: Dynamically sets the meal size buttons and images.
+/**
+ * Dynamically sets the meal size buttons and images for the customer interface.
+ * Gets the image data from the JSON file and the meal size info from the server.
+ * Creates a table with the meal size buttons and images.
+ * Redirects to either the entrees page or review page if we finish selecting entrees.
+ */
 async function setMealSizeButtonCustomer() {
-    let mealSizeInfo = await getMealSizeInfo();
+    const mealSizeInfo = await getMealSizeInfo();
 
     const table = document.getElementById("meal-size-table");
     let tr;
@@ -417,8 +432,13 @@ async function setEntreeButtonEmployee() {
         translatePage();
     }
 }
-
-//entree buttons for customer with images
+/**
+ * Creates entree buttons for customer with images
+ * Fetches image data from the imageData.json file
+ * Adds buttons to the table in the customer-entrees.html page
+ * Each button has an image and a text label
+ * Button is clicked, it calls the entreeButtonClick function
+ */
 async function setEntreeButtonCustomer() {
     let entreeNames = await getEntreeNames();
 
@@ -446,17 +466,18 @@ async function setEntreeButtonCustomer() {
         const image = imageData.find(entry => entry.name === entreeName);
 
         if (image) {
+            // Create an img element with the image
             const img = document.createElement("img");
             img.src = `./menu_imgs/${image.image}`;
             img.alt = entreeName;
             img.className = "w-full h-3/4 object-cover mb-2";
             
-            // Created a new span for text
+            // Create a new span for text
             const textSpan = document.createElement('span');
             textSpan.textContent = entreeName;
             textSpan.className = "mt-2";
             
-            // Changed the order of appending
+            // Change the order of appending
             button.appendChild(img);
             button.appendChild(textSpan);
         } else {
@@ -550,8 +571,11 @@ async function setSideButton() {
         translatePage();
     }
 }
-
-//side buttons for customer with images
+// Creates side buttons for customer with images
+// Fetches image data from the imageData.json file
+// Adds buttons to the table in the customer-sides.html page
+// Each button has an image and a text label
+// Button is clicked, it calls the sideButtonClick function
 async function setSideButtonCustomer() {
     let sideNames = await getSideNames();
 
@@ -576,9 +600,11 @@ async function setSideButtonCustomer() {
         button.className = "w-5/6 py-16 my-5 bg-red-500 text-white rounded hover:bg-red-600 entreeButton";
         button.addEventListener("click", sideButtonClick);
         
+        // Find the corresponding image for the current side name
         const image = imageData.find(entry => entry.name === sideName);
 
         if (image) {
+            // Create an img element with the image
             const img = document.createElement("img");
             img.src = `./menu_imgs/${image.image}`;
             img.alt = sideName;
@@ -628,6 +654,11 @@ async function displayOrderID(){
 
 // for review page: make buttons functional and display order values while also connecting and interacting with the server
 // refreshes page and current order when order is placed
+/**
+ * Updates the order display on the review page.
+ * 
+ * @returns {Promise<void>}
+ */
 async function updateOrderDisplay() {
     console.log("current order: " + currentOrder);
     const mealDetailsElement = document.getElementById("order-display");
@@ -638,6 +669,8 @@ async function updateOrderDisplay() {
         if (storedOrder) {
             const currentOrder = JSON.parse(storedOrder);
             if(currentPage.includes("displayMeals") || currentPage.includes("customer-entrees") || currentPage.includes("customer-sides")){
+                // If the current page is the meal selection or side selection page
+                // display the food in the current meal
                 let validFood = [];
                 currentOrder[currentMeal].forEach(food => {
                     if (food !== "N/A") {
@@ -647,8 +680,12 @@ async function updateOrderDisplay() {
                 })
                 mealDetailsElement.textContent = validFood.join("\n    ");
             } else if (currentPage.includes("customer-mealsize")){
+                // If the current page is the meal size selection page
+                // display "No meal selected."
                 mealDetailsElement.textContent = "No meal selected.";
             } else{
+                // If the current page is the review order page
+                // display the food in all the meals
                 let prettyOrder = [];
                 currentOrder.forEach(meal => {
                     let validFood = [];
@@ -665,9 +702,15 @@ async function updateOrderDisplay() {
                 orderTotalElement.textContent = "Order Total: $" + gottenPrice.toFixed(2);
             }
         } else if (currentPage.includes("customer-mealsize")){
+            // If the current page is the meal size selection page
+            // and there is no stored order
+            // display "No meal selected."
             mealDetailsElement.textContent = "No meal selected.";
         }
         else {
+            // If the current page is not the meal selection or side selection page
+            // and there is no stored order
+            // display "No meal selected."
             mealDetailsElement.textContent = "No meal selected.";
             orderTotalElement.textContent = "Order Total: $0.00";
         }
