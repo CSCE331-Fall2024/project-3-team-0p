@@ -266,25 +266,24 @@ async function setMealSizeButtonCustomer() {
             img.alt = newItemealName;
             img.className = "w-full h-3/4 object-cover mb-2";
             
-            const textSpan = document.createElement('span');
-            // textSpan.textContent = `${newItemealName}\n${entreeNum}&${sideNum}`;
+            const pre = document.createElement('pre');
 
             if (sideNum == 0) {
-                textSpan.innerHTML = `${newItemealName}<br>${entreeNum} entree`;
+                pre.textContent = `${newItemealName}\n${entreeNum} entree`;
             } else if (entreeNum == 0) {
-                textSpan.innerHTML = `${newItemealName}<br>${sideNum} side`;
+                pre.textContent = `${newItemealName}\n${sideNum} side`;
             } else {
                 if (entreeNum == 1) {
-                    textSpan.innerHTML = `${newItemealName}<br>${sideNum} side & ${entreeNum} entree`;
+                    pre.textContent = `${newItemealName}\n${sideNum} side & ${entreeNum} entree`;
                 } else {
-                    textSpan.innerHTML = `${newItemealName}<br>${sideNum} side & ${entreeNum} entrees`;
+                    pre.textContent = `${newItemealName}\n${sideNum} side & ${entreeNum} entrees`;
                 }
             }
 
-            textSpan.className = "mt-2";
+            pre.className = "mt-2 font-sans whitespace-pre-wrap";
             
             button.appendChild(img);
-            button.appendChild(textSpan);
+            button.appendChild(pre);
         } else {
             button.textContent = newItemealName;
         }
