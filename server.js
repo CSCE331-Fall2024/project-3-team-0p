@@ -265,13 +265,31 @@ app.post("/decrease-inventory", async (req, res) => {
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // Functions for manager-meals page
 
+/**
+ * Gets all menu items from the server and returns them as a JSON array of objects.
+ * @async
+ * @function getMenuItems
+ * @returns {Promise<Object[]>} The menu items, or an error message if the request fails.
+ */
 app.get("/menuitems", async (req, res) => {
-    // Get data from the database
-    const rows = await readMenuItems();
-    
-    res.json(rows);
+    try {
+        // Get data from the database
+        const rows = await readMenuItems();
+        
+        res.json(rows);
+    } catch(e) {
+        console.error(`HTTP request failed: ${e}`);
+        res.status(500).json({ message: "Internal server error" });
+    }
 });
 
+/**
+ * Adds a new menu item to the database.
+ * @async
+ * @function addMenuItem
+ * @param {Object} menuItemData The new menu item data.
+ * @returns {Promise<void>}
+ */
 app.post("/add-menu-item", async (req, res) => {
     try {
         const menuItemData = req.body;
@@ -284,6 +302,13 @@ app.post("/add-menu-item", async (req, res) => {
     }
 });
 
+/**
+ * Deletes a menu item from the database.
+ * @async
+ * @function deleteMenuItem
+ * @param {string} name The name of the menu item to delete.
+ * @returns {Promise<void>}
+ */
 app.post("/delete-menu-item", async (req, res) => {
     try {
         const name = req.body;
@@ -475,6 +500,12 @@ async function changeEmployeePosition(employeeData) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Functions for manager-meals page
+/**
+ * Gets all menu items from the database and returns them as an array of objects.
+ * @async
+ * @function readMenuItems
+ * @returns {Promise<Object[]>} The menu items, or an error message if the request fails.
+ */
 async function readMenuItems() {
     try {
         const results = await pool.query("SELECT name, category, ingredient1, ingredient2, ingredient3 FROM menuitems");
@@ -484,6 +515,13 @@ async function readMenuItems() {
     }
 }
 
+/**
+ * Adds a new menu item to the database.
+ * @async
+ * @function addMenuItem
+ * @param {Object} menuItemData The new menu item data.
+ * @returns {Promise<void>}
+ */
 async function addMenuItem(menuItemData) {
     try {
         const name = menuItemData[0];
@@ -498,6 +536,13 @@ async function addMenuItem(menuItemData) {
     }
 }
 
+/**
+ * Deletes a menu item from the database.
+ * @async
+ * @function deleteMenuItem
+ * @param {String} name The name of the menu item to delete.
+ * @returns {Promise<String>} A success or failure message.
+ */
 async function deleteMenuItem(name) {
     try {
         let result = await pool.query("DELETE FROM menuitems WHERE name = $1", [name]);
