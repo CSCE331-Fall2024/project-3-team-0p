@@ -306,6 +306,27 @@ async function addMenuItem() {
             const errorMessage = await result.json(); 
             alert(`Error: ${errorMessage.message}`);
         }
+
+        // Update the table display
+        const menuTable = document.getElementById("menu-table");
+        const tr = document.createElement("tr");
+        tr.id = newItem;
+
+        addItemInfo.forEach(info => {
+            const td = document.createElement("td");
+            td.textContent = info;
+            td.className = "w-1/5 border-2 border-black";
+            tr.appendChild(td);
+        });
+
+        menuTable.appendChild(tr);
+
+        document.getElementById("add-name-input").value = "";
+        document.getElementById("add-ingredient1-input").value = "";
+        document.getElementById("add-ingredient2-input").value = "";
+        document.getElementById("add-ingredient3-input").value = "";
+        document.getElementById("add-category").value = "";
+
     } catch (error) {
         console.error("Failed to send menu item data to add to the database:", error);
         alert("Failed to add new menu item. Please try again.");
@@ -334,6 +355,14 @@ async function deleteMenuItem() {
             const errorMessage = await result.json(); 
             alert(`Error: ${errorMessage.message}`);
         }
+
+        // Update the table display
+        const menuTable = document.getElementById("menu-table");      
+        const tr = document.getElementById(deleteItem);
+        menuTable.deleteRow(tr.rowIndex);
+        
+        document.getElementById("delete-item-input").value = "";
+
     } catch (error) {
         console.error("Failed to send menu item data to delete to the database:", error);
         alert("Failed to delete menu item. Please try again.");
@@ -577,7 +606,6 @@ async function orderInventory() {
     }
 }
 
-console.log("hi");
 //STATS GRPAH CONTENT
 document.addEventListener('DOMContentLoaded', async () => {
     try {
