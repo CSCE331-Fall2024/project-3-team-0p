@@ -1,7 +1,9 @@
 // const weather_api = "https://api.weatherbit.io/v2.0/current?lat=30.628&lon=-96.3344&key=59b64ecfcc1e48d99f3c00e333c61f97&include=minutely";
 const weather_api = "https://api.weatherbit.io/v2.0/current?lat=30.628&lon=-96.3344&key=c606812b4de3452d8c4469b67f368633&include=minutely"; 
 
-// updates the weather every time the statistic page shows up. Shows the temperature, a description, and the precipitation.
+/**
+ * Updates the weather every time the statistic page shows up. Shows the temperature, a description, and the precipitation.
+ */
 async function updateWeather() {
     try {
         const response = await fetch(weather_api);
