@@ -12,6 +12,7 @@
 </head>
 <body>
     <div class="flex relative">
+        <!-- Navigation bar -->
         <div class="flex-shrink-0 w-1/5 h-screen bg-[#1A1B21]">
             <h2 class="text-center text-white pt-5 pb-5">Cashier Navigation</h2>
             <ul>
@@ -37,16 +38,18 @@
         </div>
 
         <div class="flex-grow p-5">
+            <!-- The graph for sales number each month of the year -->
             <canvas id="salesChart" class="bg-white rounded-lg shadow-md"></canvas>
 
+            <!-- Contains the weather data when hovering over the cloud -->
             <div class="w-16 h-16 flex justify-center items-center bg-red-500 rounded-full group absolute right-7 bottom-7">
                 <span class="group-hover:hidden text-white text-3xl">🌥️</span>
                 <span class="hidden group-hover:block">
-                    <span id="weather-icon" class="text-3xl"></span>
-                    <div class="w-64 h-36 p-4 flex flex-col justify-center bg-red-500 rounded-3xl text-white group absolute right-10 bottom-7">
-                        <p id="weather-info">Loading Weather Data...</p>
-                        <p id="suggestion">Loading Precipitation Suggestion...</p>
-                    </div>
+                <span id="weather-icon" class="text-3xl"></span>
+                <div class="w-64 h-36 p-4 flex flex-col justify-center bg-red-500 rounded-3xl text-white group absolute right-10 bottom-7">
+                    <p id="weather-info">Loading Weather Data...</p>
+                    <p id="suggestion">Loading Precipitation Suggestion...</p>
+                </div>
                 </span>
             </div>
         </div>
