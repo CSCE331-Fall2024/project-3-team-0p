@@ -6,8 +6,6 @@ const express = require("express");
 const path = require("path");
 const passport = require('passport');
 const { Strategy: GoogleStrategy } = require('passport-google-oauth20');
-const { userInfo } = require("os");
-const { exit } = require("process");
 
 // Connects to the database
 const app = express();
@@ -15,6 +13,7 @@ app.use(express.static(path.join(__dirname, "src")));
 app.use(express.json());
 app.use(express.text());
 
+// Connects to the data locally and privately
 const pool = new Pool ({
     "host": "csce-315-db.engr.tamu.edu",
     "user": "team_0p",
@@ -48,7 +47,7 @@ app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "src", "employee-mealsize.html"));
 });
 
-// Launches the web page
+// Launches the web page at 8080
 app.listen(8080, () => console.log("app listening at http://localhost:8080"));
 
 // Start the Google login process
@@ -67,6 +66,7 @@ app.get(
     }
 );
 
+// Used to get the meal size info
 app.get("/meal-size", async (req, res) => {
     // Get data from the database
     const rows = await readMealSizesInfo();
@@ -75,6 +75,7 @@ app.get("/meal-size", async (req, res) => {
     res.json(rows);
 });
 
+// Gets the entree info
 app.get("/entrees", async (req, res) => {
     // Get data from the database
     const rows = await readMenuItems();
@@ -86,6 +87,7 @@ app.get("/entrees", async (req, res) => {
     res.json(entrees);
 });
 
+// Gets the side info
 app.get("/sides", async (req, res) => {
     // Get data from the database
     const rows = await readMenuItems();
@@ -99,24 +101,24 @@ app.get("/sides", async (req, res) => {
 
 //Tests inputed login credentials against database
 app.post("/login", async (req, res) => {
-const { username, password } = req.body;
+    const { username, password } = req.body;
   
-  try {
-    const result = await pool.query(
-      "SELECT position FROM employees WHERE username = $1 AND password = $2",
-      [username, password]
-    );
+    try {
+        const result = await pool.query(
+            "SELECT position FROM employees WHERE username = $1 AND password = $2",
+            [username, password]
+        );
 
-    if (result.rows.length > 0) {
-      const position = result.rows[0].position;
-      res.json({ success: true, position: position });
-    } else {
-      res.json({ success: false, message: "Invalid credentials" });
+        if (result.rows.length > 0) {
+            const position = result.rows[0].position;
+            res.json({ success: true, position: position });
+        } else {
+            res.json({ success: false, message: "Invalid credentials" });
+        }
+    } catch (error) {
+        console.error("Login error:", error);
+        res.status(500).json({ success: false, message: "Server error" });
     }
-  } catch (error) {
-    console.error("Login error:", error);
-    res.status(500).json({ success: false, message: "Server error" });
-  }
 });
 
 //get cost of current order
@@ -163,6 +165,7 @@ app.get("/employees", async (req, res) => {
     res.json(rows);
 });
 
+// Gets the data for all inventory items
 app.get("/inventory", async (req, res) => {
     // Get data from the database
     const rows = await readInventory();
@@ -170,6 +173,7 @@ app.get("/inventory", async (req, res) => {
     res.json(rows);
 });
 
+// Gets the data (just the names) for an inventory dropdown
 app.get('/inventoryItems', async (req, res) => {
     try {
         const result = await pool.query('SELECT item_name FROM inventory');
@@ -180,6 +184,7 @@ app.get('/inventoryItems', async (req, res) => {
     }
 });
 
+// Gets the prices of all the meals and their prices
 app.get("/prices", async (req, res) => {
     // Get data from the database
     const rows = await readMealPrices();
@@ -187,6 +192,7 @@ app.get("/prices", async (req, res) => {
     res.json(rows);
 });
 
+// Puts new employee data sent in the database
 app.post("/add-employee", async (req, res) => {
     try {
         const employeeData = req.body;
@@ -199,6 +205,7 @@ app.post("/add-employee", async (req, res) => {
     }
 });
 
+// Removes the employee data sent from the database
 app.post("/remove-employee", async (req, res) => {
     try {
         const username = req.body;
@@ -212,6 +219,7 @@ app.post("/remove-employee", async (req, res) => {
     }
 });
 
+// Changes the database from the employee data sent
 app.post("/change-employee-position", async (req, res) => {
     try {
         const employeeData = req.body;
@@ -225,6 +233,7 @@ app.post("/change-employee-position", async (req, res) => {
     }
 });
 
+// Changes the database from the price data sent
 app.post("/change-price", async (req, res) => {
     try {
         const newPriceData = req.body;
@@ -238,6 +247,7 @@ app.post("/change-price", async (req, res) => {
     }
 });
 
+// Changes the data from the inventory data sent
 app.post("/order-inventory", async (req, res) => {
     try {
         const orderInventoryData = req.body;
@@ -251,6 +261,7 @@ app.post("/order-inventory", async (req, res) => {
     }
 });
 
+// Changes the data based on the inventory data sent
 app.post("/decrease-inventory", async (req, res) => {
     try {
         const orderInventoryData = req.body;
@@ -263,9 +274,6 @@ app.post("/decrease-inventory", async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 });
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-// Functions for manager-meals page
 
 /**
  * Gets all menu items from the server and returns them as a JSON array of objects.
@@ -324,7 +332,12 @@ app.post("/delete-menu-item", async (req, res) => {
     }
 });
 
-//////////////////////////////////////////////////////////////////////////////////////////////
+/**
+ * Makes query to get data from the table mealsizes.
+ * @async
+ * @function readMealSizesInfo
+ * @returns {Promise|null} Returns the meal name, num of entrees, and num of sides
+ */
 async function readMealSizesInfo() {
     try {
         const results = await pool.query("SELECT mealname, numberofentrees, numberofsides FROM mealsizes");
@@ -334,6 +347,13 @@ async function readMealSizesInfo() {
     }
 }
 
+/**
+ * Makes query to get data from the table orders.
+ * @async
+ * @function readMealSizesInfo
+ * @param {Object} orderData The order data
+ * @returns {Promise|null} Returns the id of the last order
+ */
 async function addOrder(orderData) {
     try{
         // INFORMATION FOR ORDER
@@ -390,6 +410,12 @@ async function addOrder(orderData) {
     }
 }
 
+/**
+ * Makes query to get data from the table mealsizes.
+ * @async
+ * @function readMealSizesInfo
+ * @param {Object} orderData The for the inventory
+ */
 async function decreaseInventory(orderData){
     const numItems = orderData.length;
     let amountNeeded = .3;
@@ -428,11 +454,15 @@ async function decreaseInventory(orderData){
             }
         }
     }
-
-
 }
 
-//Returns price of the order passed in based on meal prices set in the database
+/**
+ * Makes a query to the database for the price of a meal size
+ * @async
+ * @function getOrderPrice
+ * @param {Object} orderData The order data that the customer chose.
+ * @returns {Promise<Array} Returns price of the order passed in based on meal prices set in the database
+ */
 async function getOrderPrice(orderData) {
     try {
         let orderPrice = 0;
@@ -447,7 +477,12 @@ async function getOrderPrice(orderData) {
     }
 }
 
-// Functions for manager-employee page
+/**
+ * Makes a query to the database for all the employee data.
+ * @async
+ * @function readEmployees
+ * @returns {Promise<Array} Returns the name, username, password, and position of all employees
+ */
 async function readEmployees() {
     try {
         const results = await pool.query("SELECT name, username, password, position FROM employees");
@@ -457,6 +492,12 @@ async function readEmployees() {
     }
 }
 
+/**
+ * Makes a query to the data to insert a new employee.
+ * @async
+ * @function addEmployee
+ * @param {Object} employeeData The new employee data.
+ */
 async function addEmployee(employeeData) {
     try {
         const name = employeeData[0];
@@ -470,6 +511,13 @@ async function addEmployee(employeeData) {
     }
 }
 
+/**
+ * Makes a query to the database to remove an employee from the database.
+ * @async
+ * @function removeEmployee
+ * @param {Object} username The username of the employee
+ * @returns {Promise<String>} Returns a message if successful or not
+ */
 async function removeEmployee(username) {
     try {
         let result = await pool.query("DELETE FROM employees WHERE username = $1", [username]);
@@ -484,6 +532,13 @@ async function removeEmployee(username) {
     }
 }
 
+/**
+ * Makes a query to the database to change the position of an employee.
+ * @async
+ * @function changeEmployeePosition
+ * @param {Object} employeeData The employee data.
+ * @returns {Promise<String>} Returns a message if successful or not
+ */
 async function changeEmployeePosition(employeeData) {
     try {
         const username = employeeData[0];
@@ -500,9 +555,7 @@ async function changeEmployeePosition(employeeData) {
         console.log("Query failed to change employee's position:", e);
     }
 }
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// Functions for manager-meals page
 /**
  * Gets all menu items from the database and returns them as an array of objects.
  * @async
@@ -559,8 +612,13 @@ async function deleteMenuItem(name) {
         console.log("Query failed to add menu item:", e);
     }
 }
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/**
+ * Makes a query to the database to get all meal names and their prices
+ * @async
+ * @function readMealPrices
+ * @returns {Promise<Array>} Returns the mealname and price
+ */
 async function readMealPrices() {
     try {
         const results = await pool.query("SELECT mealname, price FROM mealsizes");
@@ -570,6 +628,12 @@ async function readMealPrices() {
     }
 }
 
+/**
+ * Makes a query to the database for all inventoy items and their amounts
+ * @async
+ * @function readInventory
+ * @returns {Promise<Array>} Returns all inventory items and its amount
+ */
 async function readInventory() {
     try {
         const results = await pool.query("SELECT item_name, amount FROM inventory");
@@ -579,6 +643,13 @@ async function readInventory() {
     }
 }
 
+/**
+ * Makes a query to the database that updates the price of the meal size.
+ * @async
+ * @function changePrice
+ * @param {Object} newPriceData Object of the meal size and its new price 
+ * @returns 
+ */
 async function changePrice(newPriceData) {
     try {
         const mealName = newPriceData[0];
@@ -596,6 +667,13 @@ async function changePrice(newPriceData) {
     }
 }
 
+/**
+ * Makes a query to the database that adds more inventory for a specific item.
+ * @async
+ * @function orderInventory
+ * @param {Object} orderInventoryData Inventory item name and its added amount 
+ * @returns {Promise<String>} A message of if the ordering was a success or not
+ */
 async function orderInventory(orderInventoryData) {
     try {
         const item_name = orderInventoryData[0];

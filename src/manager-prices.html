@@ -11,6 +11,7 @@
 </head>
 <body>
     <div class="flex relative">
+        <!-- Navigation bar -->
         <div class="flex-shrink-0 w-1/5 h-screen bg-[#1A1B21]">
             <h2 class="text-center text-white pt-5 pb-5">Cashier Navigation</h2>
             <ul>
@@ -36,12 +37,14 @@
         </div>
 
         <div class="flex flex-col w-full">
+            <!-- Table to hold meal size and their prices that is added dynamically -->
             <div class="flex-grow m-4 h-1/2">
                 <table id="meal-price-table" class="w-full box-border border-collapse text-center">
                 </table>
             </div>
 
             <div class="container flex flex-row h-1/2 justify-center">
+                <!-- Input to update the price of a meal -->
                 <div class="container max-w-80">
                     <p class="bg-red-500 text-white border-2 border-black text-center p-1">Update the price of a meal</p>
                     <div class="flex flex-col border-2 border-black p-4 h-72">
@@ -64,6 +67,7 @@
                         <button id="change-price-button" class="bg-red-500 text-white font-semibold rounded mt-auto">Change Price</button>
                     </div>
                 </div>
+            </div>
         </div>
     </div>
 </body>

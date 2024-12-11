@@ -19,7 +19,7 @@ orderPrice = parseInt(sessionStorage.getItem("orderPrice")) || 0;
 currentPage = currentPage = window.location.pathname;
 
 
-//get current order from session storage if it exists
+// Get current order from session storage if it exists
 const storedMeal = sessionStorage.getItem("currentOrder");
 if (storedMeal) {
     currentOrder = JSON.parse(storedMeal);
@@ -29,8 +29,10 @@ if (storedMeal) {
 // Loads all necessary assets when each page is called.
 document.addEventListener("DOMContentLoaded", () => {
     const loadedWindow = window.location.pathname;
-    // Loads the current order after choosing food items
-    if (loadedWindow === "/employee-review.html" || loadedWindow === "/customer-review.html" || loadedWindow === "/customer-displayMeals.html" ){
+    // Populates the pages with the data they needed whenever they are loaded
+    if (loadedWindow === "/employee-review.html" || 
+        loadedWindow === "/customer-review.html" || 
+        loadedWindow === "/customer-displayMeals.html" ){
         updateOrderDisplay();
     } else if (loadedWindow === "/customer-mealsize.html"){
         updateOrderDisplay();
@@ -42,11 +44,11 @@ document.addEventListener("DOMContentLoaded", () => {
         updateOrderDisplay();
         setSideButtonCustomer();
     } else if (loadedWindow === "/employee-mealsize.html") {
-        setMealSizeButton();
+        setMealSizeButtonEmployee();
     } else if (loadedWindow === "/employee-entrees.html") {
         setEntreeButtonEmployee();
     } else if (loadedWindow === "/employee-sides.html") {
-        setSideButton();
+        setSideButtonEmployee();
     } else if (loadedWindow === "/customer-orderConfirmation.html") {
         displayOrderID();
     } else if (loadedWindow === "/manager-employees.html") {
@@ -65,9 +67,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-// for login page: redirect to correct page
+// for login page: redirect to correct page after checking the credentials
 const loginButton = document.getElementById("login-button");
-
 if (loginButton) {
     loginButton.addEventListener("click", function() {
         const usernameInput = document.getElementById("username");
@@ -75,6 +76,7 @@ if (loginButton) {
         const username = usernameInput.value;
         const password = passwordInput.value;
 
+        // Send request to the server
         fetch("/login", {
             method: "POST",
             headers: {
@@ -104,8 +106,13 @@ if (loginButton) {
     });
 }
 
-// for meal size page: gets the text of each button and adds it to the array.
-// Also sets the price of the current item and also establishes the number of entrees and sides.
+/**
+ * Gets the info (meal name, number of entrees, and number of sides) for each meal size from
+ * the server by a get request.
+ * @async
+ * @function getMealSizeInfo
+ * @returns {Promise|null}
+ */
 async function getMealSizeInfo() {
     try {
         // Sends GET to the server
@@ -113,6 +120,7 @@ async function getMealSizeInfo() {
             method: "GET",
         });
 
+        // Ensures the info was retrieved successfully
         if (result.ok) {
             const mealSizeNames = await result.json();
             console.log(mealSizeNames);
@@ -151,10 +159,11 @@ async function loadImageData() {
     }
 }
 
-/*
-    When a meal size is selected, sets the number of needed entrees and sides, stores the meal size into an array, and navigates
-    to the next page.
-*/
+/**
+ * Sets the number of needed entrees and sides when the meal size button is selected and
+ * stores the meal size into the array storing the order data and navigates to the next page.
+ * @function mealSizeButtonClick
+ */
 function mealSizeButtonClick() {
     if(currentOrder[currentMeal][0] != "N/A"){
         alert("You have already selected a meal size. Please proceed with the order.")
@@ -193,7 +202,8 @@ function mealSizeButtonClick() {
                 numEntrees = 1;
                 numSides = 0;
             }
-            // saving the items for a single session
+
+            // Saving the items for a single session
             sessionStorage.setItem("numEntrees", numEntrees);
             sessionStorage.setItem("numSides", numSides);
             sessionStorage.setItem("selectedEntrees", selectedEntrees);
@@ -211,13 +221,21 @@ function mealSizeButtonClick() {
     }
 }
 
-// For the cashier interface: Dynamically sets the meal size buttons.
-async function setMealSizeButton() {
+/**
+ * Dynamically sets the meal size buttons for the employee interface with
+ * the correct name and format. Retrieves the data from requesting it
+ * from the server.
+ * @async
+ * @function setMealSizeButtonEmployee
+ */
+async function setMealSizeButtonEmployee() {
+    // Retrieve the info for the meal size
     let mealSizeNames = await getMealSizeInfo();
 
     const table = document.getElementById("meal-size-table");
     let tr;
 
+    // Add each meal size as a button dynamically based on the info retrieved
     for (let i = 0; i < mealSizeNames.length; ++i) {
         if (i % 3 === 0) {
             tr = document.createElement("tr");
@@ -230,7 +248,8 @@ async function setMealSizeButton() {
     
         const mealName = mealSizeNames[i].mealname;
         button.textContent = mealName;
-        // Made the label for the buttons for meal sizes with capitalized words
+
+        // Make the label for the buttons of the meal sizes with proper capitalization
         button.textContent = mealName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
         button.setAttribute('data', button.textContent);
         button.className = "w-5/6 py-16 my-5 bg-red-500 text-white rounded hover:bg-red-600 sizeButton";
@@ -239,17 +258,20 @@ async function setMealSizeButton() {
         td.appendChild(button);
         tr.appendChild(td);
     }
+
+    // Translates the page if that is the setting
     if(targetLanguage != "null") {
         translatePage();
     }
 }
 
-// For the customer interface: Dynamically sets the meal size buttons and images.
 /**
- * Dynamically sets the meal size buttons and images for the customer interface.
+ * Dynamically sets the meal size buttons with images for the customer interface.
  * Gets the image data from the JSON file and the meal size info from the server.
  * Creates a table with the meal size buttons and images.
  * Redirects to either the entrees page or review page if we finish selecting entrees.
+ * @async
+ * @function setMealSizeButtonCustomer
  */
 async function setMealSizeButtonCustomer() {
     const mealSizeInfo = await getMealSizeInfo();
@@ -260,6 +282,7 @@ async function setMealSizeButtonCustomer() {
     // Fetch image data from JSON file
     const imageData = await loadImageData();
     
+    // Add the buttons to the customer interface
     for (let i = 0; i < mealSizeInfo.length; ++i) {
         if (i % 3 === 0) {
             tr = document.createElement("tr");
@@ -283,12 +306,14 @@ async function setMealSizeButtonCustomer() {
         // Find the corresponding image for the current meal name
         const image = imageData.find(entry => entry.name === mealName);
 
+        // Add the correct image to the buttons
         if (image) {
             const img = document.createElement("img");
             img.src = `./menu_imgs/${image.image}`;
             img.alt = newItemealName;
             img.className = "w-full h-3/4 object-cover mb-2";
             
+            // Add the text for what is in the meal (num of entrees and sides)
             const pre = document.createElement('pre');
 
             if (sideNum == 0) {
@@ -315,14 +340,18 @@ async function setMealSizeButtonCustomer() {
         tr.appendChild(td);
     }
 
+    // Translates the page if that is the setting
     if(targetLanguage != "null") {
         translatePage();
     }
 }
 
-
-// for entrees page: gets the text of each button and adds it to the array. Allows 1-3 entrees to be selected depending on the type of meal.
-// Redirects to either the sides page or review page if we finish selecting entrees.
+/**
+ * Retrieves the text for each button from the server by sending a get request.
+ * @async
+ * @function getEntreeNames
+ * @returns {Promist|null} Returns the name of the entrees
+ */
 async function getEntreeNames() {
     try {
         // Sends GET to the server
@@ -330,6 +359,7 @@ async function getEntreeNames() {
             method: "GET"
         });
 
+        // Ensure the data was retrieved correctly
         if (result.ok) {
             const entreeNames = await result.json();
             return entreeNames;
@@ -344,6 +374,12 @@ async function getEntreeNames() {
 }
 
 //Asks the server for the total price of the current order and returns it
+/**
+ * Sends a get request to the server for the total price of the current order.
+ * @async
+ * @function getOrderPrice
+ * @returns {Promise|null} Returns the total order price
+ */
 async function getOrderPrice() {
     try {
         // Sends GET to the server
@@ -355,6 +391,7 @@ async function getOrderPrice() {
             method: "GET"
         });
 
+        // Ensures the data was retrieved
         if (result.ok) {
             const price = await result.json();
             return price;
@@ -367,8 +404,10 @@ async function getOrderPrice() {
     }
 }
 
-/*
- * When a entree is selected, allows selection of more entrees until the desired number of entrees is met and navigates to the next page.
+/**
+ * When an entree is selected, allows selection of more entrees until the desired number
+ * of entrees is met and navigates to the next page.
+ * @function entreeButtonClick
  */
 function entreeButtonClick() {
     if(selectedEntrees >= numEntrees || numEntrees == 0){
@@ -416,6 +455,8 @@ function entreeButtonClick() {
 
 /**
  * Dynamically sets all of the entree buttons for the employee interface.
+ * @async
+ * @function setEntreeButtonEmployee
  */
 async function setEntreeButtonEmployee() {
     let entreeNames = await getEntreeNames();
@@ -423,6 +464,7 @@ async function setEntreeButtonEmployee() {
     const table = document.getElementById("entree-table");
     let tr;
 
+    // Adds all the buttons based on the number of entrees
     for (let i = 0; i < entreeNames.length; ++i) {
         if (i % 3 === 0) {
             tr = document.createElement("tr");
@@ -446,12 +488,15 @@ async function setEntreeButtonEmployee() {
         translatePage();
     }
 }
+
 /**
  * Creates entree buttons for customer with images
  * Fetches image data from the imageData.json file
  * Adds buttons to the table in the customer-entrees.html page
  * Each button has an image and a text label
  * Button is clicked, it calls the entreeButtonClick function
+ * @async
+ * @function setEntreeButtonCustomer
  */
 async function setEntreeButtonCustomer() {
     let entreeNames = await getEntreeNames();
@@ -462,6 +507,7 @@ async function setEntreeButtonCustomer() {
     // Fetch image data from your JSON file
     const imageData = await loadImageData();
 
+    // Adds all the entrees as buttons
     for (let i = 0; i < entreeNames.length; ++i) {
         if (i % 3 === 0) {
             tr = document.createElement("tr");
@@ -479,6 +525,7 @@ async function setEntreeButtonCustomer() {
         
         const image = imageData.find(entry => entry.name === entreeName);
 
+        // Adds the images of the entree
         if (image) {
             // Create an img element with the image
             const img = document.createElement("img");
@@ -511,6 +558,12 @@ async function setEntreeButtonCustomer() {
 
 // for sides page: gets the text of each button and adds it to the array. Allows 0-1 sides depending on the size.
 // Redirects to the review order page once finished selecting.
+/**
+ * Sends a get request to the server to retrieve the name of the sides.
+ * @async
+ * @function getSideNames
+ * @returns {Promise|null} Returns the names of the sides as a json object
+ */
 async function getSideNames() {
     try {
         // Sends GET to the server
@@ -518,6 +571,7 @@ async function getSideNames() {
             method: "GET"
         });
 
+        // Esnure the data is retrieved
         if (result.ok) {
             const sideNames = await result.json();
             return sideNames;
@@ -533,6 +587,7 @@ async function getSideNames() {
 
 /**
  * When a side is selected, stores the side into an array and navigates to the next page.
+ * @function sideButtonClick
  */
 function sideButtonClick() {
     if(selectedSides >= numSides || numSides == 0){
@@ -560,14 +615,17 @@ function sideButtonClick() {
 }
 
 /**
- * Dynamically sets all side buttons.
+ * Dynamically sets all side buttons for the employee interface.
+ * @async
+ * @function setSideButtonEmployee
  */
-async function setSideButton() {
+async function setSideButtonEmployee() {
     let sideNames = await getSideNames();
 
     const table = document.getElementById("side-table");
     let tr;
 
+    // Add all the side buttons
     for (let i = 0; i < sideNames.length; ++i) {
         if (i % 3 === 0) {
             tr = document.createElement("tr");
@@ -591,11 +649,16 @@ async function setSideButton() {
         translatePage();
     }
 }
-// Creates side buttons for customer with images
-// Fetches image data from the imageData.json file
-// Adds buttons to the table in the customer-sides.html page
-// Each button has an image and a text label
-// Button is clicked, it calls the sideButtonClick function
+
+/**
+ * Creates side buttons for customer with images
+ * Fetches image data from the imageData.json file
+ * Adds buttons to the table in the customer-sides.html page
+ * Each button has an image and a text label
+ * Button is clicked, it calls the sideButtonClick function
+ * @async
+ * @function setSideButtonCustomer
+ */
 async function setSideButtonCustomer() {
     let sideNames = await getSideNames();
 
@@ -605,6 +668,7 @@ async function setSideButtonCustomer() {
     // Fetch image data from your JSON file
     const imageData = await loadImageData();
 
+    // Add the side buttons
     for (let i = 0; i < sideNames.length; ++i) {
         if (i % 3 === 0) {
             tr = document.createElement("tr");
@@ -623,6 +687,7 @@ async function setSideButtonCustomer() {
         // Find the corresponding image for the current side name
         const image = imageData.find(entry => entry.name === sideName);
 
+        // Add the image to the button
         if (image) {
             // Create an img element with the image
             const img = document.createElement("img");
@@ -646,6 +711,7 @@ async function setSideButtonCustomer() {
         td.appendChild(button);
         tr.appendChild(td);
     }
+    
     if(targetLanguage != "null") {
         translatePage();
     }
@@ -653,11 +719,15 @@ async function setSideButtonCustomer() {
 
 /**
  * Retreives the order ID and displays it at the end of the ordering process for the customer interface.
+ * @async
+ * @function displayOrderID
  */
 async function displayOrderID(){
     let results = await fetch("/last-order-id", {
         method: "GET",
     });
+
+    // Ensure the data was retrieved
     if (results.ok) {
         const data = await results.json();
         const orderID = data.order_id;
@@ -674,11 +744,9 @@ async function displayOrderID(){
     }
 }
 
-// for review page: make buttons functional and display order values while also connecting and interacting with the server
-// refreshes page and current order when order is placed
 /**
  * Updates the order display on the review page.
- * 
+ * @async
  * @returns {Promise<void>}
  */
 async function updateOrderDisplay() {
@@ -748,6 +816,7 @@ async function updateOrderDisplay() {
 /**
  * When an order is cancelled, clears the order and resets it so that a new order can be made. Redirects back to the start page
  * or back to the meal size selection page for cashiers.
+ * @function cancelOrder
  */
 function cancelOrder() {
     console.log("cancelling order");
@@ -776,25 +845,36 @@ function cancelOrder() {
 }
 
 /**
- * Sets all button listeners for all buttons.
+ * Adds an event listener to the "Cancel Order" employee button.
+ * When the button is clicked, the cancelOrder function is called.
  */
 const cancelButton = document.getElementById("cancel-order-button");
 if (cancelButton) {
     cancelButton.addEventListener("click", cancelOrder);
 }
 
-const removeMealButton = document.getElementById("remove-meal-button");
-
+/**
+ * Adds an event listener to the "Add Order" employee button.
+ * When the button is clicked, the addMeal function is called.
+ */
 const addMealButton = document.getElementById("add-to-order-button");
 if (addMealButton) {
     addMealButton.addEventListener("click", addMeal);
 }
 
+/**
+ * Adds an event listener to the "Place Order" employee button.
+ * When the button is clicked, the placeOrder function is called.
+ */
 const placeOrderButton = document.getElementById("place-order-button");
 if (placeOrderButton) {
     placeOrderButton.addEventListener("click", placeOrder);
 }
 
+/**
+ * Adds an event listener to the "Add Item" employee button.
+ * When the button is clicked, the newItem function is called.
+ */
 const newItemButton = document.getElementById("new-item-button");
 if (newItemButton) {
     console.log("adding item");
@@ -802,7 +882,10 @@ if (newItemButton) {
 }
 
 /**
- * When an order is placed, submits the order to the database.
+ * When an order is placed, submits the order to the database via sending the
+ * server a post request.
+ * @async
+ * @function placeOrder
  */
 async function placeOrder() {
     const orderData = JSON.stringify(currentOrder);
@@ -846,6 +929,8 @@ async function placeOrder() {
 
 /**
  * When an order is placed, decreases the amount of inventory based on the items in the order.
+ * @async
+ * @function decreaseInventory
  */
 async function decreaseInventory(){
     const orderData = JSON.stringify(currentOrder);
@@ -873,6 +958,8 @@ async function decreaseInventory(){
 
 /**
  * When a new item is added to the order, sets an array so all items can be filled in.
+ * @async
+ * @function newItem
  */
 async function newItem() {
     // For when you press new item when there is no order placed yet in review page
@@ -905,6 +992,7 @@ async function newItem() {
 
 /**
  * Removes the most recent meal and navigates to the next page.
+ * @function removeMeal
  */
 function removeMeal(){
     console.log("current order first: " + currentOrder);
@@ -917,6 +1005,7 @@ function removeMeal(){
 
 /**
  * If no changes are added to the meal, navigate to the next page.
+ * @function addMeal
  */
 function addMeal(){
     window.location.href = "customer-review.html";

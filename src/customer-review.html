@@ -9,6 +9,7 @@
     <script type = "text/javascript" defer src = "script.js"></script>
 </head>
 <body>
+    <!-- Translation Selector -->
     <div id="translate-popup" class="absolute top-2 right-2 z-50 bg-white shadow-md rounded-lg p-3">
         <select id="language-select" class="w-full p-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
           <option value="" disabled selected>Select Language</option>
@@ -19,13 +20,16 @@
           <!-- Add more languages as needed -->
         </select>
     </div>
+
     <div class="flex relative">
         <div class="flex-grow p-5">
+            <!-- Header -->
             <div class="text-center mb-4">
                 <img src="progress_imgs/progress-bar5.png" alt="Progress" class="mx-auto mb-2 w-1/2 h-3/5">
                 <h1 class="font-bold text-3xl">Review Order</h1>
                 <h2>These are the meals in your order!</h2>
             </div>
+            <!-- Displays all the meals the customer has selected -->
             <div class="relative flex flex-col space-y-4">
                 <div class="bg-red-500 text-white p-4 rounded text-xl font-bold">
                     <pre id="order-display" class="whitespace-pre-wrap">
@@ -33,6 +37,8 @@
                     </pre>
                 </div>
             </div>
+
+            <!-- Contains price and buttons for ordering -->
             <div class="fixed bottom-0 right-0 w-3/4 flex py-6">
                 <div class="ml-auto flex space-x-7 px-4 font-bold">
                     <div id="total-display" class="flex text-black text-3xl font-bold py-2"> Order Total: $0.00</div>

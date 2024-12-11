@@ -11,6 +11,7 @@
 </head>
 <body>
     <div class="flex relative">
+        <!-- Navigation bar -->
         <div class="flex-shrink-0 w-1/5 h-screen bg-[#1A1B21] fixed">
             <h2 class="text-center text-white pt-5 pb-5">Manager Navigation</h2>
             <ul>
@@ -35,14 +36,15 @@
             </ul>
         </div>
 
-       
         <div class="flex flex-col w-full ml-[20%]">
+            <!-- Table to hold meanu items and their ingredients that is added dynamically -->
             <div class="flex-grow m-4 h-1/2">
                 <table id="menu-table" class="w-full box-border border-collapse text-center">
                 </table>
             </div>
 
             <div class="container flex flex-row justify-center">
+                <!-- Inputs to add a menu item -->
                 <div class="container max-w-80">
                     <p class="bg-red-500 text-white border-2 border-black text-center p-1">Add Menu Item</p>
                     <div class="flex flex-col border-2 border-black p-4 h-80">
@@ -69,6 +71,7 @@
                     </div>
                 </div>
     
+                <!-- Inputs to remove a menu item -->
                 <div class="container max-w-80">
                     <p class="bg-red-500 text-white border-2 border-black text-center p-1">Delete Menu Item</p>
                     <div class="container flex flex-col border-2 border-black p-4 h-80">
@@ -78,7 +81,6 @@
                         <button id="delete-item-button" class="bg-red-500 text-white font-semibold rounded mt-auto">Delete</button>
                     </div>
                 </div>
-    
             </div>
         </div>
     </div>
