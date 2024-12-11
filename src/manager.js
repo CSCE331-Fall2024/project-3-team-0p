@@ -1,10 +1,19 @@
 // manager-employees.html
+/**
+ * Fetches the employee data (name, username, password, and position) from the
+ * server by sending a get request.
+ * @async
+ * @function getEmployeeData
+ * @returns {Promise<Object|null} returns a json object
+ */
 async function getEmployeeData() {
     try {
+        // Send request to the server
         let result = await fetch("/employees", {
             method: "GET",
         });
     
+        // Check to make sure data is good
         if (result.ok) {
             const employeeData = result.json();
             return employeeData;
@@ -18,6 +27,12 @@ async function getEmployeeData() {
     }
 }
 
+/**
+ * Makes all the rows and fills them with data for all the
+ * employee data that is retrieved from getEmployeeData().
+ * @async
+ * @function populateEmployeeTable
+ */
 async function populateEmployeeTable() {
     let employeeData = await getEmployeeData();
 
@@ -52,22 +67,42 @@ async function populateEmployeeTable() {
     });
 }
 
+/**
+ * Adds an event listener to the "Add" employee button.
+ * When the button is clicked, the addEmployee function is called.
+ */
 const addEmployeeButton = document.getElementById("add-employee-button");
 if (addEmployeeButton) {
     addEmployeeButton.addEventListener("click", addEmployee);
 }
 
+/**
+ * Adds an event listener to the "Remove" employee button.
+ * When the button is clicked, the removeEmployee function is called.
+ */
 const removeEmployeeButton = document.getElementById("remove-employee-button");
 if (removeEmployeeButton) {
     removeEmployeeButton.addEventListener("click", removeEmployee);
 }
 
+/**
+ * Adds an event listener to the "Change" employee button.
+ * When the button is clicked, the changeEmployee function is called.
+ */
 const changeEmployeeButton = document.getElementById("change-employee-button");
 if (changeEmployeeButton) {
     changeEmployeeButton.addEventListener("click", changeEmployee);
 }
 
+/**
+ * Adds a new employee to the database via post request to the server and
+ * will update the table on the interface with the appropriate data.
+ * @async
+ * @function addEmployee
+ * @returns {void} Nothing is returned.
+ */
 async function addEmployee() {
+    // Retrieve the input data for the new employee
     const newName = document.getElementById("add-name-input").value;
     const newUsername = document.getElementById("add-username-input").value;
     const newPassword = document.getElementById("add-password-input").value;
@@ -75,6 +110,7 @@ async function addEmployee() {
 
     const addEmployeeInfo = [newName, newUsername, newPassword, newPosition];
 
+    // Ensure there is input for all fields and alert if not
     if (!newName || !newUsername || !newPassword || !newPosition) {
         alert("Missing new employee info. Try again.");
         return;
@@ -83,6 +119,7 @@ async function addEmployee() {
     }
 
     try {
+        // Request to server to add to the database the new employee
         const addEmployeeData = JSON.stringify(addEmployeeInfo);
         let result = await fetch("/add-employee", {
             method: "POST",
@@ -90,6 +127,7 @@ async function addEmployee() {
             body: addEmployeeData
         });
 
+        // Ensure the employee was added successfully
         if (result.ok) {
             alert("Employee added!");
         } else {
@@ -114,6 +152,7 @@ async function addEmployee() {
 
         employeeTable.appendChild(tr);
 
+        // Empty input fields
         document.getElementById("add-name-input").value = "";
         document.getElementById("add-username-input").value = "";
         document.getElementById("add-password-input").value = "";
@@ -125,21 +164,32 @@ async function addEmployee() {
     }
 }
 
+/**
+ * Removes an employee from the database via post request to the server and
+ * will update the table on the interface with the removal of appropriate data.
+ * @async
+ * @function removeEmployee
+ * @returns {void} Nothin is returned
+ */
 async function removeEmployee() {
+    // Retrieve input data to remove employee
     const removeUsername = document.getElementById("remove-username-input").value;
     
+    // Ensure there is input
     if (!removeUsername) {
         alert("Missing username to remove. Try again.");
         return;
     }
 
     try {
+        // Send request to server to remove employee
         let result = await fetch("/remove-employee", {
             method: "POST",
             headers: {"content-type": "text/plain"},
             body: removeUsername
         });
 
+        // Ensure employee was removed successfully
         if (result.ok) {
             const responseMessage = await result.json();
             alert(responseMessage.message);
@@ -154,6 +204,7 @@ async function removeEmployee() {
         const tr = document.getElementById(removeUsername);
         employeeTable.deleteRow(tr.rowIndex);
 
+        // Empty input fields
         document.getElementById("remove-username-input").value = "";
 
     } catch (error) {
@@ -162,10 +213,19 @@ async function removeEmployee() {
     }
 }
 
+/**
+ * Modify's an employee's position in the database via a post request to the server
+ * and update the table with the new position.
+ * @async
+ * @function changeEmployee
+ * @returns {void} Nothing is returned.
+ */
 async function changeEmployee() {
+    // Retrieve input to modify the employee position
     const username = document.getElementById("change-username-input").value;
     const changedPosition = document.getElementById("change-position-drop-down").value;
 
+    // Ensure there is input in all fields
     if (!username || !changedPosition) {
         alert("Missing username to remove. Try again.");
         return;
@@ -174,6 +234,7 @@ async function changeEmployee() {
     const changeEmployeePosition = [username, changedPosition];
 
     try {
+        // Send request to modify the database
         const employeeData = JSON.stringify(changeEmployeePosition);
         let result = await fetch("/change-employee-position", {
             method: "POST",
@@ -181,6 +242,7 @@ async function changeEmployee() {
             body: employeeData
         })
 
+        // Determine whether or not the data is good and alert accordingly
         const responseData = await result.json();
         const responseMessage = responseData.message;
         if (result.ok) {
@@ -190,7 +252,6 @@ async function changeEmployee() {
                 return;
             }
         } else {
-            // const errorMessage = await result.json(); // Get error message from server
             alert(`Error: ${responseMessage}`);
             return;
         }
@@ -199,6 +260,7 @@ async function changeEmployee() {
         const tr = document.getElementById(username);
         tr.querySelectorAll('td')[3].textContent = changedPosition;
 
+        // Empty input fields
         document.getElementById("change-username-input").value = "";
         document.getElementById("change-position-drop-down").value = "";
 
@@ -289,7 +351,6 @@ async function populateMenuTable() {
 /**
  * Adds an event listener to the "Add Menu Item" button.
  * When the button is clicked, the addMenuItem function is called.
- * @function
  */
 const addItemButton = document.getElementById("add-menu-item-button");
 if (addItemButton) {
@@ -299,7 +360,6 @@ if (addItemButton) {
 /**
  * Adds an event listener to the "Delete Menu Item" button.
  * When the button is clicked, the deleteMenuItem function is called.
- * @function
  */
 const deleteItemButton = document.getElementById("delete-item-button");
 if (deleteItemButton) {
@@ -428,9 +488,11 @@ async function deleteMenuItem() {
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-// Manage Meal Prices Page
+// manager-prices.html
+/**
+ * Adds an event listener to the "Change Price" button.
+ * When the button is clicked, the changePrice function is called.
+ */
 const changePriceButton = document.getElementById("change-price-button");
 if (changePriceButton) {
     changePriceButton.addEventListener("click", changePrice);
@@ -446,6 +508,7 @@ async function getMealPriceData() {
             method: "GET",
         });
     
+        // Ensures the data was retrieved
         if (result.ok) {
             const mealPriceData = await result.json();
             return mealPriceData;
@@ -542,11 +605,15 @@ async function changePrice() {
             console.error("Failed to send new price data to change position to the database:", error);
             alert("Failed to change the meal price. Please try again.");
         }
-
     }
 }
 
-// Manage inventory page
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+// manager-inventory.html
+/**
+ * Adds an event listener to the "Order Inventory" button.
+ * When the button is clicked, the orderInventory function is called.
+ */
 const orderInventoryButton = document.getElementById("order-inventory-button");
 if (orderInventoryButton) {
     orderInventoryButton.addEventListener("click", orderInventory);
@@ -562,6 +629,7 @@ async function getInventoryData() {
             method: "GET",
         });
     
+        // Ensure the data was retrieved successfully
         if (result.ok) {
             const inventoryData = await result.json();
             return inventoryData;
@@ -649,6 +717,7 @@ async function orderInventory() {
     const amount = document.getElementById("order-inventory-input").value.trim();
     const amountToOrder = parseFloat(amount);
 
+    // Ensure all inputs are filled
     if (!item_name || !amountToOrder) {
         alert("Please insert an amount of inventory to order.");
         return;
@@ -668,6 +737,7 @@ async function orderInventory() {
                 body: newPriceData
             })
 
+            // Ensure the post request was successfully
             if (result.ok) {
                 const responseMessage = await result.json();
                 alert(responseMessage.message);
@@ -684,7 +754,11 @@ async function orderInventory() {
     }
 }
 
-//STATS GRPAH CONTENT
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+// manager-statistics.html
+/**
+ * Adds an event listener so when the page is loaded, the graph will populate.
+ */
 document.addEventListener('DOMContentLoaded', async () => {
     try {
         //Get data from server
