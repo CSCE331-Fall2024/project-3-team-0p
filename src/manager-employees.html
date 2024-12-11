@@ -11,6 +11,7 @@
 </head>
 <body>
     <div class="flex relative">
+        <!-- Navigation bar -->
         <div class="flex-shrink-0 w-1/5 h-screen bg-[#1A1B21]">
             <h2 class="text-center text-white pt-5 pb-5">Cashier Navigation</h2>
             <ul>
@@ -36,12 +37,14 @@
         </div>
 
         <div class="flex flex-col w-full">
+            <!-- Table to hold employee data that is added dynamically -->
             <div class="flex-grow m-4 h-1/2">
                 <table id="employee-data-table" class="w-full box-border border-collapse text-center">
                 </table>
             </div>
 
             <div class="container flex flex-row h-1/2 justify-center">
+                <!-- Inputs to add an employee -->
                 <div class="container max-w-80">
                     <p class="bg-red-500 text-white border-2 border-black text-center p-1">Add Employee</p>
                     <div class="flex flex-col border-2 border-black p-4 h-72">
@@ -65,6 +68,7 @@
                     </div>
                 </div>
     
+                <!-- Inputs to remove an employee -->
                 <div class="container max-w-80">
                     <p class="bg-red-500 text-white border-2 border-black text-center p-1">Remove Employee</p>
                     <div class="container flex flex-col border-2 border-black p-4 h-72">
@@ -75,6 +79,7 @@
                     </div>
                 </div>
     
+                <!-- Inputs to change an employee's position -->
                 <div class="container max-w-80">
                     <p class="bg-red-500 text-white border-2 border-black text-center p-1">Manage Positions</p>
                     <div class="flex flex-col border-2 border-black p-4 h-72">
