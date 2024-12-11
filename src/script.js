@@ -25,7 +25,7 @@ if (storedMeal) {
     currentMeal = currentOrder.length - 1;
 }
 
-//When page loads, run function to populate page
+// Loads all necessary assets when each page is called.
 document.addEventListener("DOMContentLoaded", () => {
     const loadedWindow = window.location.pathname;
     // Loads the current order after choosing food items
@@ -150,6 +150,10 @@ async function loadImageData() {
     }
 }
 
+/*
+    When a meal size is selected, sets the number of needed entrees and sides, stores the meal size into an array, and navigates
+    to the next page.
+*/
 function mealSizeButtonClick() {
     if(currentOrder[currentMeal][0] != "N/A"){
         alert("You have already selected a meal size. Please proceed with the order.")
@@ -362,6 +366,9 @@ async function getOrderPrice() {
     }
 }
 
+/*
+ * When a entree is selected, allows selection of more entrees until the desired number of entrees is met and navigates to the next page.
+ */
 function entreeButtonClick() {
     if(selectedEntrees >= numEntrees || numEntrees == 0){
         alert("You cannot add any more entrees.")
@@ -405,7 +412,10 @@ function entreeButtonClick() {
         }
     }
 }
-//entree buttons for cashier
+
+/**
+ * Dynamically sets all of the entree buttons for the employee interface.
+ */
 async function setEntreeButtonEmployee() {
     let entreeNames = await getEntreeNames();
 
@@ -520,6 +530,9 @@ async function getSideNames() {
     }
 }
 
+/**
+ * When a side is selected, stores the side into an array and navigates to the next page.
+ */
 function sideButtonClick() {
     if(selectedSides >= numSides || numSides == 0){
         alert("You cannot add any more sides.")
@@ -544,7 +557,10 @@ function sideButtonClick() {
         }
     }
 }
-//side buttons for cashier 
+
+/**
+ * Dynamically sets all side buttons.
+ */
 async function setSideButton() {
     let sideNames = await getSideNames();
 
@@ -634,7 +650,9 @@ async function setSideButtonCustomer() {
     }
 }
 
-// gets the order id and displays it for the customer interface
+/**
+ * Retreives the order ID and displays it at the end of the ordering process for the customer interface.
+ */
 async function displayOrderID(){
     let results = await fetch("/last-order-id", {
         method: "GET",
@@ -725,6 +743,11 @@ async function updateOrderDisplay() {
         translatePage();
     }
 }
+
+/**
+ * When an order is cancelled, clears the order and resets it so that a new order can be made. Redirects back to the start page
+ * or back to the meal size selection page for cashiers.
+ */
 function cancelOrder() {
     console.log("cancelling order");
     const userConfirmed = confirm("Are you sure you want to proceed?");
@@ -751,26 +774,35 @@ function cancelOrder() {
     }
 }
 
+/**
+ * Sets all button listeners for all buttons.
+ */
 const cancelButton = document.getElementById("cancel-order-button");
 if (cancelButton) {
     cancelButton.addEventListener("click", cancelOrder);
 }
 
 const removeMealButton = document.getElementById("remove-meal-button");
-// console.log(removeMealButton);
-// removeMealButton.addEventListener("click", removeMeal);
 
 const addMealButton = document.getElementById("add-to-order-button");
 if (addMealButton) {
     addMealButton.addEventListener("click", addMeal);
 }
 
-// Place order into the database
 const placeOrderButton = document.getElementById("place-order-button");
 if (placeOrderButton) {
     placeOrderButton.addEventListener("click", placeOrder);
 }
 
+const newItemButton = document.getElementById("new-item-button");
+if (newItemButton) {
+    console.log("adding item");
+    newItemButton.addEventListener("click", newItem);
+}
+
+/**
+ * When an order is placed, submits the order to the database.
+ */
 async function placeOrder() {
     const orderData = JSON.stringify(currentOrder);
     console.log("Order data being sent:", orderData);
@@ -811,6 +843,9 @@ async function placeOrder() {
     }
 }
 
+/**
+ * When an order is placed, decreases the amount of inventory based on the items in the order.
+ */
 async function decreaseInventory(){
     const orderData = JSON.stringify(currentOrder);
     console.log("Order inventory to decrease:", orderData);
@@ -835,22 +870,15 @@ async function decreaseInventory(){
     }
 }
 
-
-//
-const newItemButton = document.getElementById("new-item-button");
-if (newItemButton) {
-    console.log("adding item");
-    newItemButton.addEventListener("click", newItem);
-}
-
-//save current meal into order and start new meal
-function newItem() {
+/**
+ * When a new item is added to the order, sets an array so all items can be filled in.
+ */
+async function newItem() {
     // For when you press new item when there is no order placed yet in review page
     if(currentOrder.length != 0){
 
         if (currentOrder[currentMeal][0] == "N/A") {
             window.location.href = "employee-mealsize.html";
-            return;
         }
 
     }
@@ -874,6 +902,9 @@ function newItem() {
     }
 }
 
+/**
+ * Removes the most recent meal and navigates to the next page.
+ */
 function removeMeal(){
     console.log("current order first: " + currentOrder);
     currentOrder.pop();
@@ -883,6 +914,9 @@ function removeMeal(){
     window.location.href = "customer-review.html";
 }
 
+/**
+ * If no changes are added to the meal, navigate to the next page.
+ */
 function addMeal(){
     window.location.href = "customer-review.html";
 }

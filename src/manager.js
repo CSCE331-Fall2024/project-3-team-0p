@@ -436,7 +436,10 @@ if (changePriceButton) {
     changePriceButton.addEventListener("click", changePrice);
 }
 
-// gets all of the meal sizes and their prices to populate the price table
+/**
+ * gets all of the meal sizes and their prices to populate the price table
+ * @returns {Promise<void>}
+ */
 async function getMealPriceData() {
     try {
         let result = await fetch("/prices", {
@@ -456,7 +459,10 @@ async function getMealPriceData() {
     }
 }
 
-// updates the price table
+/**
+ * Populates table containing the prices of all meal sizes
+ * @returns {Promise<void>}
+ */
 async function populatePriceTable() {
     let mealPriceData = await getMealPriceData();
 
@@ -496,7 +502,10 @@ async function populatePriceTable() {
     });
 }
 
-// changes the price of the selected meal size based on what the user inputs.
+/**
+ * changes the price of the selected meal size based on what the user inputs.
+ * @returns {Promise<void>}
+ */
 async function changePrice() {
     const mealSize = document.getElementById("meal-size-drop-down").value;
     const price = document.getElementById("new-price-input").value.trim();
@@ -543,7 +552,10 @@ if (orderInventoryButton) {
     orderInventoryButton.addEventListener("click", orderInventory);
 }
 
-// gets all of the inventory data to populate the inventory table with
+/**
+ * Retreives all inventory items
+ * @returns {Promise<void>}
+ */
 async function getInventoryData() {
     try {
         let result = await fetch("/inventory", {
@@ -563,7 +575,10 @@ async function getInventoryData() {
     }
 }
 
-// updates the inventory table
+/**
+ * Populates the inventory table with their name and the associated quantities.
+ * @returns {Promise<void>}
+ */
 async function populateInventoryTable() {
     let inventoryData = await getInventoryData();
 
@@ -603,7 +618,9 @@ async function populateInventoryTable() {
     });
 }
 
-// updates the inventory dropdown
+/**
+ * Populates the inventory dropdown.
+ */
 async function populateInventoryDropdown() {
     try {
         const dropdown = document.getElementById('inventory-dropdown');
@@ -623,7 +640,10 @@ async function populateInventoryDropdown() {
     }
 }
 
-// updates the amount of inventory based on the amount of inventory the user is trying to order
+/**
+ * Updates the inventory quantities based on how much the manager is trying to order.
+ * @returns {Promise<void>}
+ */
 async function orderInventory() {
     const item_name = document.getElementById("inventory-dropdown").value;
     const amount = document.getElementById("order-inventory-input").value.trim();
