@@ -1,3 +1,4 @@
+//Local Variables for tracking current order in progress
 var currentOrder = [["N/A", "N/A", "N/A", "N/A", "N/A"]];
 let currentMeal = 0;
 let numEntrees = 0;
