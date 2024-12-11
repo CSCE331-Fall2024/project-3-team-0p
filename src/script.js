@@ -1,3 +1,4 @@
+//Local Variables for tracking current order in progress
 var currentOrder = [["N/A", "N/A", "N/A", "N/A", "N/A"]];
 let currentMeal = 0;
 let numEntrees = 0;
@@ -8,6 +9,7 @@ let orderPrice = 0.0;
 let currentPage = window.location.pathname;
 let targetLanguage = "null";
 
+//Get varible values from session storage if they exist
 targetLanguage = sessionStorage.getItem("language") || "";
 numEntrees = parseInt(sessionStorage.getItem("numEntrees")) || 0;
 numSides = parseInt(sessionStorage.getItem("numSides"));
@@ -17,6 +19,7 @@ orderPrice = parseInt(sessionStorage.getItem("orderPrice")) || 0;
 currentPage = currentPage = window.location.pathname;
 
 
+//get current order from session storage if it exists
 const storedMeal = sessionStorage.getItem("currentOrder");
 if (storedMeal) {
     currentOrder = JSON.parse(storedMeal);
@@ -340,7 +343,7 @@ async function getEntreeNames() {
     }
 }
 
-//
+//Asks the server for the total price of the current order and returns it
 async function getOrderPrice() {
     try {
         // Sends GET to the server

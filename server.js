@@ -97,6 +97,7 @@ app.get("/sides", async (req, res) => {
     res.json(sides);
 });
 
+//Tests inputed login credentials against database
 app.post("/login", async (req, res) => {
 const { username, password } = req.body;
   
@@ -142,6 +143,7 @@ app.post("/submit", async (req, res) => {
     }
 });
 
+//Returns id of the latest order in the database
 app.get('/last-order-id', async (req, res) => {
     try {
         const result = await pool.query("select max(id) as max_id from orders");
@@ -430,6 +432,7 @@ async function decreaseInventory(orderData){
 
 }
 
+//Returns price of the order passed in based on meal prices set in the database
 async function getOrderPrice(orderData) {
     try {
         let orderPrice = 0;

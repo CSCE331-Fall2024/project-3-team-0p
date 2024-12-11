@@ -49,6 +49,7 @@ async function updateWeather() {
 
 updateWeather();
 
+//runs translation function when a new language is selected
 const languageSelector = document.getElementById('language-select');
 languageSelector.addEventListener('change', (event) => {
     targetLanguage = event.target.value;
