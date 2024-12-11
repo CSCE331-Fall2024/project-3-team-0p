@@ -8,6 +8,7 @@ let orderPrice = 0.0;
 let currentPage = window.location.pathname;
 let targetLanguage = "null";
 
+//Get varible values from session storage if they exist
 targetLanguage = sessionStorage.getItem("language") || "";
 numEntrees = parseInt(sessionStorage.getItem("numEntrees")) || 0;
 numSides = parseInt(sessionStorage.getItem("numSides"));
@@ -17,12 +18,14 @@ orderPrice = parseInt(sessionStorage.getItem("orderPrice")) || 0;
 currentPage = currentPage = window.location.pathname;
 
 
+//get current order from session storage if it exists
 const storedMeal = sessionStorage.getItem("currentOrder");
 if (storedMeal) {
     currentOrder = JSON.parse(storedMeal);
     currentMeal = currentOrder.length - 1;
 }
 
+//When page loads, run function to populate page
 document.addEventListener("DOMContentLoaded", () => {
     const loadedWindow = window.location.pathname;
     // Loads the current order after choosing food items
@@ -335,7 +338,7 @@ async function getEntreeNames() {
     }
 }
 
-//
+//Asks the server for the total price of the current order and returns it
 async function getOrderPrice() {
     try {
         // Sends GET to the server
@@ -833,6 +836,7 @@ async function decreaseInventory(){
 }
 
 
+//
 const newItemButton = document.getElementById("new-item-button");
 if (newItemButton) {
     console.log("adding item");
