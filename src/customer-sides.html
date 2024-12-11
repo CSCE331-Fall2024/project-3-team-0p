@@ -9,6 +9,7 @@
     <link rel = "stylesheet" href = "./output.css">
 </head>
 <body>
+    <!-- Translation Selector -->
     <div id="translate-popup" class="absolute top-2 right-2 z-50 bg-white shadow-md rounded-lg p-3">
         <select id="language-select" class="w-full p-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
           <option value="" disabled selected>Select Language</option>
@@ -20,6 +21,7 @@
         </select>
     </div>
     <div class="flex relative">
+        <!-- Sidebar displaying current meal -->
         <div class="fixed flex-shrink-0 w-1/4 h-screen bg-[#1A1B21]">
             <ul>
                 <li class="review-order text-white text-center">
@@ -36,6 +38,8 @@
                 </li>
                 </div>
             </ul>
+
+            <!-- Button to exit customer interface -->
             <div class = "fixed bottom-3.5 left-1">
                 <button onclick = "cancelOrder()" class="rounded-md px-6 py-3 bottom-0 left-0 bg-[#C02827] hover:bg-[#ff7b7b] text-white font-semibold shadow-lg transition duration-300">
                     Back to start
@@ -43,12 +47,16 @@
             </div>
         </div>
 
+        <!-- Main part of the page -->
         <div class="flex-grow p-5 ml-[27%]">
+            <!-- Header -->
             <div class="text-center mb-4">
                 <img src="progress_imgs/progress-bar3.png" alt="Progress" class="mx-auto mb-2 w-3/4 h-3/4">
                 <h1 class="font-bold text-2xl">Select a side</h1>
                 <h2>Choose a side for your meal!</h2>
             </div>
+
+            <!-- Holds all the sides buttons that will be added dynamically -->
             <table id="side-table" class="w-full text-center">
             </table>
         </div>
